@@ -1,0 +1,17 @@
+# Data - never commit client data
+data/
+
+# Virtual environment
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.env
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
