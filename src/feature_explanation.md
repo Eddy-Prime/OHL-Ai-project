@@ -78,6 +78,227 @@ This captures how meaningful a match is for fans.
 * `attendance_lag_1`: fan habit
 * `opponent_freq`: proxy for opponent strength
 
+
+# Data Lineage and Feature Construction
+
+## 1. Data Sources
+
+The variables used in the model are derived from multiple internal and external datasets:
+
+| Source      | Description                  |
+| ----------- | ---------------------------- |
+| df_match    | Match results, teams, scores |
+| df_tickets  | Attendance (tickets_scanned) |
+| df_context  | Timing, promotions, calendar |
+| df_trends   | Google Trends (fan interest) |
+| df_articles | Media coverage               |
+
+---
+
+## 2. Feature Construction
+
+### A. Target Variable
+
+**tickets_scanned**
+
+Source:
+
+* df_tickets
+
+Meaning:
+Actual number of spectators present at the match.
+
+---
+
+### B. Sporting Variables
+
+**points_last_5**
+
+Source:
+
+* df_match → result_home
+
+Transformation:
+
+```python
+points_map = {'W': 3, 'D': 1, 'L': 0}
+df['points'] = df['result_home'].map(points_map)
+df['points_last_5'] = df['points'].rolling(5).sum().shift(1)
+```
+
+Meaning:
+Team performance over the last five matches.
+
+---
+
+**wins_last_3**
+
+Source:
+
+* df_match
+
+Transformation:
+
+```python
+df['win'] = (df['result_home'] == 'W').astype(int)
+df['wins_last_3'] = df['win'].rolling(3).sum().shift(1)
+```
+
+Meaning:
+Short-term momentum.
+
+---
+
+**goal_diff_last_5**
+
+Source:
+
+* df_match → goals
+
+Transformation:
+
+```python
+df['goal_diff'] = df['goals_home_ft'] - df['goals_away_ft']
+df['goal_diff_last_5'] = df['goal_diff'].rolling(5).sum().shift(1)
+```
+
+Meaning:
+Team dominance over recent matches.
+
+---
+
+### C. Match Importance
+
+Built from:
+
+* sporting performance (points_last_5)
+* season timing (matchday)
+
+Transformation:
+
+```python
+df['season_progress'] = df['matchday'] / df['matchday'].max()
+```
+
+Combined into:
+
+```python
+df['match_importance'] = ...
+```
+
+Meaning:
+Represents how meaningful a match is within the season context.
+
+---
+
+### D. Opponent Features
+
+**opponent_freq**
+
+Source:
+
+* df_match → away_team
+
+Transformation:
+
+```python
+df['opponent_freq'] = df['away_team'].map(df['away_team'].value_counts())
+```
+
+Meaning:
+Proxy for opponent familiarity or presence in the dataset.
+
+---
+
+**is_top_opponent**
+
+Source:
+
+* manually defined list
+
+Transformation:
+
+```python
+top_teams = ["Club Brugge", "Anderlecht", ...]
+df['is_top_opponent'] = df['away_team'].isin(top_teams).astype(int)
+```
+
+Meaning:
+Proxy for opponent attractiveness.
+
+---
+
+### E. Match Attractiveness
+
+Constructed from:
+
+* match importance
+* opponent strength
+* top opponent indicator
+
+Transformation:
+
+```python
+df['match_attractiveness'] = ...
+```
+
+Meaning:
+Represents the overall appeal of the match.
+
+---
+
+### F. Context Variables
+
+**is_weekend**
+
+Source:
+
+* df_context
+
+Meaning:
+Indicates whether the match is played during the weekend.
+
+---
+
+**has_promotion**
+
+Source:
+
+* df_context
+
+Meaning:
+Indicates whether a promotion or marketing action is active.
+
+---
+
+### G. Behavioral Variable
+
+**attendance_lag_1**
+
+Source:
+
+* tickets_scanned
+
+Transformation:
+
+```python
+df['attendance_lag_1'] = df['tickets_scanned'].shift(1)
+```
+
+Meaning:
+Attendance of the previous match, capturing fan momentum.
+
+---
+
+## Key Insight
+
+The variables used in the model are not raw data. They are derived through a series of transformations and feature engineering steps to capture meaningful patterns such as:
+
+* team performance
+* match importance
+* opponent attractiveness
+* fan behavior
+
 ---
 
 ## 4. Base Model Results
