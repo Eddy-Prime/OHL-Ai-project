@@ -37,6 +37,11 @@ def build_summary(regenerate_plots=False):
     if len(best_model_row) == 0:
         best_model_row = comparison_df.sort_values("mae").head(1)
     best_model_row = best_model_row.iloc[0]
+
+    baseline_row = comparison_df[comparison_df["model"] == "mean_baseline"]
+    baseline_mae = float(baseline_row.iloc[0]["mae"]) if len(baseline_row) > 0 else float("nan")
+    mae_improvement = baseline_mae - float(best_model_row["mae"]) if pd.notna(baseline_mae) else float("nan")
+
     top_features = feature_df.head(5)
     prediction_column = f"pred_{best_model_name}"
 
@@ -57,26 +62,20 @@ def build_summary(regenerate_plots=False):
     summary_lines = [
         "Attendance Prediction Project Report",
         f"Best model: {best_model_name}",
-        f"Primary candidate: {metadata.get('primary_candidate', 'xgboost')}",
-        f"Log target used: {bool(metadata.get('use_log_target', False))}",
-        f"Validation folds: {metadata.get('validation_folds', 4)}",
         f"Best MAE: {best_model_row['mae']:.2f}",
         f"Best RMSE: {best_model_row['rmse']:.2f}",
         f"Best R2: {best_model_row['r2']:.4f}",
         f"Best MAPE: {best_model_row.get('mape', float('nan')):.2f}",
-        f"Best Median Abs Error: {best_model_row.get('median_abs_error', float('nan')):.2f}",
+        f"MAE improvement vs mean baseline: {mae_improvement:.2f}",
         "Top features:",
     ]
 
     for _, row in top_features.iterrows():
         summary_lines.append(f"- {row['feature']}: {row['importance']:.4f}")
 
-    ablation_path = OUTPUTS_DIR / "ablation_results.csv"
-    if ablation_path.exists():
-        ablation_df = pd.read_csv(ablation_path)
-        summary_lines.append("\nFeature Group Ablation Analysis:")
-        for _, row in ablation_df.iterrows():
-            summary_lines.append(f"  {row['feature_group']}: MAE={row['mae']:.2f} ({int(row['num_features'])} features)")
+    if best_model_name == "ensemble":
+        weights = metadata.get("ensemble_weights", {})
+        summary_lines.append(f"Ensemble weights - xgboost: {float(weights.get('xgboost', 0.7)):.2f}, random_forest: {float(weights.get('random_forest', 0.3)):.2f}")
 
     if new_predictions_path.exists():
         new_predictions_df = pd.read_csv(new_predictions_path)
@@ -86,7 +85,6 @@ def build_summary(regenerate_plots=False):
             summary_lines.append(f"Prediction file: {new_predictions_path}")
     else:
         summary_lines.append(f"Prediction file not found yet: {new_predictions_path}")
-
 
     report_path = REPORTS_DIR / "summary_report.txt"
     report_path.write_text("\n".join(summary_lines), encoding="utf-8")

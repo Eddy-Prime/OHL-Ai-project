@@ -1,10 +1,8 @@
 Attendance Prediction Project Report
-Best model: random_forest
-MAE: 1152.57
-RMSE: 1427.91
-R2: -0.9165
-MAPE: 23.16
-Median Abs Error: 1086.40
-Log target used: False
-Walk-forward folds: 4
+Best model: xgboost
+MAE: 1107.79
+RMSE: 1415.89
+R2: -0.8844
+MAPE: 21.76
+Median Abs Error: 878.51
 Predictions file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv

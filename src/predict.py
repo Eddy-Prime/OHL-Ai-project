@@ -12,15 +12,39 @@ from .features import build_inference_dataset, prepare_inference_features
 from .utils import ensure_directories
 
 
-def load_model_and_metadata(model_path=BEST_MODEL_ARTIFACT_PATH, metadata_path=BEST_MODEL_METADATA_PATH):
-    if not Path(model_path).exists():
-        raise FileNotFoundError(f"Model artifact not found: {model_path}")
+def load_metadata(metadata_path=BEST_MODEL_METADATA_PATH):
     if not Path(metadata_path).exists():
         raise FileNotFoundError(f"Model metadata not found: {metadata_path}")
-    model = joblib.load(model_path)
     with open(metadata_path, "r", encoding="utf-8") as f:
         metadata = json.load(f)
-    return model, metadata
+    return metadata
+
+
+def _predict_single_model(model_path, model_input):
+    if not Path(model_path).exists():
+        raise FileNotFoundError(f"Model artifact not found: {model_path}")
+    model = joblib.load(model_path)
+    predictions = np.asarray(model.predict(model_input), dtype=float)
+    return np.maximum(predictions, 0.0)
+
+
+def _predict_ensemble(metadata, model_input):
+    component_paths = metadata.get("component_model_paths", {})
+    rf_path = Path(component_paths.get("random_forest", ""))
+    xgb_path = Path(component_paths.get("xgboost", ""))
+
+    if not rf_path.exists() or not xgb_path.exists():
+        raise FileNotFoundError("Ensemble component models are missing")
+
+    rf_model = joblib.load(rf_path)
+    xgb_model = joblib.load(xgb_path)
+
+    rf_pred = np.asarray(rf_model.predict(model_input), dtype=float)
+    xgb_pred = np.asarray(xgb_model.predict(model_input), dtype=float)
+
+    weights = metadata.get("ensemble_weights", {"xgboost": 0.7, "random_forest": 0.3})
+    pred = float(weights.get("xgboost", 0.7)) * xgb_pred + float(weights.get("random_forest", 0.3)) * rf_pred
+    return np.maximum(pred, 0.0)
 
 
 def predict_from_file(
@@ -34,7 +58,7 @@ def predict_from_file(
     if not input_path.exists():
         raise FileNotFoundError(f"Input file not found: {input_path}")
 
-    model, metadata = load_model_and_metadata(model_path=model_path, metadata_path=metadata_path)
+    metadata = load_metadata(metadata_path=metadata_path)
     raw_input = pd.read_csv(input_path)
     tables = load_raw_tables(data_dir)
     inference_dataset = build_inference_dataset(tables=tables, new_matches_df=raw_input)
@@ -44,10 +68,12 @@ def predict_from_file(
         raise ValueError("Model metadata does not contain features_used")
 
     model_input = prepare_inference_features(inference_dataset, feature_columns)
-    predictions = model.predict(model_input)
-    if metadata.get("use_log_target", False):
-        predictions = np.expm1(np.asarray(predictions, dtype=float))
-    predictions = np.maximum(np.asarray(predictions, dtype=float), 0.0)
+
+    best_model_name = metadata.get("best_model_name", "unknown")
+    if best_model_name == "ensemble":
+        predictions = _predict_ensemble(metadata=metadata, model_input=model_input)
+    else:
+        predictions = _predict_single_model(model_path=model_path, model_input=model_input)
 
     result = raw_input.copy()
     result["predicted_attendance"] = predictions
@@ -57,7 +83,7 @@ def predict_from_file(
     result.to_csv(output_path, index=False)
 
     summary = {
-        "best_model": metadata.get("best_model_name", "unknown"),
+        "best_model": best_model_name,
         "rows_scored": int(len(result)),
         "prediction_min": float(result["predicted_attendance"].min()),
         "prediction_mean": float(result["predicted_attendance"].mean()),

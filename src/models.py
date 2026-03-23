@@ -14,19 +14,9 @@ def build_preprocessor(x_train):
     categorical_cols = x_train.select_dtypes(include=["object", "bool"]).columns.tolist()
     numeric_cols = [col for col in x_train.columns if col not in categorical_cols]
 
-    numeric_non_empty_cols = [col for col in numeric_cols if x_train[col].notna().any()]
-    numeric_empty_cols = [col for col in numeric_cols if col not in numeric_non_empty_cols]
-    categorical_non_empty_cols = [col for col in categorical_cols if x_train[col].notna().any()]
-    categorical_empty_cols = [col for col in categorical_cols if col not in categorical_non_empty_cols]
-
     numeric_pipeline = Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="median", keep_empty_features=True)),
-        ]
-    )
-    numeric_empty_pipeline = Pipeline(
-        steps=[
-            ("imputer", SimpleImputer(strategy="constant", fill_value=0.0, keep_empty_features=True)),
         ]
     )
     categorical_pipeline = Pipeline(
@@ -35,30 +25,14 @@ def build_preprocessor(x_train):
             ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
         ]
     )
-    categorical_empty_pipeline = Pipeline(
-        steps=[
-            ("imputer", SimpleImputer(strategy="constant", fill_value="missing", keep_empty_features=True)),
-            ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
-        ]
-    )
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ("numeric", numeric_pipeline, numeric_non_empty_cols),
-            ("numeric_empty", numeric_empty_pipeline, numeric_empty_cols),
-            ("categorical", categorical_pipeline, categorical_non_empty_cols),
-            ("categorical_empty", categorical_empty_pipeline, categorical_empty_cols),
+            ("numeric", numeric_pipeline, numeric_cols),
+            ("categorical", categorical_pipeline, categorical_cols),
         ]
     )
     return preprocessor
-
-
-def is_catboost_available():
-    try:
-        import catboost
-        return True
-    except ImportError:
-        return False
 
 
 def _fit_with_optional_tuning(pipeline, x_train, y_train, tune, param_grid):
@@ -99,10 +73,10 @@ def train_linear_regression(x_train, y_train):
 def train_random_forest(x_train, y_train, tune=False):
     preprocessor = build_preprocessor(x_train)
     base_model = RandomForestRegressor(
-        n_estimators=600,
-        max_depth=10,
-        min_samples_split=4,
-        min_samples_leaf=2,
+        n_estimators=300,
+        max_depth=6,
+        min_samples_split=2,
+        min_samples_leaf=1,
         random_state=RANDOM_STATE,
         n_jobs=-1,
     )
@@ -114,11 +88,8 @@ def train_random_forest(x_train, y_train, tune=False):
     )
 
     param_grid = {
-        "model__n_estimators": [300, 600],
-        "model__max_depth": [8, 10, None],
-        "model__min_samples_split": [2, 4],
-        "model__min_samples_leaf": [1, 2],
-        "model__max_features": ["sqrt", 0.8],
+        "model__n_estimators": [200, 300, 500],
+        "model__max_depth": [3, 5, 8],
     }
     return _fit_with_optional_tuning(pipeline, x_train, y_train, tune=tune, param_grid=param_grid)
 
@@ -133,12 +104,10 @@ def train_xgboost(x_train, y_train, tune=False):
     base_model = XGBRegressor(
         objective="reg:squarederror",
         n_estimators=500,
-        max_depth=4,
+        max_depth=3,
         learning_rate=0.05,
         subsample=0.9,
-        colsample_bytree=0.8,
-        min_child_weight=3,
-        reg_lambda=1.0,
+        colsample_bytree=0.9,
         random_state=RANDOM_STATE,
         n_jobs=-1,
     )
@@ -151,73 +120,20 @@ def train_xgboost(x_train, y_train, tune=False):
 
     param_grid = {
         "model__n_estimators": [300, 500, 800],
-        "model__max_depth": [2, 3, 4, 5],
-        "model__learning_rate": [0.01, 0.03, 0.05, 0.08],
-        "model__subsample": [0.6, 0.8, 0.95, 1.0],
-        "model__colsample_bytree": [0.5, 0.7, 0.9, 1.0],
-        "model__min_child_weight": [1, 3, 5, 8],
-        "model__reg_alpha": [0, 0.5, 1, 2],
-        "model__reg_lambda": [1, 5, 10],
-        "model__gamma": [0, 1, 3],
+        "model__max_depth": [2, 3, 4],
+        "model__learning_rate": [0.03, 0.05, 0.08],
+        "model__subsample": [0.7, 0.85, 1.0],
+        "model__colsample_bytree": [0.7, 0.85, 1.0],
     }
     return _fit_with_optional_tuning(pipeline, x_train, y_train, tune=tune, param_grid=param_grid)
-
-
-def train_catboost(x_train, y_train, tune=False):
-    try:
-        from catboost import CatBoostRegressor
-    except ImportError as exc:
-        raise ImportError("catboost is required. Install dependencies with: pip install -r requirements.txt") from exc
-
-    preprocessor = build_preprocessor(x_train)
-    base_model = CatBoostRegressor(
-        iterations=500,
-        depth=5,
-        learning_rate=0.05,
-        random_state=RANDOM_STATE,
-        verbose=False,
-        thread_count=-1,
-    )
-    pipeline = Pipeline(
-        steps=[
-            ("preprocessor", preprocessor),
-            ("model", base_model),
-        ]
-    )
-
-    if not tune:
-        pipeline.fit(x_train, y_train)
-        return pipeline
-
-    param_grid = {
-        "model__iterations": [300, 500],
-        "model__depth": [4, 5, 6],
-        "model__learning_rate": [0.01, 0.05, 0.1],
-    }
-
-    n_rows = len(x_train)
-    n_splits = 3 if n_rows >= 24 else 2
-    if n_rows < 12:
-        pipeline.fit(x_train, y_train)
-        return pipeline
-
-    search = GridSearchCV(
-        estimator=pipeline,
-        param_grid=param_grid,
-        cv=TimeSeriesSplit(n_splits=n_splits),
-        scoring="neg_mean_absolute_error",
-        n_jobs=1,
-        refit=True,
-    )
-    search.fit(x_train, y_train)
-    return search.best_estimator_
 
 
 
 def get_model_feature_importance(model):
     if isinstance(model, SimpleEnsemble):
-        first_model = list(model.models.values())[0]
-        return get_model_feature_importance(first_model)
+        if "xgboost" in model.models:
+            return get_model_feature_importance(model.models["xgboost"])
+        return get_model_feature_importance(list(model.models.values())[0])
     
     preprocessor = model.named_steps["preprocessor"]
     regressor = model.named_steps["model"]
@@ -245,16 +161,11 @@ class SimpleEnsemble:
         self.weights = weights_dict
 
     def predict(self, x):
-        predictions = []
-        total_weight = 0.0
-        for model_name, model in self.models.items():
-            weight = self.weights.get(model_name, 1.0)
-            pred = model.predict(x)
-            predictions.append(weight * np.asarray(pred, dtype=float))
-            total_weight += weight
-        
-        ensemble_pred = np.sum(predictions, axis=0) / total_weight
-        return ensemble_pred
+        xgb_pred = np.asarray(self.models["xgboost"].predict(x), dtype=float)
+        rf_pred = np.asarray(self.models["random_forest"].predict(x), dtype=float)
+        xgb_weight = float(self.weights.get("xgboost", 0.7))
+        rf_weight = float(self.weights.get("random_forest", 0.3))
+        return xgb_weight * xgb_pred + rf_weight * rf_pred
 
     def fit(self, x, y):
         for model in self.models.values():
@@ -263,28 +174,6 @@ class SimpleEnsemble:
 
     @property
     def named_steps(self):
-        class DummyPreprocessor:
-            def get_feature_names_out(self):
-                if hasattr(list(self.parent.models.values())[0], 'named_steps'):
-                    return list(self.parent.models.values())[0].named_steps['preprocessor'].get_feature_names_out()
-                return np.array([f"feature_{i}" for i in range(100)])
-        
-        class DummyWrapper:
-            def __init__(self, parent):
-                self.parent = parent
-            
-            def __getitem__(self, key):
-                if key == 'preprocessor':
-                    obj = DummyPreprocessor()
-                    obj.parent = self.parent
-                    return obj
-                elif key == 'model':
-                    return self
-                return None
-            
-            def get_feature_names_out(self):
-                if hasattr(list(self.parent.models.values())[0], 'named_steps'):
-                    return list(self.parent.models.values())[0].named_steps['preprocessor'].get_feature_names_out()
-                return np.array([f"feature_{i}" for i in range(100)])
-        
-        return DummyWrapper(self)
+        if "xgboost" in self.models:
+            return self.models["xgboost"].named_steps
+        return list(self.models.values())[0].named_steps

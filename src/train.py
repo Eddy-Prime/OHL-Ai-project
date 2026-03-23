@@ -5,8 +5,6 @@ import numpy as np
 from datetime import datetime, timezone
 
 import joblib
-import pandas as pd
-from sklearn.model_selection import TimeSeriesSplit
 
 from .baselines import mean_baseline, opponent_mean_baseline
 from .config import (
@@ -22,11 +20,6 @@ from .config import (
     REPORTS_DIR,
     TARGET_COLUMN,
     TEST_SIZE,
-    TRAINED_MODEL_CANDIDATES,
-    N_SPLITS_VALIDATION,
-    ENSEMBLE_WEIGHTS,
-    SUPPORT_ENSEMBLE,
-    FEATURE_GROUPS,
 )
 from .data_loader import load_raw_tables
 from .evaluate import (
@@ -42,128 +35,36 @@ from .evaluate import (
     save_feature_importance,
 )
 from .features import build_match_level_dataset, get_feature_columns, split_features_target, time_train_test_split
-from .models import (
-    get_model_feature_importance,
-    train_linear_regression,
-    train_random_forest,
-    train_xgboost,
-    train_catboost,
-    SimpleEnsemble,
-    is_catboost_available,
-)
+from .models import get_model_feature_importance, train_linear_regression, train_random_forest, train_xgboost, SimpleEnsemble
 from .utils import ensure_directories
 
-def _predict_with_optional_inverse(model, x_test, use_log_target):
-    preds = np.asarray(model.predict(x_test), dtype=float)
-    if use_log_target:
-        preds = np.expm1(preds)
-    return np.maximum(preds, 0.0)
+MODEL_CANDIDATES = ["linear_regression", "random_forest", "xgboost"]
+BEST_SELECTION_CANDIDATES = ["random_forest", "xgboost", "ensemble"]
+ENSEMBLE_WEIGHTS = {"xgboost": 0.7, "random_forest": 0.3}
+RANDOM_FOREST_ARTIFACT_PATH = MODELS_DIR / "random_forest_model.joblib"
+XGBOOST_ARTIFACT_PATH = MODELS_DIR / "xgboost_model.joblib"
 
 
-def _train_model_candidate(model_name, x_train, y_train, x_test, tune_rf, tune_xgb, tune_catboost=False):
+def _train_model_candidate(model_name, x_train, y_train, x_test, tune_rf, tune_xgb):
     if model_name == "linear_regression":
         model = train_linear_regression(x_train=x_train, y_train=y_train)
     elif model_name == "random_forest":
         model = train_random_forest(x_train=x_train, y_train=y_train, tune=tune_rf)
     elif model_name == "xgboost":
         model = train_xgboost(x_train=x_train, y_train=y_train, tune=tune_xgb)
-    elif model_name == "catboost":
-        model = train_catboost(x_train=x_train, y_train=y_train, tune=tune_catboost)
     else:
         raise ValueError(f"Unknown model candidate: {model_name}")
     predictions = np.asarray(model.predict(x_test), dtype=float)
+    predictions = np.maximum(predictions, 0.0)
     return model, predictions
 
 
-def _create_walk_forward_splits(x, y, meta, n_splits=4):
-    split_generator = TimeSeriesSplit(n_splits=n_splits)
-    folds = []
-    for train_idx, test_idx in split_generator.split(x):
-        x_train, x_val = x.iloc[train_idx].copy(), x.iloc[test_idx].copy()
-        y_train, y_val = y.iloc[train_idx].copy(), y.iloc[test_idx].copy()
-        meta_train, meta_val = meta.iloc[train_idx].copy(), meta.iloc[test_idx].copy()
-        folds.append({
-            'x_train': x_train,
-            'x_val': x_val,
-            'y_train': y_train,
-            'y_val': y_val,
-            'meta_train': meta_train,
-            'meta_val': meta_val,
-        })
-    return folds
-
-
-def _run_ablation_analysis(x_train, y_train, x_test, y_test, feature_columns, tune_xgb):
-    ablation_results = []
-    
-    cumulative_features = []
-    for group_name in ['base', 'lag', 'form', 'opponent', 'schedule', 'media', 'trends', 'interactions']:
-        group_features = FEATURE_GROUPS.get(group_name, [])
-        if not group_features:
-            continue
-        
-        cumulative_features.extend(group_features)
-        valid_features = [f for f in cumulative_features if f in feature_columns]
-        
-        if len(valid_features) == 0:
-            continue
-        
-        x_train_group = x_train[valid_features].copy()
-        x_test_group = x_test[valid_features].copy()
-        
-        model, predictions = _train_model_candidate(
-            model_name='xgboost',
-            x_train=x_train_group,
-            y_train=y_train,
-            x_test=x_test_group,
-            tune_rf=False,
-            tune_xgb=tune_xgb,
-            tune_catboost=False,
-        )
-        metrics = compute_metrics(y_test, predictions)
-        
-        ablation_results.append({
-            'feature_group': group_name,
-            'num_features': len(valid_features),
-            'mae': metrics['mae'],
-            'rmse': metrics['rmse'],
-            'r2': metrics['r2'],
-            'mape': metrics['mape'],
-        })
-    
-    return pd.DataFrame(ablation_results)
-
-
-def _select_best_fitted_model(model_results, mae_tie_threshold=5.0):
-    ranking = sorted(model_results.items(), key=lambda item: (item[1]["metrics"]["mae"], item[1]["metrics"]["rmse"]))
-    best_name, best_payload = ranking[0]
-    if len(ranking) > 1:
-        second_name, second_payload = ranking[1]
-        mae_gap = abs(best_payload["metrics"]["mae"] - second_payload["metrics"]["mae"])
-        if mae_gap <= mae_tie_threshold and second_payload["metrics"]["rmse"] < best_payload["metrics"]["rmse"]:
-            best_name, best_payload = second_name, second_payload
-    return best_name, best_payload
-
-
-def _resolve_model_candidates(tune_catboost=False):
-    candidates = []
-    catboost_available = is_catboost_available()
-
-    for model_name in TRAINED_MODEL_CANDIDATES:
-        if model_name != "catboost":
-            candidates.append(model_name)
-            continue
-
-        if catboost_available:
-            candidates.append(model_name)
-            continue
-
-        if tune_catboost:
-            raise ImportError("catboost is required when --tune-catboost is set. Install dependencies with: pip install -r requirements.txt")
-
-        print("Skipping model candidate 'catboost' because the package is not installed.")
-
-    return candidates
+def _select_best_fitted_model(model_results, candidates):
+    selected = {k: v for k, v in model_results.items() if k in candidates}
+    if len(selected) == 0:
+        raise ValueError("No model results available for best-model selection.")
+    ranking = sorted(selected.items(), key=lambda item: (item[1]["metrics"]["mae"], item[1]["metrics"]["rmse"]))
+    return ranking[0]
 
 
 def run_pipeline(
@@ -206,93 +107,45 @@ def run_pipeline(
         "opponent_mean_baseline": {"metrics": compute_metrics(y_test, pred_opp_mean), "predictions": pred_opp_mean},
     }
 
-    active_model_candidates = _resolve_model_candidates(tune_catboost=tune_catboost)
-    if len(active_model_candidates) == 0:
-        raise ValueError("No trainable model candidates are available.")
-
-    folds = _create_walk_forward_splits(x_train, y_train, meta_train, n_splits=N_SPLITS_VALIDATION)
-    
-    fitted_models_per_fold = {model_name: [] for model_name in active_model_candidates}
     fitted_results = {}
-    
-    for fold_idx, fold in enumerate(folds):
-        x_fold_train = fold['x_train']
-        y_fold_train = fold['y_train']
-        
-        for model_name in active_model_candidates:
-            model, _ = _train_model_candidate(
-                model_name=model_name,
-                x_train=x_fold_train,
-                y_train=y_fold_train,
-                x_test=x_test,
-                tune_rf=tune_rf,
-                tune_xgb=tune_xgb,
-                tune_catboost=tune_catboost,
-            )
-            fitted_models_per_fold[model_name].append(model)
-    
-    for model_name in active_model_candidates:
-        if len(fitted_models_per_fold[model_name]) > 0:
-            final_model = fitted_models_per_fold[model_name][-1]
-            predictions = np.asarray(final_model.predict(x_test), dtype=float)
-            fitted_results[model_name] = {
-                "model": final_model,
-                "use_log_target": False,
-                "metrics": compute_metrics(y_test, predictions),
-                "predictions": predictions,
-            }
-    
-    if use_log_target:
-        y_train_log = np.log1p(np.maximum(y_train.to_numpy(dtype=float), 0.0))
-        fitted_models_log_per_fold = {model_name: [] for model_name in active_model_candidates}
-        
-        for fold_idx, fold in enumerate(folds):
-            x_fold_train = fold['x_train']
-            y_fold_train_log = np.log1p(np.maximum(fold['y_train'].to_numpy(dtype=float), 0.0))
-            
-            for model_name in active_model_candidates:
-                model, _ = _train_model_candidate(
-                    model_name=model_name,
-                    x_train=x_fold_train,
-                    y_train=y_fold_train_log,
-                    x_test=x_test,
-                    tune_rf=tune_rf,
-                    tune_xgb=tune_xgb,
-                    tune_catboost=tune_catboost,
-                )
-                fitted_models_log_per_fold[model_name].append(model)
-        
-        for model_name in active_model_candidates:
-            if len(fitted_models_log_per_fold[model_name]) > 0:
-                final_model = fitted_models_log_per_fold[model_name][-1]
-                predictions = _predict_with_optional_inverse(final_model, x_test, use_log_target=True)
-                fitted_results[f"{model_name}_log1p"] = {
-                    "model": final_model,
-                    "use_log_target": True,
-                    "metrics": compute_metrics(y_test, predictions),
-                    "predictions": predictions,
-                }
-    
-    if SUPPORT_ENSEMBLE and "xgboost" in fitted_results and "catboost" in fitted_results:
-        ensemble_models = {
-            "xgboost": fitted_results["xgboost"]["model"],
-            "catboost": fitted_results["catboost"]["model"],
-        }
-        ensemble = SimpleEnsemble(ensemble_models, ENSEMBLE_WEIGHTS)
-        ensemble_predictions = np.asarray(ensemble.predict(x_test), dtype=float)
-        fitted_results["ensemble"] = {
-            "model": ensemble,
+    for model_name in MODEL_CANDIDATES:
+        model, predictions = _train_model_candidate(
+            model_name=model_name,
+            x_train=x_train,
+            y_train=y_train,
+            x_test=x_test,
+            tune_rf=tune_rf,
+            tune_xgb=tune_xgb,
+        )
+        fitted_results[model_name] = {
+            "model": model,
             "use_log_target": False,
-            "metrics": compute_metrics(y_test, ensemble_predictions),
-            "predictions": ensemble_predictions,
+            "metrics": compute_metrics(y_test, predictions),
+            "predictions": predictions,
         }
+
+    ensemble_model = SimpleEnsemble(
+        models_dict={
+            "xgboost": fitted_results["xgboost"]["model"],
+            "random_forest": fitted_results["random_forest"]["model"],
+        },
+        weights_dict=ENSEMBLE_WEIGHTS,
+    )
+    ensemble_predictions = np.asarray(ensemble_model.predict(x_test), dtype=float)
+    ensemble_predictions = np.maximum(ensemble_predictions, 0.0)
+    fitted_results["ensemble"] = {
+        "model": ensemble_model,
+        "use_log_target": False,
+        "metrics": compute_metrics(y_test, ensemble_predictions),
+        "predictions": ensemble_predictions,
+    }
 
     all_results = {}
     all_results.update(baseline_results)
     for model_name, payload in fitted_results.items():
         all_results[model_name] = {"metrics": payload["metrics"], "predictions": payload["predictions"]}
 
-    best_model_name, best_model_payload = _select_best_fitted_model(fitted_results)
+    best_model_name, best_model_payload = _select_best_fitted_model(fitted_results, BEST_SELECTION_CANDIDATES)
     best_predictions = np.asarray(best_model_payload["predictions"], dtype=float)
 
     comparison_df = build_comparison_table(all_results)
@@ -320,11 +173,14 @@ def run_pipeline(
     top_errors["pct_error"] = np.where(
         top_errors["actual"] != 0,
         np.abs(top_errors["signed_error"]) / np.abs(top_errors["actual"]) * 100.0,
-        np.nan
+        np.nan,
     )
     save_csv(top_errors, PREDICTIONS_DIR / "top_error_cases.csv")
 
-    feature_names, feature_values = get_model_feature_importance(best_model_payload["model"])
+    feature_model = best_model_payload["model"]
+    if best_model_name == "ensemble":
+        feature_model = fitted_results["xgboost"]["model"]
+    feature_names, feature_values = get_model_feature_importance(feature_model)
     feature_importance_df = save_feature_importance(
         names=feature_names,
         values=feature_values,
@@ -332,7 +188,23 @@ def run_pipeline(
         top_n=30,
     )
 
-    joblib.dump(best_model_payload["model"], BEST_MODEL_ARTIFACT_PATH)
+    joblib.dump(fitted_results["random_forest"]["model"], RANDOM_FOREST_ARTIFACT_PATH)
+    joblib.dump(fitted_results["xgboost"]["model"], XGBOOST_ARTIFACT_PATH)
+
+    if best_model_name == "ensemble":
+        joblib.dump(
+            {
+                "type": "ensemble",
+                "weights": ENSEMBLE_WEIGHTS,
+                "component_models": {
+                    "random_forest": str(RANDOM_FOREST_ARTIFACT_PATH),
+                    "xgboost": str(XGBOOST_ARTIFACT_PATH),
+                },
+            },
+            BEST_MODEL_ARTIFACT_PATH,
+        )
+    else:
+        joblib.dump(best_model_payload["model"], BEST_MODEL_ARTIFACT_PATH)
 
     plot_actual_vs_predicted(
         y_true=y_test.to_numpy(dtype=float),
@@ -359,12 +231,6 @@ def run_pipeline(
         output_path=PREDICTIONS_DIR / "residual_distribution_best_model.png",
     )
 
-    if run_ablation:
-        ablation_df = _run_ablation_analysis(x_train, y_train, x_test, y_test, feature_columns, tune_xgb)
-        save_csv(ablation_df, OUTPUTS_DIR / "ablation_results.csv")
-    else:
-        ablation_df = None
-
     run_info = {
         "schema_version": MODEL_SCHEMA_VERSION,
         "best_model_name": best_model_name,
@@ -375,12 +241,16 @@ def run_pipeline(
         "rows_test": int(len(x_test)),
         "features_used": feature_columns,
         "target_column": TARGET_COLUMN,
-        "use_log_target": bool(best_model_payload["use_log_target"]),
-        "validation_folds": N_SPLITS_VALIDATION,
+        "use_log_target": False,
         "metrics_by_model": {name: payload["metrics"] for name, payload in all_results.items()},
         "best_metrics": best_model_payload["metrics"],
         "data_dir": str(Path(data_dir)),
         "trained_at_utc": datetime.now(timezone.utc).isoformat(),
+        "component_model_paths": {
+            "random_forest": str(RANDOM_FOREST_ARTIFACT_PATH),
+            "xgboost": str(XGBOOST_ARTIFACT_PATH),
+        },
+        "ensemble_weights": ENSEMBLE_WEIGHTS,
     }
 
     with open(BEST_MODEL_METADATA_PATH, "w", encoding="utf-8") as f:
@@ -394,8 +264,6 @@ def run_pipeline(
         f"R2: {best_model_payload['metrics']['r2']:.4f}",
         f"MAPE: {best_model_payload['metrics']['mape']:.2f}",
         f"Median Abs Error: {best_model_payload['metrics']['median_abs_error']:.2f}",
-        f"Log target used: {bool(best_model_payload['use_log_target'])}",
-        f"Walk-forward folds: {N_SPLITS_VALIDATION}",
         f"Predictions file: {PREDICTIONS_DIR / 'new_match_predictions.csv'}",
     ]
     (REPORTS_DIR / "summary_report.txt").write_text("\n".join(summary_lines), encoding="utf-8")
@@ -406,7 +274,7 @@ def run_pipeline(
         "predictions": predictions_df,
         "top_errors": top_errors,
         "feature_importance": feature_importance_df,
-        "ablation": ablation_df,
+        "ablation": None,
         "run_info": run_info,
     }
 
@@ -434,13 +302,8 @@ def main():
     )
     print(result["comparison"].to_string(index=False))
     print(f"Best model: {result['run_info']['best_model_name']}")
-    if result["ablation"] is not None:
-        print("\nAblation Results:")
-        print(result["ablation"].to_string(index=False))
 
 
 if __name__ == "__main__":
     main()
-
-
 
