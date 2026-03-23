@@ -1,0 +1,41 @@
+{
+  "rows_total": 71,
+  "rows_train": 56,
+  "rows_test": 15,
+  "features_used": [
+    "season",
+    "stage",
+    "competition_name",
+    "away_team",
+    "matchday",
+    "weekday_name",
+    "is_weekend",
+    "is_midweek",
+    "is_public_holiday",
+    "is_school_holiday_flanders",
+    "kickoff_hour",
+    "month",
+    "weather_temp_mean_c",
+    "weather_rain_mm",
+    "weather_windspeed_max_kmh",
+    "has_promotion",
+    "promo_tickets_total",
+    "pct_free_tickets",
+    "seasonpass_holders",
+    "ohl_interest",
+    "num_articles",
+    "avg_days_to_match"
+  ],
+  "target_column": "tickets_scanned",
+  "data_dir": "C:\\Users\\ASUS\\Desktop\\International Project\\Data",
+  "trained_at_utc": "2026-03-23T11:54:52.625108+00:00",
+  "random_forest_metrics": {
+    "mae": 1293.9719562738194,
+    "rmse": 1479.9197576570857,
+    "r2": -1.058654934800047,
+    "max_abs_error": 2243.929967060717,
+    "share_abs_error_le_500": 0.2,
+    "share_abs_error_le_800": 0.26666666666666666,
+    "share_abs_error_le_1000": 0.3333333333333333
+  }
+}
