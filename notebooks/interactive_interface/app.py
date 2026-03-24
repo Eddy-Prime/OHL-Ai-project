@@ -79,6 +79,18 @@ def rain_label(mm: float) -> str:
 def is_weekend(d: date) -> int:
     return int(d.weekday() >= 5)
 
+def parse_form(form_str: str):
+    form_str = form_str.upper().replace(',', ' ').replace('-', ' ')
+    results  = [c for c in form_str if c in ('W', 'D', 'L')]
+    if not results:
+        return None
+    points_map    = {'W': 3, 'D': 1, 'L': 0}
+    last5         = results[-5:]
+    last3         = results[-3:]
+    points_last_5 = sum(points_map[r] for r in last5)
+    wins_last_3   = sum(1 for r in last3 if r == 'W')
+    return points_last_5, wins_last_3
+
 TOP_TEAMS = {"club brugge", "anderlecht", "stvv", "kv mechelen", "westerlo"}
 
 def is_top_opponent(name: str) -> int:
@@ -86,6 +98,13 @@ def is_top_opponent(name: str) -> int:
 
 # ── Session state ─────────────────────────────────────────────────────────────
 session = {}
+
+# ── Reset endpoint ────────────────────────────────────────────────────────────
+@app.route('/reset', methods=['POST'])
+def reset():
+    session.clear()
+    session['step'] = 'ask_opponent'
+    return jsonify({'ok': True})
 
 # ── Chat endpoint ─────────────────────────────────────────────────────────────
 @app.route('/chat', methods=['POST'])
@@ -96,15 +115,23 @@ def chat():
     # ── Step 1: Opponent ──────────────────────────────────────────────────────
     if step == 'ask_opponent':
         matched, opp_avg = fuzzy_match(user_msg)
-        session['opponent']     = matched or 'Unknown'
-        session['opp_avg']      = opp_avg
-        session['is_top']       = is_top_opponent(user_msg)
-        session['step']         = 'ask_date'
-        reply = (
-            f"Got it — <b>{session['opponent']}</b> "
-            f"(historical avg: {opp_avg:.0f} tickets).<br>"
-            f"📅 What is the match date? <i>(YYYY-MM-DD)</i>"
-        )
+
+        if not matched:
+            reply = (
+                f"❌ Opponent <b>'{user_msg}'</b> not recognised.<br>"
+                f"Try a name like <b>Club Brugge</b>, <b>Anderlecht</b>, <b>Westerlo</b>...<br><br>"
+                f"👤 Who is the <b>opponent</b>?"
+            )
+        else:
+            session['opponent'] = matched
+            session['opp_avg']  = opp_avg
+            session['is_top']   = is_top_opponent(user_msg)
+            session['step']     = 'ask_date'
+            reply = (
+                f"Got it — <b>{matched}</b> "
+                f"(historical avg: {opp_avg:.0f} tickets).<br>"
+                f"📅 What is the match date? <i>(YYYY-MM-DD)</i>"
+            )
 
     # ── Step 2: Date ──────────────────────────────────────────────────────────
     elif step == 'ask_date':
@@ -119,13 +146,24 @@ def chat():
             f"⏰ What is the kickoff time? <i>(HH:MM, e.g. 20:45)</i>"
         )
 
-    # ── Step 3: Kickoff → Predict ─────────────────────────────────────────────
+    # ── Step 3: Kickoff ───────────────────────────────────────────────────────
     elif step == 'ask_kickoff':
         try:
             kickoff_hour = int(user_msg.split(':')[0])
         except ValueError:
             return jsonify({'reply': "❌ Invalid time. Please use <b>HH:MM</b> format (e.g. 20:45)."})
 
+        session['kickoff_hour'] = kickoff_hour
+        session['step']         = 'ask_form'
+        reply = (
+            "⏰ Kickoff set.<br><br>"
+            "📋 What are OHL's <b>last 5 match results</b>? <i>(e.g. W W L D W — oldest to newest)</i><br>"
+            "<small style='color:#888'>Type <b>skip</b> to use season averages instead.</small>"
+        )
+
+    # ── Step 4: Form → Predict ────────────────────────────────────────────────
+    elif step == 'ask_form':
+        kickoff_hour  = session['kickoff_hour']
         match_date    = datetime.strptime(session['date'], "%Y-%m-%d").date()
         academic_week = get_academic_week(match_date)
         matchday      = get_matchday(match_date)
@@ -133,33 +171,40 @@ def chat():
         rain_mm, rain_source = get_rain(match_date)
         opp_avg       = session['opp_avg']
         is_top        = session['is_top']
+        weekend       = is_weekend(match_date)
 
-        # Opponent frequency & strength — use lookup size as proxy
-        opp_freq      = len(opponent_lookup)  # fallback: total unique opponents seen
-        opp_str_norm  = 0.5                   # neutral fallback
+        # Form — parse or use defaults
+        form_note = ""
+        if user_msg.lower() == 'skip':
+            points_last_5    = 7.5
+            wins_last_3      = 1.0
+            goal_diff_last_5 = 0.0
+            form_note        = "<i style='color:#888;font-size:12px;'>* Using season average form.</i><br>"
+        else:
+            parsed = parse_form(user_msg)
+            if parsed:
+                points_last_5, wins_last_3 = parsed
+                goal_diff_last_5 = 0.0
+                form_note = (
+                    f"<i style='color:#a0c4ff;font-size:12px;'>"
+                    f"✅ Form used: {points_last_5} pts last 5 | {wins_last_3} wins last 3"
+                    f"</i><br>"
+                )
+            else:
+                points_last_5    = 7.5
+                wins_last_3      = 1.0
+                goal_diff_last_5 = 0.0
+                form_note        = "<i style='color:#f4a261;font-size:12px;'>⚠️ Could not parse form — using season averages.</i><br>"
 
-        # Form features — neutral defaults (no live form available at prediction time)
-        points_last_5    = 7.5   # ~midpoint of 0–15
-        wins_last_3      = 1.0   # ~midpoint of 0–3
-        goal_diff_last_5 = 0.0   # neutral
-
-        # Match importance composite
-        form_norm        = 0.5   # neutral
+        # Composite features
+        opp_str_norm     = 0.5
+        form_norm        = points_last_5 / 15
         match_importance = round(0.5 * form_norm + 0.5 * season_prog, 4)
         match_attract    = round(0.4 * match_importance + 0.4 * opp_str_norm + 0.2 * is_top, 4)
         form_x_opp       = points_last_5 * is_top
-
-        # Lag — use global avg as fallback
         attendance_lag_1 = float(GLOBAL_AVG)
         has_promotion    = 0
-        weekend          = is_weekend(match_date)
 
-        # ── Build feature vector (must match feats order) ────────────────────
-        # features_combined order:
-        # opponent_avg_attendance_raw, academic_week, matchday, weather_rain_mm,
-        # kickoff_hour, points_last_5, wins_last_3, goal_diff_last_5,
-        # match_importance, match_attractiveness, form_x_opponent,
-        # is_weekend, season_progress, has_promotion, attendance_lag_1
         X = np.array([[
             opp_avg,
             academic_week,
@@ -192,16 +237,16 @@ def chat():
 
         reply = f"""
         ✅ Prediction for <b>{session['opponent']}</b>
-        on <b>{session['date']}</b> at <b>{user_msg}</b>:<br><br>
+        on <b>{session['date']}</b> at <b>{kickoff_hour}:00</b>:<br><br>
         {weather_line}<br>
         📅 Academic week: {academic_week} &nbsp;|&nbsp; Est. matchday: {matchday}<br>
         🏆 Top opponent: {"Yes" if is_top else "No"} &nbsp;|&nbsp; Weekend: {"Yes" if weekend else "No"}<br><br>
+        {form_note}
         <div style='background:#0d2a4a;padding:12px;border-radius:8px;margin-top:8px;'>
             📊 <b>Predicted attendance: {pred:,}</b><br>
             📉 Minimum estimate: {low:,}<br>
             📈 Maximum estimate: {high:,}
         </div><br>
-        <i style='color:#888;font-size:12px;'>* Form features use season averages — provide current form below for a sharper prediction.</i><br><br>
         🔄 Want to predict another match? Type an opponent name to start again!
         """
 
