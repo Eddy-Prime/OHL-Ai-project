@@ -6,3 +6,4 @@ xgboost>=1.7.0
 catboost>=1.1.0
 joblib>=1.2.0
 jupyter>=1.0.0
+streamlit>=1.38.0

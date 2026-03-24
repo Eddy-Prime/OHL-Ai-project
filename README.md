@@ -1,21 +1,19 @@
-# OHL Match Attendance Prediction
+# OHL Football Attendance Prediction
 
-## Objective
+This project predicts OHL home match attendance (`tickets_scanned`) using a reproducible machine learning pipeline and a new Streamlit web interface.
 
-This project predicts OHL home match attendance with `tickets_scanned` as target using advanced tabular ML practices.
+## What is already included
 
-The training pipeline evaluates:
+- Training pipeline with model comparison and artifact saving
+- Prediction pipeline using saved best model metadata
+- Reporting pipeline with summary outputs
+- Reduced inference contract with minimal user input:
+  - `match_date`
+  - `away_team`
+  - `stage`
+  - `kickoff_time`
 
-- Baselines: `mean_baseline`, `opponent_mean_baseline`
-- Linear Regression
-- Random Forest
-- XGBoost (primary candidate)
-- CatBoost
-- Ensemble (weighted average of XGBoost + CatBoost)
-
-Best model is selected automatically by validation MAE with RMSE as secondary tie-break.
-
-## Real Dataset Location
+## Data location
 
 Default data directory:
 
@@ -30,81 +28,7 @@ Expected files:
 - `gold_belga_press_articles.csv`
 - `gold_match_goals.csv`
 
-## Advanced Feature Engineering
-
-The feature engineering pipeline uses strict temporal ordering with 70+ leakage-safe features.
-
-**Attendance Lags** (home matches only):
-- `attendance_last_match`, `attendance_last_3_avg`, `attendance_last_5_avg`
-- `attendance_std_last_3`, `attendance_std_last_5`
-- `attendance_ewm` (exponential weighted mean)
-- `attendance_last_same_weekday`
-- `attendance_vs_same_opponent_last`
-
-**Team Form** (strictly pre-match):
-- `points_last_1`, `points_last_3_matches`, `points_last_5_matches`
-- `wins_last_1`, `wins_last_3_matches`, `wins_last_5`
-- `unbeaten_streak`
-- `goals_scored_last_1/3/5`, `goals_conceded_last_1/3/5`
-- `goal_difference_last_1/3/5`
-
-**Opponent Strength**:
-- `opponent_historical_avg_attendance`
-- `opponent_frequency_seen`
-- `opponent_avg_goals_scored`, `opponent_avg_goals_conceded`
-- `opponent_recent_goals_scored`, `opponent_recent_goals_conceded`
-- `big_opponent_flag` (based on historical attendance percentile)
-- `opponent_strength_proxy`, `opponent_encoded_rank_proxy`
-
-**Calendar & Schedule**:
-- `days_since_previous_home_match`, `days_since_previous_match`
-- `consecutive_home_matches`
-- `early_season_flag`, `mid_season_flag`, `late_season_flag`
-
-**Media Features** (time-window based):
-- `num_articles`, `num_articles_1d`, `num_articles_3d`, `num_articles_7d`
-- `avg_days_to_match`
-- `articles_trend_slope`
-
-**Google Trends**:
-- `ohl_interest`, `ohl_interest_3d_avg`, `ohl_interest_7d_avg`
-- `ohl_interest_trend`
-- `ohl_interest_last_available`
-
-**Interaction Features**:
-- `promotion_weekend_interaction`
-- `promotion_big_opponent_interaction`
-- `weekend_big_opponent_interaction`
-- `ohl_interest_big_opponent_interaction`
-- `free_ticket_pressure`
-
-All features use only information available before the match kickoff.
-
-## Walk-Forward Validation
-
-The pipeline uses time-aware walk-forward validation instead of random train-test split:
-
-- 4 expanding window folds on training data
-- Strict temporal ordering (no shuffling)
-- Average validation metrics across folds
-- Final test set for reporting
-- Ensures reproducibility and prevents data leakage
-
-## Ensemble Approach
-
-Automatically creates weighted ensemble:
-- 60% XGBoost + 40% CatBoost
-- Evaluated as candidate model
-- Provides robustness through model diversity
-
-## Target Transformation
-
-Optional log1p transformation:
-- Apply during training for improved distribution
-- Apply expm1 during prediction
-- Compare both approaches
-
-## Setup
+## Installation
 
 ```powershell
 python -m venv .venv
@@ -112,102 +36,26 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-## Training
-
-Standard training (4 validation folds):
+## Train models
 
 ```powershell
 python -m src.train --data-dir "C:\Users\ASUS\Desktop\International Project\Data"
 ```
 
-With XGBoost hyperparameter tuning:
+Optional feature minimization experiment:
 
 ```powershell
-python -m src.train --data-dir "C:\Users\ASUS\Desktop\International Project\Data" --tune-xgb
+python -m src.train --data-dir "C:\Users\ASUS\Desktop\International Project\Data" --run-feature-minimization
 ```
 
-With CatBoost and both models tuned:
+## Predict from CSV
 
-```powershell
-python -m src.train --data-dir "C:\Users\ASUS\Desktop\International Project\Data" --tune-xgb --tune-catboost
-```
+Use an input CSV with only these columns:
 
-With all models tuned and log target evaluation:
-
-```powershell
-python -m src.train --data-dir "C:\Users\ASUS\Desktop\International Project\Data" --tune-rf --tune-xgb --tune-catboost --use-log-target
-```
-
-With feature group ablation analysis:
-
-```powershell
-python -m src.train --data-dir "C:\Users\ASUS\Desktop\International Project\Data" --tune-xgb --run-ablation
-```
-
-## Best-Model Selection and Artifacts
-
-After training, the best fitted model is saved to:
-
-- `models/best_attendance_model.joblib`
-- `models/best_attendance_model_metadata.json`
-
-Metadata includes:
-
-- best model name (XGBoost, CatBoost, Ensemble, etc.)
-- tested model names
-- feature list (70+ features)
-- target column
-- log target flag
-- validation fold count
-- train/test row counts
-- metrics for all models
-- training timestamp
-- data directory
-
-## Prediction for New Matches
-
-Prediction automatically loads best-model files and reconstructs the same feature schema with historical context.
-
-Template input: see `data_examples/new_match_input_template.csv`
-
-```powershell
-python -m src.predict --input-file "path/to/new_matches.csv" --data-dir "C:\Users\ASUS\Desktop\International Project\Data"
-```
-
-## Output Files
-
-Training generates comprehensive outputs:
-
-- `outputs/model_comparison.csv` - all model metrics
-- `outputs/predictions/test_predictions.csv` - test set results
-- `outputs/predictions/top_error_cases.csv` - worst predictions
-- `outputs/predictions/residual_distribution.png` - error distribution
-- `outputs/predictions/attendance_distribution.png` - target distribution
-- `outputs/predictions/actual_vs_predicted_best_model.png` - scatter plot
-- `outputs/predictions/attendance_over_time_test.png` - time series
-- `outputs/feature_importance/best_model_feature_importance.csv` - top 30 features
-- `outputs/feature_importance/top_feature_importance.png` - feature bar chart
-- `outputs/ablation_results.csv` - (if --run-ablation)
-- `outputs/reports/summary_report.txt` - text summary
-
-## Validation Strategy
-
-Walk-forward validation ensures:
-- No future information leakage
-- Realistic model evaluation
-- Time-series aware
-- Reproducible results
-- All feature engineering is strictly pre-match
-
-## Reproducibility
-
-- Fixed random state (42) for all models
-- Deterministic feature engineering
-- TimeSeriesSplit for validation (no shuffling)
-- Versioned metadata stored with model
-
-
-- `data_examples/new_match_input_template.csv`
+- `match_date`
+- `away_team`
+- `stage`
+- `kickoff_time`
 
 Run prediction:
 
@@ -215,48 +63,48 @@ Run prediction:
 python -m src.predict --input-file "data_examples\new_match_input_template.csv" --data-dir "C:\Users\ASUS\Desktop\International Project\Data"
 ```
 
-Output:
+Output file:
 
 - `outputs/predictions/new_match_predictions.csv`
 
-## Reporting
-
-Generate report summary:
+## Generate report
 
 ```powershell
 python -m src.report
 ```
 
-Regenerate key plots from test predictions:
+## Run the web app
 
 ```powershell
-python -m src.report --regenerate-plots
+streamlit run app.py
 ```
 
-## Notebook
+The app includes:
 
-`notebooks/MACHINE_learning.ipynb` mirrors the improved pipeline and demonstrates:
+- Input form for minimal match fields
+- Prediction with MAE-based and median-error-based ranges
+- Historical context cards
+- Charts from saved outputs and historical trends
+- Model quality metrics and error profile
+- Feature transparency and minimal-feature summary when available
+- Artifact viewer for key CSV outputs
+- Prediction CSV export
 
-- training with new feature engineering
-- model comparison including XGBoost
-- selected best model metadata
-- feature importance
-- top error cases
-- new-match prediction
+## Web smoke test
 
-## Outputs
+```powershell
+python -m src.web_smoke_test
+```
 
-Main generated files:
+## Main generated artifacts
 
+- `models/best_attendance_model.joblib`
+- `models/best_attendance_model_metadata.json`
 - `outputs/model_comparison.csv`
+- `outputs/minimal_feature_results.csv` (if minimization was run)
+- `outputs/feature_importance/best_model_feature_importance.csv`
 - `outputs/predictions/test_predictions.csv`
 - `outputs/predictions/top_error_cases.csv`
-- `outputs/predictions/new_match_predictions.csv`
-- `outputs/feature_importance/best_model_feature_importance.csv`
 - `outputs/predictions/actual_vs_predicted_best_model.png`
-- `outputs/feature_importance/top_feature_importance.png`
-- `outputs/predictions/attendance_over_time_test.png`
-- `outputs/predictions/attendance_distribution.png`
 - `outputs/predictions/residual_distribution_best_model.png`
 - `outputs/reports/summary_report.txt`
-
