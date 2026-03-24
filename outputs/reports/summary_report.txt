@@ -1,33 +1,13 @@
 Attendance Prediction Project Report
 Best model: ensemble_raw
-Best MAE: 900.12
-Best RMSE: 1075.03
-Best R2: -0.0863
-Best MAPE: 16.92
-MAE improvement vs mean baseline: 623.02
-Minimal required prediction input: match_date, away_team, stage, kickoff_time
-Top features:
+MAE: 900.12
+RMSE: 1075.03
+R2: -0.0863
+MAPE: 16.92
+Median Abs Error: 631.22
+Predictions file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv
+Reduced features: 11
+Calibration enabled: False
 XGBoost MAE before reduction: 1107.79
 XGBoost MAE after reduction: 925.82
-MAE delta after reduction (%): -16.43
-Calibration enabled: False
-- categorical__stage_Conference League Play-off Group: 0.2424
-- numeric__attendance_last_3_avg: 0.0994
-- categorical__season_2024/2025: 0.0812
-- categorical__away_team_Club Brugge: 0.0801
-- categorical__away_team_Anderlecht: 0.0760
-Feature minimization:
-- Best feature set: minimal_plus_ticketing (MAE=851.0113, features=5)
-- Smallest acceptable set: minimal_plus_ticketing (MAE=851.0113, features=5)
-Feature minimization comparison:
-  minimal_plus_ticketing: MAE=851.0113, features=5
-  minimal_plus_lag: MAE=927.5572, features=5
-  full_current: MAE=1107.7859, features=24
-  compact_best_practice: MAE=1136.8162, features=7
-  minimal_plus_timing: MAE=1347.9017, features=6
-  minimal_core: MAE=1482.3397, features=3
-  minimal_plus_media: MAE=2101.8227, features=5
-Feature minimization summary file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\minimal_feature_summary.txt
-New match predictions rows: 2
-New predictions mean attendance: 6875.97
-Prediction file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv
+MAE delta: -181.96 (-16.43%)

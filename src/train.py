@@ -228,6 +228,124 @@ def _plot_minimal_feature_results(results_df):
     plt.close()
 
 
+def _build_detailed_test_export(match_level_df, predictions_df, best_model_name, best_model_payload):
+    identifier_columns = [
+        "match_id",
+        "match_date",
+        "season",
+        "competition_name",
+        "stage",
+        "away_team",
+        "matchday",
+        "weekday_name",
+        "kickoff_time_local",
+        "kickoff_hour",
+        "month",
+    ]
+    feature_columns = [
+        "is_weekend",
+        "is_midweek",
+        "is_public_holiday",
+        "is_school_holiday_flanders",
+        "seasonpass_holders",
+        "pct_free_tickets",
+        "has_promotion",
+        "promo_tickets_total",
+        "weather_temp_mean_c",
+        "weather_rain_mm",
+        "weather_windspeed_max_kmh",
+        "ohl_interest",
+        "num_articles",
+        "avg_days_to_match",
+        "attendance_last_match",
+        "attendance_last_3_avg",
+    ]
+    prediction_columns_order = [
+        "pred_mean_baseline",
+        "pred_opponent_mean_baseline",
+        "pred_linear_regression_raw",
+        "pred_linear_regression_calibrated",
+        "pred_random_forest_raw",
+        "pred_random_forest_calibrated",
+        "pred_xgboost_raw",
+        "pred_xgboost_calibrated",
+        "pred_ensemble_raw",
+        "pred_ensemble_calibrated",
+    ]
+    error_columns_order = [
+        "abs_error_mean_baseline",
+        "abs_error_opponent_mean_baseline",
+        "abs_error_linear_regression_raw",
+        "abs_error_linear_regression_calibrated",
+        "abs_error_random_forest_raw",
+        "abs_error_random_forest_calibrated",
+        "abs_error_xgboost_raw",
+        "abs_error_xgboost_calibrated",
+        "abs_error_ensemble_raw",
+        "abs_error_ensemble_calibrated",
+    ]
+
+    source_columns = ["match_id"]
+    source_columns.extend([c for c in identifier_columns if c != "match_id" and c in match_level_df.columns])
+    source_columns.extend([c for c in feature_columns if c in match_level_df.columns])
+    source_columns = list(dict.fromkeys(source_columns))
+
+    source_df = match_level_df[source_columns].drop_duplicates(subset="match_id", keep="first").copy()
+    detailed_df = predictions_df.merge(source_df, on="match_id", how="left", sort=False, suffixes=("", "_real"))
+
+    for col in ["match_date", "away_team"]:
+        real_col = f"{col}_real"
+        if real_col in detailed_df.columns:
+            detailed_df[col] = detailed_df[real_col]
+            detailed_df = detailed_df.drop(columns=[real_col])
+
+    best_prediction_column = f"pred_{best_model_name}"
+    best_error_column = f"abs_error_{best_model_name}"
+    detailed_df["best_model_name"] = best_model_name
+    detailed_df["prediction_best_model"] = detailed_df[best_prediction_column] if best_prediction_column in detailed_df.columns else np.nan
+    detailed_df["abs_error_best_model"] = detailed_df[best_error_column] if best_error_column in detailed_df.columns else np.nan
+
+    calibration_enabled = bool(best_model_payload.get("calibration_enabled", False))
+    if calibration_enabled:
+        model_base_name = str(best_model_payload.get("model_base_name", ""))
+        raw_column = f"pred_{model_base_name}_raw"
+        calibrated_column = f"pred_{model_base_name}_calibrated"
+        detailed_df["raw_prediction_best_model"] = detailed_df[raw_column] if raw_column in detailed_df.columns else np.nan
+        if calibrated_column in detailed_df.columns:
+            detailed_df["calibrated_prediction_best_model"] = detailed_df[calibrated_column]
+        else:
+            detailed_df["calibrated_prediction_best_model"] = detailed_df["prediction_best_model"]
+        detailed_df["calibration_enabled"] = True
+        detailed_df["calibration_type"] = best_model_payload.get("calibration_type")
+
+    available_identifier_cols = [c for c in identifier_columns if c in detailed_df.columns]
+    available_prediction_cols = [c for c in prediction_columns_order if c in detailed_df.columns]
+    available_error_cols = [c for c in error_columns_order if c in detailed_df.columns]
+    available_feature_cols = [c for c in feature_columns if c in detailed_df.columns]
+
+    ordered_columns = []
+    ordered_columns.extend(available_identifier_cols)
+    if "actual" in detailed_df.columns:
+        ordered_columns.append("actual")
+    ordered_columns.extend(["best_model_name", "prediction_best_model", "abs_error_best_model"])
+    ordered_columns.extend(available_prediction_cols)
+    ordered_columns.extend(available_error_cols)
+
+    if calibration_enabled:
+        ordered_columns.extend(
+            [
+                "raw_prediction_best_model",
+                "calibrated_prediction_best_model",
+                "calibration_enabled",
+                "calibration_type",
+            ]
+        )
+
+    ordered_columns.extend(available_feature_cols)
+    ordered_columns = list(dict.fromkeys([c for c in ordered_columns if c in detailed_df.columns]))
+    return detailed_df[ordered_columns].copy()
+
+
 def run_feature_minimization_experiment(dataset_df, tune_xgb=False):
     full_feature_columns = get_feature_columns(dataset_df)
     x_all, y_all, meta_all = split_features_target(dataset_df, full_feature_columns)
@@ -431,6 +549,14 @@ def run_pipeline(
         predictions_dict=predictions_dict,
     )
     save_csv(predictions_df, PREDICTIONS_DIR / "test_predictions.csv")
+
+    detailed_test_predictions_df = _build_detailed_test_export(
+        match_level_df=match_level_df,
+        predictions_df=predictions_df,
+        best_model_name=best_model_name,
+        best_model_payload=best_model_payload,
+    )
+    save_csv(detailed_test_predictions_df, PREDICTIONS_DIR / "test_predictions_real_data_detailed.csv")
 
     error_column = f"abs_error_{best_model_name}"
     pred_column = f"pred_{best_model_name}"

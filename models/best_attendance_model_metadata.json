@@ -83,12 +83,12 @@
       "share_abs_error_le_1000": 0.26666666666666666
     },
     "random_forest_raw": {
-      "mae": 924.6826489682115,
-      "rmse": 1095.4027945333903,
-      "r2": -0.12785926169415873,
-      "mape": 17.797308684997873,
-      "median_abs_error": 901.833913759493,
-      "max_abs_error": 2001.7075135415635,
+      "mae": 924.6826489682118,
+      "rmse": 1095.4027945333908,
+      "r2": -0.12785926169415962,
+      "mape": 17.79730868499788,
+      "median_abs_error": 901.833913759494,
+      "max_abs_error": 2001.7075135415644,
       "share_abs_error_le_500": 0.3333333333333333,
       "share_abs_error_le_800": 0.4,
       "share_abs_error_le_1000": 0.5333333333333333
@@ -105,30 +105,30 @@
       "share_abs_error_le_1000": 0.7333333333333333
     },
     "ensemble_raw": {
-      "mae": 900.1179294459738,
-      "rmse": 1075.034037399706,
-      "r2": -0.08630468125575552,
-      "mape": 16.916447928156398,
+      "mae": 900.117929445974,
+      "rmse": 1075.0340373997062,
+      "r2": -0.08630468125575597,
+      "mape": 16.916447928156405,
       "median_abs_error": 631.2247979489002,
-      "max_abs_error": 2461.598946045324,
+      "max_abs_error": 2461.5989460453247,
       "share_abs_error_le_500": 0.2,
       "share_abs_error_le_800": 0.5333333333333333,
       "share_abs_error_le_1000": 0.6
     }
   },
   "best_metrics": {
-    "mae": 900.1179294459738,
-    "rmse": 1075.034037399706,
-    "r2": -0.08630468125575552,
-    "mape": 16.916447928156398,
+    "mae": 900.117929445974,
+    "rmse": 1075.0340373997062,
+    "r2": -0.08630468125575597,
+    "mape": 16.916447928156405,
     "median_abs_error": 631.2247979489002,
-    "max_abs_error": 2461.598946045324,
+    "max_abs_error": 2461.5989460453247,
     "share_abs_error_le_500": 0.2,
     "share_abs_error_le_800": 0.5333333333333333,
     "share_abs_error_le_1000": 0.6
   },
   "data_dir": "C:\\Users\\ASUS\\Desktop\\International Project\\Data",
-  "trained_at_utc": "2026-03-24T08:34:53.377488+00:00",
+  "trained_at_utc": "2026-03-24T09:19:28.249332+00:00",
   "component_model_paths": {
     "random_forest": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\models\\random_forest_model.joblib",
     "xgboost": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\models\\xgboost_model.joblib"
@@ -140,12 +140,12 @@
   "calibration_enabled": false,
   "calibration_type": null,
   "raw_metrics_for_best_model": {
-    "mae": 900.1179294459738,
-    "rmse": 1075.034037399706,
-    "r2": -0.08630468125575552,
-    "mape": 16.916447928156398,
+    "mae": 900.117929445974,
+    "rmse": 1075.0340373997062,
+    "r2": -0.08630468125575597,
+    "mape": 16.916447928156405,
     "median_abs_error": 631.2247979489002,
-    "max_abs_error": 2461.598946045324,
+    "max_abs_error": 2461.5989460453247,
     "share_abs_error_le_500": 0.2,
     "share_abs_error_le_800": 0.5333333333333333,
     "share_abs_error_le_1000": 0.6
