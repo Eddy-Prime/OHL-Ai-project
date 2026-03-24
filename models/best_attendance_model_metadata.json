@@ -142,8 +142,8 @@
     },
     "random_forest_raw": {
       "mae": 756.0608942708083,
-      "rmse": 977.6614970862653,
-      "r2": 0.10157000093872104,
+      "rmse": 977.6614970862652,
+      "r2": 0.10157000093872126,
       "mape": 15.31127735037025,
       "median_abs_error": 531.969594056568,
       "max_abs_error": 1924.900211086985,
@@ -152,12 +152,12 @@
       "share_abs_error_le_1000": 0.7333333333333333
     },
     "random_forest_log": {
-      "mae": 777.8204540506148,
-      "rmse": 951.0495637681727,
-      "r2": 0.14981483520023153,
-      "mape": 15.310208480882375,
-      "median_abs_error": 643.5544610778197,
-      "max_abs_error": 1845.2681169494872,
+      "mae": 777.8204540506154,
+      "rmse": 951.04956376817,
+      "r2": 0.14981483520023653,
+      "mape": 15.310208480882373,
+      "median_abs_error": 643.5544610778534,
+      "max_abs_error": 1845.2681169494663,
       "share_abs_error_le_500": 0.4,
       "share_abs_error_le_800": 0.6666666666666666,
       "share_abs_error_le_1000": 0.6666666666666666
@@ -198,10 +198,10 @@
     "weighted_blend_raw": {
       "mae": 1058.3717528741315,
       "rmse": 1546.5767807799434,
-      "r2": -1.2482789406828694,
-      "mape": 19.841441770761428,
-      "median_abs_error": 504.90479315958055,
-      "max_abs_error": 4496.950601114393,
+      "r2": -1.2482789406828698,
+      "mape": 19.841441770761435,
+      "median_abs_error": 504.90479315958146,
+      "max_abs_error": 4496.950601114394,
       "share_abs_error_le_500": 0.4666666666666667,
       "share_abs_error_le_800": 0.6,
       "share_abs_error_le_1000": 0.6
@@ -219,7 +219,7 @@
     "share_abs_error_le_1000": 0.7333333333333333
   },
   "data_dir": "C:\\Users\\ASUS\\Desktop\\International Project\\Data",
-  "trained_at_utc": "2026-03-24T12:00:38.618246+00:00",
+  "trained_at_utc": "2026-03-24T12:54:14.054663+00:00",
   "component_model_paths": {
     "random_forest": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\models\\random_forest_model.joblib",
     "xgboost": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\models\\xgboost_model.joblib"
@@ -229,13 +229,13 @@
     "random_forest": 0.3
   },
   "weighted_blend_weights": {
-    "xgboost": 0.3899782022646103,
-    "random_forest": 0.4317986053125703,
-    "linear_regression": 0.1782231924228194
+    "xgboost": 0.3899782022646104,
+    "random_forest": 0.43179860531257014,
+    "linear_regression": 0.17822319242281945
   },
   "weighted_blend_validation_mae": {
     "xgboost": 1340.9525146484375,
-    "random_forest": 1211.0790645242098,
+    "random_forest": 1211.0790645242105,
     "linear_regression": 2934.1986521269914
   },
   "residual_model_path": null,

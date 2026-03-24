@@ -1,13 +1,13 @@
 from pathlib import Path
 import argparse
 import json
+import tempfile
 import numpy as np
 
 import joblib
 import pandas as pd
 
-from .calibration import apply_linear_calibrator, apply_multiplicative_calibrator
-from .config import BEST_MODEL_ARTIFACT_PATH, BEST_MODEL_METADATA_PATH, DEFAULT_DATA_DIR, NEW_MATCH_PREDICTIONS_PATH, WEATHER_API_ENABLED_DEFAULT
+from .config import BEST_MODEL_ARTIFACT_PATH, BEST_MODEL_METADATA_PATH, DEFAULT_DATA_DIR, NEW_MATCH_PREDICTIONS_PATH
 from .data_loader import load_raw_tables
 from .features import USER_INPUT_FEATURES, build_inference_dataset, prepare_inference_features
 from .utils import ensure_directories
@@ -29,47 +29,13 @@ def _predict_single_model(model_path, model_input):
     return np.maximum(predictions, 0.0)
 
 
-def _predict_ensemble(metadata, model_input):
-    component_paths = metadata.get("component_model_paths", {})
-    rf_path = Path(component_paths.get("random_forest", ""))
-    xgb_path = Path(component_paths.get("xgboost", ""))
-
-    if not rf_path.exists() or not xgb_path.exists():
-        raise FileNotFoundError("Ensemble component models are missing")
-
-    rf_model = joblib.load(rf_path)
-    xgb_model = joblib.load(xgb_path)
-
-    rf_pred = np.asarray(rf_model.predict(model_input), dtype=float)
-    xgb_pred = np.asarray(xgb_model.predict(model_input), dtype=float)
-
-    weights = metadata.get("ensemble_weights", {"xgboost": 0.7, "random_forest": 0.3})
-    pred = float(weights.get("xgboost", 0.7)) * xgb_pred + float(weights.get("random_forest", 0.3)) * rf_pred
-    return np.maximum(pred, 0.0)
-
-
-def _apply_optional_calibration(metadata, raw_predictions):
-    if not bool(metadata.get("calibration_enabled", False)):
-        return np.maximum(np.asarray(raw_predictions, dtype=float), 0.0)
-
-    calibration_type = metadata.get("calibration_type")
-    calibration_params = metadata.get("calibration_params") or {}
-
-    if calibration_type == "linear":
-        return apply_linear_calibrator(y_pred=raw_predictions, model_or_params=calibration_params)
-    if calibration_type == "multiplicative":
-        k = float(calibration_params.get("k", 1.0))
-        return apply_multiplicative_calibrator(y_pred=raw_predictions, k=k)
-    return np.maximum(np.asarray(raw_predictions, dtype=float), 0.0)
-
-
 def predict_from_file(
     input_file,
     data_dir=DEFAULT_DATA_DIR,
     model_path=BEST_MODEL_ARTIFACT_PATH,
     metadata_path=BEST_MODEL_METADATA_PATH,
     output_file=NEW_MATCH_PREDICTIONS_PATH,
-    use_weather_api=WEATHER_API_ENABLED_DEFAULT,
+    use_weather_api=False,
 ):
     input_path = Path(input_file)
     if not input_path.exists():
@@ -86,7 +52,7 @@ def predict_from_file(
         tables=tables,
         new_matches_df=raw_input,
         return_stats=True,
-        use_weather_api=use_weather_api,
+        use_weather_api=False,
     )
 
     feature_columns = metadata.get("features_used", [])
@@ -96,13 +62,9 @@ def predict_from_file(
     fill_values = metadata.get("feature_fill_values", {})
     model_input = prepare_inference_features(inference_dataset, feature_columns, fill_values=fill_values)
 
-    best_model_name = metadata.get("best_model_name", "unknown")
-    if str(best_model_name).startswith("ensemble"):
-        raw_predictions = _predict_ensemble(metadata=metadata, model_input=model_input)
-    else:
-        raw_predictions = _predict_single_model(model_path=model_path, model_input=model_input)
-
-    predictions = _apply_optional_calibration(metadata=metadata, raw_predictions=raw_predictions)
+    best_model_name = metadata.get("best_model_name", "xgboost_log")
+    raw_predictions = _predict_single_model(model_path=model_path, model_input=model_input)
+    predictions = np.maximum(np.asarray(raw_predictions, dtype=float), 0.0)
 
     result = raw_input.copy()
     result["raw_predicted_attendance"] = np.asarray(raw_predictions, dtype=float)
@@ -142,11 +104,42 @@ def predict_from_file(
         "auto_generated_features": inference_stats.get("auto_generated_features", []),
         "fallback_global_mean": float(inference_stats.get("fallback", {}).get("global_mean", 0.0)),
         "fallback_counts": inference_stats.get("fallback", {}).get("fallback_counts", {}),
-        "weather_api_enabled": bool(use_weather_api),
+        "weather_api_enabled": False,
         "weather_stats": inference_stats.get("weather", {}),
         "weather_fallback_counts": weather_fallback_counts,
     }
     return result, summary
+
+
+def predict_new_matches(
+    new_matches_df,
+    data_dir=DEFAULT_DATA_DIR,
+    model_path=BEST_MODEL_ARTIFACT_PATH,
+    metadata_path=BEST_MODEL_METADATA_PATH,
+    output_file=NEW_MATCH_PREDICTIONS_PATH,
+    use_weather_api=False,
+):
+    if isinstance(new_matches_df, pd.DataFrame):
+        input_df = new_matches_df.copy()
+    else:
+        input_df = pd.DataFrame(new_matches_df)
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False, encoding="utf-8") as input_tmp:
+        input_path = Path(input_tmp.name)
+
+    try:
+        input_df.to_csv(input_path, index=False)
+        return predict_from_file(
+            input_file=input_path,
+            data_dir=data_dir,
+            model_path=model_path,
+            metadata_path=metadata_path,
+            output_file=output_file,
+            use_weather_api=False,
+        )
+    finally:
+        if input_path.exists():
+            input_path.unlink()
 
 
 def parse_args():
@@ -156,7 +149,6 @@ def parse_args():
     parser.add_argument("--model-path", type=str, default=str(BEST_MODEL_ARTIFACT_PATH))
     parser.add_argument("--metadata-path", type=str, default=str(BEST_MODEL_METADATA_PATH))
     parser.add_argument("--output-file", type=str, default=str(NEW_MATCH_PREDICTIONS_PATH))
-    parser.add_argument("--use-weather-api", action="store_true")
     return parser.parse_args()
 
 
@@ -168,7 +160,6 @@ def main():
         model_path=Path(args.model_path),
         metadata_path=Path(args.metadata_path),
         output_file=Path(args.output_file),
-        use_weather_api=args.use_weather_api,
     )
     print(f"Best model: {summary['best_model']}")
     print(f"Rows scored: {summary['rows_scored']}")

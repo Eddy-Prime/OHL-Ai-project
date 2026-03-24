@@ -1,5 +1,7 @@
-# Data - never commit client data
-data/
+# Data is repository-local for reproducible runs
+
+# Notebook execution artifacts
+notebooks/*.executed.ipynb
 
 # Virtual environment
 venv/
