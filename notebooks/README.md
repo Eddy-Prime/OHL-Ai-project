@@ -45,7 +45,7 @@ jupyter notebook notebooks/demo_attendance_model.ipynb
 
 Or via command-line execution:
 ```powershell
-python -m jupyter nbconvert --to notebook --execute "notebooks\demo_attendance_model.ipynb" --output "demo_attendance_model.executed.ipynb"
+python -m jupyter nbconvert --to notebook --execute "notebooks\demo_attendance_model.ipynb" --output-dir "notebooks\executed" --output "demo_attendance_model.executed.ipynb"
 ```
 
 ## Data and Commands

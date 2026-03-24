@@ -42,4 +42,9 @@ Required files in `data/`:
 - Prediction inverse transform: `expm1(...)`
 - Split: time-based holdout on OH Leuven internal data
 
+## Outputs
+
+- Predictions: `outputs/predictions/new_match_predictions.csv`
+- Final plots: `outputs/plots/actual_vs_predicted.png`, `outputs/plots/residuals.png`
+
 

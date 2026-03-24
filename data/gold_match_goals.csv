@@ -1,0 +1,373 @@
+match_id,match_date,kickoff_time_local,season,stage,competition_name,opponent,period_id,time_min,time_min_sec,is_ohl_goal,scorer_name,assist_player_name,goal_type,home_score_after,away_score_after,var_reviewed,opta_event_id
+d0te6swsv2y99ywgugc2utbmc,2022-07-23,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,72,71:57,true,M. Maertens,L. Patris,Regular,0,1,,2438482395
+d0te6swsv2y99ywgugc2utbmc,2022-07-23,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,93,92:03,true,Mousa Tamari,L. Patris,Regular,0,2,,2438491703
+d256yo3eng04m0fu7b4sl7wno,2022-07-30,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Westerlo,1,13,12:35,true,J. Þorsteinsson,,Regular,1,0,,2440388221
+d256yo3eng04m0fu7b4sl7wno,2022-07-30,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Westerlo,2,77,76:10,true,R. Holzhauser,,Penalty,2,0,,2440445759
+d3pqkck2grzx98jg4sofhp8us,2022-08-07,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Antwerp,1,27,26:04,true,N. Nsingi,L. Patris,Regular,0,1,,2443561741
+d3pqkck2grzx98jg4sofhp8us,2022-08-07,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Antwerp,1,38,37:39,false,R. Nainggolan,K. Miyoshi,Regular,1,1,,2443570573
+d3pqkck2grzx98jg4sofhp8us,2022-08-07,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Antwerp,1,40,39:43,false,M. Frey,R. De Laet,Regular,2,1,,2443572115
+d3pqkck2grzx98jg4sofhp8us,2022-08-07,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Antwerp,2,55,54:25,true,L. Patris,R. Holzhauser,Regular,2,2,,2443590999
+d3pqkck2grzx98jg4sofhp8us,2022-08-07,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Antwerp,2,71,70:59,false,M. Balikwisha,P. Gerkens,Regular,3,2,yes,2443603257
+d3pqkck2grzx98jg4sofhp8us,2022-08-07,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Antwerp,2,82,81:08,false,M. Balikwisha,A. Yusuf,Regular,4,2,,2443609081
+d4mn5ksbxuvnaww4pmommxhqs,2022-08-14,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Club Brugge,1,33,32:59,false,C. Nielsen,,Regular,0,1,,2446290727
+d4mn5ksbxuvnaww4pmommxhqs,2022-08-14,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Club Brugge,1,42,41:42,false,Ferran Jutglà,K. Sowah,Regular,0,2,,2446297741
+d4mn5ksbxuvnaww4pmommxhqs,2022-08-14,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,53,52:57,false,N. Lang,,Penalty,0,3,,2446322447
+d5htdqmc8w72upys41sfxhfkk,2022-08-21,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,1,34,33:59,true,J. Þorsteinsson,M. Maertens,Regular,0,1,,2449438615
+d5htdqmc8w72upys41sfxhfkk,2022-08-21,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,1,45,44:36,true,N. Nsingi,L. Patris,Regular,0,2,,2449447999
+d5htdqmc8w72upys41sfxhfkk,2022-08-21,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,75,74:02,true,Mousa Tamari,,Regular,0,3,,2449476553
+d5htdqmc8w72upys41sfxhfkk,2022-08-21,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,91,90:57,false,R. Emond,,Regular,1,3,,2449485159
+d65hmi7sq03yzr5he1k7ypus4,2022-08-27,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,KV Oostende,1,5,4:31,false,F. Hornby,,Regular,0,1,,2451703405
+d65hmi7sq03yzr5he1k7ypus4,2022-08-27,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,KV Oostende,2,51,50:17,true,Mario González,L. Patris,Regular,1,1,,2451762275
+d65hmi7sq03yzr5he1k7ypus4,2022-08-27,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,KV Oostende,2,90,89:22,true,M. Maertens,R. Holzhauser,Regular,2,1,,2451800599
+d700mwu32x772ns4veqq32yhg,2022-09-04,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,19,18:07,true,J. Þorsteinsson,Mousa Tamari,Regular,0,1,,2455712857
+d700mwu32x772ns4veqq32yhg,2022-09-04,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,71,70:27,false,J. Duranville,M. Ashimeru,Regular,1,1,,2455762033
+d700mwu32x772ns4veqq32yhg,2022-09-04,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,74,73:44,true,Mousa Tamari,M. Maertens,Regular,1,2,,2455764727
+d700mwu32x772ns4veqq32yhg,2022-09-04,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,85,84:41,false,Fábio Silva,,Regular,2,2,,2455776117
+d80mkemezkz16bqh6lbn8tlhw,2022-09-10,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,1,13,12:07,false,D. Heymans,A. Gholizadeh,Regular,0,1,,2458205369
+d80mkemezkz16bqh6lbn8tlhw,2022-09-10,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,1,22,21:14,true,M. Maertens,K. Malinov,Regular,1,1,,2458211881
+d80mkemezkz16bqh6lbn8tlhw,2022-09-10,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,2,62,61:23,true,Mario González,R. Holzhauser,Regular,2,1,,2458256793
+d80mkemezkz16bqh6lbn8tlhw,2022-09-10,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,2,76,75:38,false,M. Ilaimaharitra,,Penalty,2,2,,2458267761
+d80mkemezkz16bqh6lbn8tlhw,2022-09-10,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,2,85,84:57,true,Mario González,D. Ouedraogo,Regular,3,2,,2458273563
+dak40etbhbqsr1nxyt50qcg0k,2022-10-01,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,12,11:19,false,C. Burgess,T. Teuma,Regular,0,1,,2465563375
+dak40etbhbqsr1nxyt50qcg0k,2022-10-01,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,20,19:08,false,I. Kandouss,T. Teuma,Regular,0,2,,2465582257
+dak40etbhbqsr1nxyt50qcg0k,2022-10-01,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,68,67:16,false,D. Vanzeir,S. Adingra,Regular,0,3,,2465716217
+dbqant2dfdnu9vplc4eqpn7dg,2022-10-08,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,1,40,39:39,false,J. Vossen,A. Ndour,Regular,1,0,,2469084673
+dbqant2dfdnu9vplc4eqpn7dg,2022-10-08,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,51,50:41,true,Mario González,C. De Norre,Regular,1,1,,2469114857
+dbqant2dfdnu9vplc4eqpn7dg,2022-10-08,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,58,57:28,true,S. Kiyine,,Regular,1,2,,2469121651
+dbqant2dfdnu9vplc4eqpn7dg,2022-10-08,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,65,64:25,true,Mario González,H. Mendyl,Regular,1,3,,2469129755
+dbqant2dfdnu9vplc4eqpn7dg,2022-10-08,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,74,73:12,true,C. De Norre,,Own Goal,2,3,,2469140409
+dbqant2dfdnu9vplc4eqpn7dg,2022-10-08,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,77,76:40,true,C. De Norre,Mario González,Regular,2,4,,2469143157
+dbqant2dfdnu9vplc4eqpn7dg,2022-10-08,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,91,90:06,true,Mario González,S. Kiyine,Regular,2,5,,2469151553
+dcl81t8chgq07o8rw8orj5no4,2022-10-15,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Genk,1,16,15:55,false,P. Onuachu,M. Trésor,Regular,0,1,,2472434177
+de8wkd0re6d3g1j29g1ijwmqc,2022-10-18,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Eupen,1,8,7:28,true,Mario González,S. Kiyine,Regular,0,1,,2473898139
+de8wkd0re6d3g1j29g1ijwmqc,2022-10-18,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Eupen,1,24,23:36,false,Regan Charles-Cook,K. N’Dri,Regular,1,1,,2473904375
+de8wkd0re6d3g1j29g1ijwmqc,2022-10-18,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Eupen,1,27,26:45,true,Mario González,,Penalty,1,2,,2473904855
+de8wkd0re6d3g1j29g1ijwmqc,2022-10-18,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Eupen,1,48,47:07,false,S. Peeters,,Penalty,2,2,,2473911583
+de8wkd0re6d3g1j29g1ijwmqc,2022-10-18,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Eupen,2,75,74:48,false,G. Magnée,J. Král,Regular,3,2,,2473929311
+de8wkd0re6d3g1j29g1ijwmqc,2022-10-18,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Eupen,2,86,85:15,false,K. N’Dri,S. Peeters,Regular,4,2,,2473938157
+dfui3aovgvfccasonp6w5ajh0,2022-10-30,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Gent,1,42,41:17,false,H. Cuypers,M. Samoise,Regular,0,1,yes,2479723641
+dfui3aovgvfccasonp6w5ajh0,2022-10-30,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Gent,2,73,72:13,true,Mario González,,Penalty,1,1,,2479748755
+dh2jinzfxkjr5uq2xcw047dw4,2022-11-05,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,36,35:36,false,A. Ueda,T. Somers,Regular,1,0,,2481984259
+dh2jinzfxkjr5uq2xcw047dw4,2022-11-05,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,41,40:51,true,Mario González,C. De Norre,Regular,1,1,,2481987367
+dh2jinzfxkjr5uq2xcw047dw4,2022-11-05,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,2,91,90:23,false,C. Ravych,,Regular,2,1,,2482031607
+di0x0as1g324k0hoea1o5vvh0,2022-11-11,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Seraing,1,23,22:11,true,M. Maertens,C. De Norre,Regular,1,0,,2484342337
+di0x0as1g324k0hoea1o5vvh0,2022-11-11,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Seraing,1,29,28:39,true,Mario González,,Penalty,2,0,,2484347173
+di0x0as1g324k0hoea1o5vvh0,2022-11-11,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Seraing,1,42,41:28,true,C. De Norre,,Regular,3,0,,2484355323
+di0x0as1g324k0hoea1o5vvh0,2022-11-11,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Seraing,1,47,46:37,true,S. Kiyine,,Penalty,4,0,,2484358101
+di0x0as1g324k0hoea1o5vvh0,2022-11-11,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Seraing,2,89,88:58,true,N. Nsingi,H. Mendyl,Regular,5,0,,2484382139
+disu0asmlgxkbrbsihhfkin84,2022-12-26,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Club Brugge,1,44,43:01,false,Ferran Jutglà,,Penalty,1,0,,2493206681
+disu0asmlgxkbrbsihhfkin84,2022-12-26,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,94,93:04,true,N. Nsingi,,Regular,1,1,,2493227189
+dkbsomyigazbberxvdmjq7wgk,2023-01-08,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Kortrijk,1,9,8:43,true,Mousa Tamari,L. Patris,Regular,1,0,,2496081575
+dkbsomyigazbberxvdmjq7wgk,2023-01-08,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Kortrijk,1,43,42:21,false,F. Avenatti,O. Sych,Regular,1,1,,2496089275
+dkbsomyigazbberxvdmjq7wgk,2023-01-08,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,51,50:05,false,O. Sych,F. Selamani,Regular,1,2,,2496094863
+dkbsomyigazbberxvdmjq7wgk,2023-01-08,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,76,75:58,true,L. Patris,R. Holzhauser,Regular,2,2,,2496101287
+dkbsomyigazbberxvdmjq7wgk,2023-01-08,21:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,92,91:53,false,F. Avenatti,S. Lončar,Regular,2,3,,2496104111
+dlnn04m3bhefdkjof0qemprmc,2023-01-13,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Westerlo,2,51,50:25,true,Mario González,H. Mendyl,Regular,0,1,,2496986255
+dlnn04m3bhefdkjof0qemprmc,2023-01-13,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Westerlo,2,56,55:32,true,Mario González,,Penalty,0,2,,2496989097
+dlnn04m3bhefdkjof0qemprmc,2023-01-13,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Westerlo,2,79,78:04,false,D. Nene,Igor Vetokele,Regular,1,2,,2497000333
+dmcif0n7veawzigj8cd5bm904,2023-01-17,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Eupen,1,28,27:07,true,J. Þorsteinsson,,Regular,1,0,,2498196873
+dmcif0n7veawzigj8cd5bm904,2023-01-17,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Eupen,2,92,91:01,false,S. Prevljak,,Penalty,1,1,,2498212377
+dngvv4b04pq0170pqr3c73uvo,2023-01-21,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,77,77:00,false,G. Nilsson,L. Lapoussin,Regular,1,0,,2499466831
+dojq6igk3d5ol4c78rkm0ugb8,2023-01-28,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,9,8:37,false,D. Hayashi,D. Hashioka,Regular,0,1,,2501557507
+dojq6igk3d5ol4c78rkm0ugb8,2023-01-28,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,2,53,52:43,true,J. Þorsteinsson,,Penalty,1,1,,2501602981
+dpjf3ys82e8ogok1huyfd64no,2023-02-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Seraing,1,4,3:59,false,M. Poaty,M. Tshibuabua,Regular,1,0,,2504000277
+dpjf3ys82e8ogok1huyfd64no,2023-02-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Seraing,1,37,36:49,true,F. Ricca,S. Schrijvers,Regular,1,1,,2504021907
+dpjf3ys82e8ogok1huyfd64no,2023-02-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Seraing,2,85,84:17,false,C. Lepoint,S. Sissoko,Regular,2,1,,2504057897
+drhnleuu8ae9hudku3cehgb9w,2023-02-19,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Gent,2,49,48:54,false,H. Cuypers,Hong Hyun-Seok,Regular,1,0,,2509985277
+drhnleuu8ae9hudku3cehgb9w,2023-02-19,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Gent,2,73,72:43,false,S. Kums,H. Cuypers,Regular,2,0,,2510004157
+dt091ishr3km0wuuhiatev9xw,2023-02-26,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Antwerp,1,34,33:57,true,J. Þorsteinsson,,Penalty,1,0,,2512895709
+dt091ishr3km0wuuhiatev9xw,2023-02-26,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Antwerp,2,60,59:58,false,G. Kerk,,Regular,1,1,,2512931959
+du1wib350joxeh5hdv9v8yihg,2023-03-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,1,29,28:04,true,S. Schrijvers,,Regular,1,0,,2515346031
+du1wib350joxeh5hdv9v8yihg,2023-03-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,1,41,40:58,true,J. Þorsteinsson,N. Nsingi,Regular,2,0,,2515355411
+du1wib350joxeh5hdv9v8yihg,2023-03-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,1,45,44:40,true,C. De Norre,J. Þorsteinsson,Regular,3,0,,2515357789
+du1wib350joxeh5hdv9v8yihg,2023-03-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,73,72:02,false,J. Vossen,,Penalty,3,1,,2515399333
+du1wib350joxeh5hdv9v8yihg,2023-03-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,76,75:31,true,J. Þorsteinsson,,Penalty,4,1,,2515401423
+du1wib350joxeh5hdv9v8yihg,2023-03-04,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,2,82,81:56,false,Zinho Gano,A. Ndour,Regular,4,2,,2515404591
+dvmreijz690fz4wcvl8yw1kic,2023-03-10,20:45:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,1,16,15:34,true,Mousa Tamari,C. De Norre,Regular,0,1,,2517965209
+dw8a4f7k9qt9iyxuuno9rvztg,2023-03-19,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,33,32:41,false,I. Slimani,,Penalty,0,1,,2522502325
+dw8a4f7k9qt9iyxuuno9rvztg,2023-03-19,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,90,89:46,false,K. Arnstad,B. Raman,Regular,0,2,,2522584995
+dwztfp6va3lnxnao66y2odq8k,2023-04-02,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Genk,1,23,22:17,false,B. Heynen,,Regular,1,0,yes,2527397119
+dwztfp6va3lnxnao66y2odq8k,2023-04-02,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Genk,2,56,55:21,true,J. Þorsteinsson,,Penalty,1,1,,2527461337
+dwztfp6va3lnxnao66y2odq8k,2023-04-02,13:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Genk,2,87,86:49,false,M. Trésor,,Regular,2,1,,2527499251
+dyrd81lg1d8eb5ptsbq1tg6j8,2023-04-08,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Mechelen,1,4,3:21,true,C. De Norre,,Regular,1,0,,2530244071
+dyrd81lg1d8eb5ptsbq1tg6j8,2023-04-08,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Mechelen,1,39,38:40,true,N. Opoku,,Regular,2,0,,2530288579
+dyrd81lg1d8eb5ptsbq1tg6j8,2023-04-08,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Mechelen,2,56,55:41,true,M. Maertens,J. Þorsteinsson,Regular,3,0,,2530335805
+dyrd81lg1d8eb5ptsbq1tg6j8,2023-04-08,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Mechelen,2,60,59:46,true,Mousa Tamari,N. Opoku,Regular,4,0,,2530340989
+dyrd81lg1d8eb5ptsbq1tg6j8,2023-04-08,16:00:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Mechelen,2,89,88:07,false,G. Hairemans,J. Vanlerberghe,Regular,4,1,,2530369417
+e0cja3pwz23dl8uqycthu33f8,2023-04-15,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,KV Oostende,1,22,21:17,true,S. Schrijvers,H. Mendyl,Regular,0,1,,2533893391
+e0cja3pwz23dl8uqycthu33f8,2023-04-15,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,KV Oostende,1,44,43:43,true,N. Opoku,E. Pletinckx,Regular,0,2,,2533914117
+e0cja3pwz23dl8uqycthu33f8,2023-04-15,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,KV Oostende,2,58,57:15,true,J. Þorsteinsson,,Penalty,0,3,,2533947227
+e0cja3pwz23dl8uqycthu33f8,2023-04-15,18:15:00,2022/2023,Regular Season,Belgian Jupiler Pro League,KV Oostende,2,88,87:21,true,N. Nsingi,J. Þorsteinsson,Regular,0,4,,2533969977
+e0tuth9cc11wefswrzq1cjyms,2023-04-23,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,1,43,42:12,true,N. Opoku,M. Maertens,Regular,1,0,,2538253989
+e0tuth9cc11wefswrzq1cjyms,2023-04-23,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,55,54:44,false,M. Bokadi,S. Alzate,Regular,1,1,,2538280765
+e0tuth9cc11wefswrzq1cjyms,2023-04-23,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,63,62:15,true,J. Þorsteinsson,,Penalty,2,1,,2538287783
+e0tuth9cc11wefswrzq1cjyms,2023-04-23,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,67,66:02,true,J. Þorsteinsson,M. Maertens,Regular,3,1,,2538290923
+e0tuth9cc11wefswrzq1cjyms,2023-04-23,18:30:00,2022/2023,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,91,91:00,false,F. Melegoni,,Regular,3,2,,2538313737
+3hphnm42ozcm1yye5nocz3ytw,2023-07-29,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,1,9,9:00,false,Oday Dabbagh,I. Mbenza,Regular,1,0,,2571279089
+3hphnm42ozcm1yye5nocz3ytw,2023-07-29,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,2,84,83:38,true,N. Opoku,,Penalty,1,1,,2571315905
+3kewmr690bhoid47mku9wfgno,2023-08-05,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,RWDM,1,18,17:39,true,R. Sagrado,N. Opoku,Regular,1,0,,2573530491
+3kewmr690bhoid47mku9wfgno,2023-08-05,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,RWDM,1,44,43:01,false,M. Biron,X. Mercier,Regular,1,1,,2573542603
+3kewmr690bhoid47mku9wfgno,2023-08-05,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,RWDM,2,48,47:54,false,M. Biron,,Penalty,1,2,,2573555749
+3m8rcryxrola5kngcoiekflec,2023-08-12,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,21,20:08,false,C. Terho,D. Eckert Ayensa,Regular,1,0,,2575990697
+3m8rcryxrola5kngcoiekflec,2023-08-12,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,34,33:56,false,Cameron Puertas,L. Amani,Regular,2,0,,2576002869
+3m8rcryxrola5kngcoiekflec,2023-08-12,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,39,38:01,true,J. Þorsteinsson,F. Miguel,Regular,2,1,,2576005333
+3m8rcryxrola5kngcoiekflec,2023-08-12,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,65,64:16,false,D. Eckert Ayensa,,Penalty,3,1,,2576051403
+3m8rcryxrola5kngcoiekflec,2023-08-12,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,74,73:16,false,D. Eckert Ayensa,,Penalty,4,1,,2576062211
+3m8rcryxrola5kngcoiekflec,2023-08-12,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,98,97:01,false,G. Nilsson,,Penalty,5,1,,2576079715
+3nrkjdhpc5zse1sdzt1onor2s,2023-08-18,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Antwerp,1,34,33:30,false,V. Janssen,R. De Laet,Regular,0,1,,2578538141
+3nrkjdhpc5zse1sdzt1onor2s,2023-08-18,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Antwerp,2,82,81:50,true,R. Sagrado,T. Vlietinck,Regular,1,1,,2578590751
+3qd97tj5mca89c1m61vh5j190,2023-08-26,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Eupen,1,24,23:19,false,G. Magnée,,Penalty,1,0,,2582225287
+3qd97tj5mca89c1m61vh5j190,2023-08-26,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Eupen,2,50,49:08,false,I. Nuhu,A. Finnbogason,Regular,2,0,,2582275881
+3qd97tj5mca89c1m61vh5j190,2023-08-26,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Eupen,2,81,80:48,true,S. Schrijvers,,Penalty,2,1,,2582317505
+3qd97tj5mca89c1m61vh5j190,2023-08-26,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Eupen,2,87,86:54,false,Regan Charles-Cook,J. Déom,Regular,3,1,,2582322645
+3rwouz4640n6ngfbwrwsqkp3o,2023-09-01,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Kortrijk,1,40,40:00,true,F. Ricca,Y. Maziz,Regular,1,0,,2584931423
+3rwouz4640n6ngfbwrwsqkp3o,2023-09-01,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,54,53:12,true,J. Schingtienne,S. Kiyine,Regular,2,0,,2584967523
+3rwouz4640n6ngfbwrwsqkp3o,2023-09-01,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,60,59:55,true,Y. Maziz,H. Mendyl,Regular,3,0,,2584973453
+3vk3btgbt7w7qy9hjp3f2934k,2023-09-17,18:30:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Gent,1,6,6:00,true,J. Braut Brunes,R. Sagrado,Regular,1,0,,2590883289
+3vk3btgbt7w7qy9hjp3f2934k,2023-09-17,18:30:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Gent,1,38,37:23,false,I. Kandouss,S. Kums,Regular,1,1,,2590917297
+3xm0jsg0h11z1i1y2zizqwhec,2023-09-23,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Mechelen,1,2,1:18,true,J. Þorsteinsson,N. Nsingi,Regular,0,1,,2593738295
+3xm0jsg0h11z1i1y2zizqwhec,2023-09-23,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Mechelen,1,52,51:43,true,Y. Maziz,,Regular,0,2,,2593791581
+3xm0jsg0h11z1i1y2zizqwhec,2023-09-23,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Mechelen,2,46,45:30,false,P. Pflücke,K. Mrabti,Regular,1,2,,2593819199
+3yp7glzujzj8nc07qp0sd0kr8,2023-09-30,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Standard Liège,1,44,43:13,false,W. Kanga,S. Alzate,Regular,0,1,,2597455639
+3yp7glzujzj8nc07qp0sd0kr8,2023-09-30,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,65,64:33,true,H. Mendyl,J. Þorsteinsson,Regular,1,1,,2597505029
+3yp7glzujzj8nc07qp0sd0kr8,2023-09-30,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,81,80:58,false,K. Sowah,,Regular,1,2,,2597520501
+41a3ppgub9bq2getrvndrmv4k,2023-10-07,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,3,2:27,false,K. Denkey,C. Ravych,Regular,1,0,,2601126651
+41a3ppgub9bq2getrvndrmv4k,2023-10-07,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,4,3:56,true,R. Shlomo,J. Þorsteinsson,Regular,1,1,,2601130927
+41a3ppgub9bq2getrvndrmv4k,2023-10-07,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,37,36:14,false,K. Denkey,,Regular,2,1,,2601209345
+41a3ppgub9bq2getrvndrmv4k,2023-10-07,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,44,43:17,true,E. Banzuzi,,Regular,2,2,,2601229245
+41a3ppgub9bq2getrvndrmv4k,2023-10-07,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,2,87,86:24,false,K. Denkey,,Regular,3,2,,2601360435
+42wgdmxzlcn9w08umkea3hpg4,2023-10-22,19:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,12,11:48,true,N. Nsingi,Y. Maziz,Regular,1,0,,2607197383
+42wgdmxzlcn9w08umkea3hpg4,2023-10-22,19:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,22,21:09,true,S. Schrijvers,,Penalty,2,0,,2607203923
+42wgdmxzlcn9w08umkea3hpg4,2023-10-22,19:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,2,60,59:16,true,H. Mendyl,K. Misao,Regular,3,0,,2607239207
+42wgdmxzlcn9w08umkea3hpg4,2023-10-22,19:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,2,79,78:23,true,H. Mendyl,N. Nsingi,Regular,4,0,yes,2607246007
+44q48on0rpshsvmh6e94ls0es,2023-10-28,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,6,5:06,true,K. Misao,J. Dom,Regular,0,1,,2609928755
+44q48on0rpshsvmh6e94ls0es,2023-10-28,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,12,11:25,false,A. Dreyer,M. Stroeykens,Regular,1,1,,2609932727
+44q48on0rpshsvmh6e94ls0es,2023-10-28,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,42,41:45,false,A. Dreyer,K. Sardella,Regular,2,1,,2609953653
+44q48on0rpshsvmh6e94ls0es,2023-10-28,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,47,46:13,false,K. Dolberg,L. Augustinsson,Regular,3,1,,2609970185
+44q48on0rpshsvmh6e94ls0es,2023-10-28,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,52,51:41,false,M. Stroeykens,T. Leoni,Regular,4,1,,2609972225
+44q48on0rpshsvmh6e94ls0es,2023-10-28,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,86,85:47,false,A. Dreyer,K. Arnstad,Regular,5,1,,2609993357
+4729fykixfyfwxlbno9zilq8k,2023-11-04,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Westerlo,2,64,63:02,false,N. Madsen,,Penalty,0,1,,2613193575
+4729fykixfyfwxlbno9zilq8k,2023-11-04,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Westerlo,2,69,68:05,false,S. Sydorchuk,A. Piedfort,Regular,0,2,,2613200373
+48xc3lu3nk2jq8lu05jqrgfmc,2023-11-12,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Genk,1,25,24:14,false,B. Heynen,,Regular,1,0,,2617203465
+48xc3lu3nk2jq8lu05jqrgfmc,2023-11-12,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Genk,2,85,84:46,true,J. Braut Brunes,J. Þorsteinsson,Regular,1,1,,2617305361
+48xc3lu3nk2jq8lu05jqrgfmc,2023-11-12,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Genk,2,90,89:43,false,B. Heynen,,Regular,2,1,,2617312639
+48xc3lu3nk2jq8lu05jqrgfmc,2023-11-12,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Genk,2,95,94:06,false,D. Muñoz,,Regular,3,1,,2617316943
+4bjgrdur7wdidfbs58xmjynf8,2023-11-26,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Club Brugge,1,47,46:41,false,Ferran Jutglà,T. Buchanan,Regular,0,1,,2621502431
+4derk4vitzrps5926w5dp7llg,2023-12-02,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Antwerp,1,44,43:21,false,M. Balikwisha,V. Janssen,Regular,1,0,,2624131655
+4gbdx686w0jxnz4gpsualoa38,2023-12-09,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,6,5:49,false,K. Zahiroleslam,J. Steuckers,Regular,1,0,,2626895715
+4gbdx686w0jxnz4gpsualoa38,2023-12-09,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,18,17:47,true,J. Braut Brunes,J. Þorsteinsson,Regular,1,1,,2626904139
+4i4bz7rnjs44z8bt8bnftavbo,2023-12-16,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,2,1:06,true,J. Þorsteinsson,N. Nsingi,Regular,1,0,,2629337723
+4i4bz7rnjs44z8bt8bnftavbo,2023-12-16,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,2,59,58:39,false,K. Denkey,T. Somers,Regular,1,1,,2629502985
+4i4bz7rnjs44z8bt8bnftavbo,2023-12-16,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,2,95,94:04,false,K. Denkey,,Penalty,1,2,,2629576587
+4jf2cc3asaku8kfbswxuns4r8,2023-12-21,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Gent,1,4,3:14,false,M. Samoise,M. Fofana,Regular,1,0,,2631530187
+4jf2cc3asaku8kfbswxuns4r8,2023-12-21,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Gent,2,57,56:03,false,M. Fofana,Hong Hyun-Seok,Regular,2,0,,2631559759
+4jf2cc3asaku8kfbswxuns4r8,2023-12-21,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Gent,2,65,64:21,false,H. Cuypers,S. Kums,Regular,3,0,,2631562021
+4jf2cc3asaku8kfbswxuns4r8,2023-12-21,20:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Gent,2,69,68:50,false,T. Watanabe,S. Kums,Regular,4,0,,2631563273
+4mbxzkhlc9edsor1s0fjsxses,2023-12-26,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Eupen,1,2,1:43,true,J. Þorsteinsson,Y. Maziz,Regular,1,0,,2632556835
+4mbxzkhlc9edsor1s0fjsxses,2023-12-26,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Eupen,1,29,28:34,true,Y. Maziz,J. Braut Brunes,Regular,2,0,,2632596317
+4mbxzkhlc9edsor1s0fjsxses,2023-12-26,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Eupen,2,89,88:57,true,S. Mueanta,K. N’Dri,Regular,3,0,,2632682829
+4oobcluwuns3xnlhy5m9m7sic,2024-01-21,18:30:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,10,9:46,true,Y. Maziz,,Regular,1,0,,2637990721
+4oobcluwuns3xnlhy5m9m7sic,2024-01-21,18:30:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,70,69:55,false,L. Patris,K. Dolberg,Regular,1,1,,2638042813
+4s3or8i47or8p70amtotvjlec,2024-01-31,18:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Genk,2,54,53:53,true,F. Ricca,,Own Goal,0,1,,2641188203
+4s3or8i47or8p70amtotvjlec,2024-01-31,18:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Genk,2,80,79:55,true,S. Schrijvers,,Penalty,1,1,,2641197181
+4s3or8i47or8p70amtotvjlec,2024-01-31,18:45:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Genk,2,90,89:16,true,E. Pletinckx,,Regular,2,1,,2641201235
+4vac5nncewvzj0ecddu81chsk,2024-02-03,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Westerlo,1,2,1:18,true,E. Banzuzi,Y. Maziz,Regular,0,1,,2642254009
+4vac5nncewvzj0ecddu81chsk,2024-02-03,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Westerlo,1,11,10:33,true,F. Miguel,S. Schrijvers,Regular,0,2,,2642259877
+4vac5nncewvzj0ecddu81chsk,2024-02-03,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Westerlo,2,60,59:15,true,M. Maertens,,Regular,0,3,,2642316479
+4w2seh9hm8htc71niexj6a7f8,2024-02-10,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Standard Liège,1,19,18:39,false,A. O'Neill,S. Alzate,Regular,1,0,,2644518491
+50ljuhsiuflgkyoqabj23q80k,2024-02-24,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,RWDM,1,30,29:21,false,M. Biron,I. Camara,Regular,1,0,,2650182245
+50ljuhsiuflgkyoqabj23q80k,2024-02-24,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,RWDM,1,36,35:42,true,E. Pletinckx,Y. Maziz,Regular,1,1,,2650197473
+539hjt08589esprrqk8xj09as,2024-03-02,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,28,27:52,false,R. Sykes,,Regular,0,1,,2653647813
+539hjt08589esprrqk8xj09as,2024-03-02,18:15:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,74,73:17,false,C. Terho,G. Nilsson,Regular,0,2,,2653715001
+54bf3d7pni6yppljo5licwhsk,2024-03-10,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Club Brugge,1,31,30:26,true,E. Pletinckx,J. Þorsteinsson,Regular,0,1,,2657699255
+54bf3d7pni6yppljo5licwhsk,2024-03-10,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Club Brugge,1,40,39:35,true,T. Leysen,,Own Goal,1,1,,2657709071
+54bf3d7pni6yppljo5licwhsk,2024-03-10,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,62,61:14,false,H. Vanaken,,Regular,2,1,,2657745363
+54bf3d7pni6yppljo5licwhsk,2024-03-10,16:00:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,64,63:04,false,B. Meijer,,Regular,3,1,,2657747031
+57i6yyarvjpugxfcvu1v2fl04,2024-03-17,18:30:00,2023/2024,Regular Season,Belgian Jupiler Pro League,Mechelen,2,93,92:02,true,N. Nsingi,S. Schrijvers,Regular,1,0,,2661311915
+98omfw1wagomo5aac4rpyhtlg,2024-03-30,18:15:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,1,5,4:25,false,E. Cobbaut,P. Pflücke,Regular,0,1,,2664880591
+98omfw1wagomo5aac4rpyhtlg,2024-03-30,18:15:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,52,51:57,false,D. Foulon,I. Slimani,Regular,0,2,,2664946151
+98omfw1wagomo5aac4rpyhtlg,2024-03-30,18:15:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,74,73:04,true,Y. Maziz,T. Akimoto,Regular,1,2,,2664969769
+98omfw1wagomo5aac4rpyhtlg,2024-03-30,18:15:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,96,95:11,true,N. Opoku,M. Maertens,Regular,2,2,,2664989785
+98omfw1wagomo5aac4rpyhtlg,2024-03-30,18:15:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,97,96:49,false,M. Konaté,,Regular,2,3,,2664992471
+9bied5x123qpk7tpdx9t2fml0,2024-04-14,19:15:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Gent,1,23,22:03,true,M. Maertens,J. Þorsteinsson,Regular,1,0,,2672983157
+9bied5x123qpk7tpdx9t2fml0,2024-04-14,19:15:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Gent,1,25,24:13,false,Matías Fernández,,Regular,1,1,,2672985225
+9bied5x123qpk7tpdx9t2fml0,2024-04-14,19:15:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Gent,1,37,36:51,true,M. Maertens,,Regular,2,1,,2672995807
+9bwhkknuamvj2f60dtr3tdlas,2024-04-20,16:00:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Sint-Truiden,2,83,82:38,true,Y. Maziz,S. Schrijvers,Regular,1,0,,2675426099
+9d4e9li8vmiuipt83qewm1hqs,2024-04-23,20:30:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,1,25,24:01,false,R. Tagir,D. Haspolat,Regular,1,0,,2677369759
+9d4e9li8vmiuipt83qewm1hqs,2024-04-23,20:30:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,2,77,76:12,false,N. Gillekens,,Own Goal,1,1,,2677437583
+9eb5kjsrfg1qyk71ynzx2pwd0,2024-04-27,16:00:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,47,46:19,false,R. Schoofs,N. Storm,Regular,1,0,,2678910033
+9eb5kjsrfg1qyk71ynzx2pwd0,2024-04-27,16:00:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,58,57:14,false,N. Bassette,R. Schoofs,Regular,2,0,,2678930011
+9eb5kjsrfg1qyk71ynzx2pwd0,2024-04-27,16:00:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,92,91:15,false,K. Mrabti,,Penalty,3,0,,2678995263
+9garbt9ourfmmy4uxcq3f84yc,2024-05-05,16:00:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Standard Liège,1,43,42:42,false,K. Yeboah,,Regular,0,1,,2683242915
+9garbt9ourfmmy4uxcq3f84yc,2024-05-05,16:00:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Standard Liège,2,47,46:47,true,Y. Maziz,,Regular,1,1,,2683273479
+9garbt9ourfmmy4uxcq3f84yc,2024-05-05,16:00:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Standard Liège,2,74,73:05,true,N. Nsingi,J. Þorsteinsson,Regular,2,1,,2683296887
+9garbt9ourfmmy4uxcq3f84yc,2024-05-05,16:00:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Standard Liège,2,93,92:36,true,J. Þorsteinsson,N. Nsingi,Regular,3,1,,2683316679
+9h3ot7q260j2zti5eotdzdij8,2024-05-12,13:30:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Gent,1,6,5:19,true,F. Russo,Y. Maziz,Regular,0,1,,2686256097
+9hy1pqjwhk2xcdgbm7fqlfris,2024-05-17,20:45:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Sint-Truiden,2,66,65:02,false,F. Kaya,M. Delorge,Regular,1,0,,2688527201
+9hy1pqjwhk2xcdgbm7fqlfris,2024-05-17,20:45:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Sint-Truiden,2,74,73:52,true,J. Þorsteinsson,Y. Maziz,Regular,1,1,,2688534925
+9j49kwr0mzxabprw5v0rfr3mc,2024-05-25,20:30:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,1,33,32:57,false,K. Vaesen,T. Rommens,Regular,0,1,,2691829507
+9j49kwr0mzxabprw5v0rfr3mc,2024-05-25,20:30:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,1,48,47:03,false,R. Tagir,D. Haspolat,Regular,0,2,,2691839797
+9j49kwr0mzxabprw5v0rfr3mc,2024-05-25,20:30:00,2023/2024,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,2,52,51:51,true,J. Þorsteinsson,,Regular,1,2,,2691854697
+5sue6595uizdrssh0wv22egpg,2024-08-03,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Genk,1,22,21:30,true,Y. Maziz,M. Maertens,Regular,1,0,,2705532587
+5sue6595uizdrssh0wv22egpg,2024-08-03,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Genk,1,36,35:54,true,T. Vlietinck,E. Pletinckx,Regular,2,0,yes,2705542569
+5sue6595uizdrssh0wv22egpg,2024-08-03,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Genk,2,62,61:49,false,T. Arokodare,Y. Sor,Regular,2,1,,2705561611
+5sue6595uizdrssh0wv22egpg,2024-08-03,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Genk,2,85,84:02,true,J. Þorsteinsson,M. Osifo,Regular,3,1,,2705571875
+5wb56hj1k3gel6lkn5se3gqok,2024-08-10,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,36,35:12,false,K. Dolberg,M. Stroeykens,Regular,1,0,,2707563291
+5wb56hj1k3gel6lkn5se3gqok,2024-08-10,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,44,43:44,true,M. Maertens,S. Schrijvers,Regular,1,1,,2707570949
+602pbgoexz07st4msln8fq0wk,2024-08-18,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,16,15:22,false,K. Denkey,Bruninho,Regular,0,1,,2710464061
+602pbgoexz07st4msln8fq0wk,2024-08-18,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,37,36:37,true,Y. Maziz,K. N’Dri,Regular,1,1,,2710479811
+61xmh1s2xtwsx4noo7sqj6k2c,2024-08-24,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Westerlo,1,14,13:30,false,A. Mebude,L. Stassin,Regular,1,0,,2712583021
+61xmh1s2xtwsx4noo7sqj6k2c,2024-08-24,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Westerlo,1,19,18:17,true,W. Balikwisha,E. Banzuzi,Regular,1,1,,2712587493
+65chj645tcu0gtoy18rdroyz8,2024-08-31,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Standard Liège,1,32,31:19,true,K. N’Dri,E. Banzuzi,Regular,1,0,,2715765299
+65chj645tcu0gtoy18rdroyz8,2024-08-31,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,63,62:39,false,M. Fossey,,Own Goal,2,0,,2715818105
+695t6yuiyw8q7bjv9nnll1atw,2024-09-15,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,47,46:39,false,A. Bertaccini,K. Zahiroleslam,Regular,1,0,,2720912651
+695t6yuiyw8q7bjv9nnll1atw,2024-09-15,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,2,64,63:22,true,E. Banzuzi,B. Verstraete,Regular,1,1,,2720942001
+695t6yuiyw8q7bjv9nnll1atw,2024-09-15,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,2,81,80:33,false,B. Brahimi,R. Yamamoto,Regular,2,1,,2720960623
+6c8lz4vpdfl8yxo9kgokz9250,2024-09-22,19:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,57,56:16,false,D. De Neve,,Regular,0,1,,2724637359
+6c8lz4vpdfl8yxo9kgokz9250,2024-09-22,19:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,62,61:35,true,K. N’Dri,B. Verstraete,Regular,1,1,,2724641649
+6e51m1j7b2y8ycmgv0h215c7o,2024-09-29,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Gent,1,9,8:14,false,M. Dean,A. Brown,Regular,1,0,,2728216441
+6e51m1j7b2y8ycmgv0h215c7o,2024-09-29,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Gent,1,13,12:13,false,N. Fadiga,F. Surdez,Regular,2,0,,2728221757
+6e51m1j7b2y8ycmgv0h215c7o,2024-09-29,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Gent,2,78,77:30,false,A. Guðjohnsen,P. Gerkens,Regular,3,0,,2728300375
+6i180b3iyx583di6at041k4r8,2024-10-05,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Mechelen,1,14,13:28,true,C. Ikwuemesi,,Own Goal,1,0,,2730634781
+6i180b3iyx583di6at041k4r8,2024-10-05,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Mechelen,1,18,17:01,false,R. Schoofs,N. Storm,Regular,2,0,,2730644351
+6i180b3iyx583di6at041k4r8,2024-10-05,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Mechelen,2,58,57:28,false,L. Lauberbach,N. Storm,Regular,3,0,,2730768273
+6i180b3iyx583di6at041k4r8,2024-10-05,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Mechelen,2,77,76:09,false,P. Dahl,D. Foulon,Regular,4,0,,2730809829
+6i180b3iyx583di6at041k4r8,2024-10-05,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Mechelen,2,93,92:22,false,B. Bafdili,P. Pflücke,Regular,5,0,,2730846197
+6lop4d01krcoktw7peu0xrlec,2024-10-20,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Antwerp,1,34,33:28,false,J. Ondrejka,S. Renders,Regular,0,1,,2736501075
+6lop4d01krcoktw7peu0xrlec,2024-10-20,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Antwerp,2,66,65:03,true,S. Mitrović,E. Banzuzi,Regular,1,1,,2736568651
+6p4xcllb1x7vx1xljrk14gbh0,2024-10-26,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,1,32,31:08,true,C. Ikwuemesi,W. Balikwisha,Regular,0,1,,2739153945
+6p4xcllb1x7vx1xljrk14gbh0,2024-10-26,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,1,47,46:34,true,C. Ikwuemesi,E. Banzuzi,Regular,0,2,,2739196435
+6rulhyb9xa5yczi1jntilsr9w,2024-11-02,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,58,57:32,false,A. Skov Olsen,H. Vanaken,Regular,0,1,,2743001375
+6vul2r4nef60spfw1s0m9nwno,2024-11-09,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Dender,1,22,22:00,true,Y. Maziz,S. Mitrović,Regular,0,1,,2746308913
+6vul2r4nef60spfw1s0m9nwno,2024-11-09,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Dender,1,43,42:58,false,N. Rôdes,A. Scheidler,Regular,1,1,,2746334867
+6y80kic6abtlkzmkr4oiejkt0,2024-11-24,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,11,10:47,true,S. Schrijvers,,Own Goal,0,1,,2751336587
+6y80kic6abtlkzmkr4oiejkt0,2024-11-24,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,41,40:16,true,S. Schrijvers,,Penalty,1,1,,2751373835
+741sm8f1osrj6qvq54ql5sv84,2024-12-07,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Standard Liège,1,45,44:13,false,A. Zeqiri,I. Camara,Regular,1,0,,2756455071
+741sm8f1osrj6qvq54ql5sv84,2024-12-07,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,94,93:52,true,F. Ricca,E. Banzuzi,Regular,1,1,,2756506863
+77idfj6cmoadi2223efythatw,2024-12-14,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,2,60,59:47,true,K. N’Dri,B. Verstraete,Regular,1,0,,2759104053
+7a76a8362jg3typalwyouhfdg,2024-12-22,19:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,2,100,99:09,false,K. Olaigbe,,Penalty,1,0,,2761795103
+7dq0nagdoadvgfk4qfxw3lvkk,2024-12-27,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Beerschot,2,76,75:55,true,C. Ikwuemesi,H. Mendyl,Regular,1,0,,2762456199
+7dq0nagdoadvgfk4qfxw3lvkk,2024-12-27,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Beerschot,2,86,85:38,true,C. Ikwuemesi,,Regular,2,0,,2762456545
+7f8hyu2mxs711863i8ui9atqs,2025-01-11,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Genk,2,48,47:29,false,J. Steuckers,,Penalty,1,0,,2764673075
+7f8hyu2mxs711863i8ui9atqs,2025-01-11,18:15:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Genk,2,84,83:18,false,Oh Hyeon-Gyu,,Penalty,2,0,,2764687323
+7icq1hu6zx1cpixqxzm5ktb84,2025-01-19,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,15,14:01,false,P. David,,Penalty,1,0,,2767009605
+7qex3cmy0pi6r9v2luba43qqc,2025-01-31,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Mechelen,1,6,5:14,true,S. Mitrović,K. N’Dri,Regular,1,0,,2770780193
+7r6v5k8usx2d5lojp7024ikus,2025-02-08,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Club Brugge,1,31,30:09,false,G. Nilsson,M. De Cuyper,Regular,1,0,,2773644321
+7wei2vfmf9wa2ikr3hmt50ljo,2025-02-15,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Dender,1,9,8:27,false,M. Berte,J. Pupe,Regular,0,1,,2776400145
+7wei2vfmf9wa2ikr3hmt50ljo,2025-02-15,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Dender,1,30,29:57,true,H. Kuruçay,S. Schrijvers,Regular,1,1,,2776445383
+7wei2vfmf9wa2ikr3hmt50ljo,2025-02-15,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Dender,1,39,38:40,false,D. Hrnčár,F. Ferraro,Regular,1,2,,2776465495
+7wei2vfmf9wa2ikr3hmt50ljo,2025-02-15,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Dender,2,89,88:10,true,S. Schrijvers,,Penalty,2,2,,2776601353
+7wei2vfmf9wa2ikr3hmt50ljo,2025-02-15,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Dender,2,92,91:37,true,J. Mijatović,,Regular,3,2,,2776608491
+7ypezm6dgrnx4seixgf565f6c,2025-02-22,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Antwerp,2,47,46:02,false,D. Odoi,G. Kerk,Regular,1,0,,2779703553
+7ypezm6dgrnx4seixgf565f6c,2025-02-22,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Antwerp,2,56,55:13,true,E. Pletinckx,T. Verlinden,Regular,1,1,,2779708355
+7ypezm6dgrnx4seixgf565f6c,2025-02-22,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Antwerp,2,58,57:12,false,V. Janssen,D. Praet,Regular,2,1,,2779709247
+7ypezm6dgrnx4seixgf565f6c,2025-02-22,20:45:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Antwerp,2,96,95:40,true,E. Banzuzi,,Regular,2,2,,2779735007
+84iv05xyhc3am31y0fo7hhces,2025-03-08,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Kortrijk,1,44,43:56,false,T. Ambrose,D. De Neve,Regular,1,0,,2785372575
+84iv05xyhc3am31y0fo7hhces,2025-03-08,16:00:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Kortrijk,2,63,62:25,false,T. Ambrose,D. Karim,Regular,2,0,,2785425939
+89eut1cf33jziticurrctu2ok,2025-03-16,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,13,12:55,true,S. Schrijvers,,Regular,1,0,,2789490471
+89eut1cf33jziticurrctu2ok,2025-03-16,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,44,43:52,false,A. Bertaccini,R. Vanwesemael,Regular,1,1,,2789525589
+89eut1cf33jziticurrctu2ok,2025-03-16,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,2,66,65:57,true,Óscar Gil,S. Schrijvers,Regular,2,1,,2789557645
+89eut1cf33jziticurrctu2ok,2025-03-16,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,2,74,73:31,false,A. Bertaccini,J. Fujita,Regular,2,2,,2789565257
+89eut1cf33jziticurrctu2ok,2025-03-16,18:30:00,2024/2025,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,2,83,82:30,true,S. Schrijvers,,Penalty,3,2,,2789575117
+7w95lgqov6wnfqm2cbcywk6j8,2025-04-05,18:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,2,53,52:32,false,E. Bayram,,Own Goal,0,1,,2796493863
+7w95lgqov6wnfqm2cbcywk6j8,2025-04-05,18:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,2,58,57:51,true,R. Nyakossi,,Regular,0,2,,2796498181
+7w95lgqov6wnfqm2cbcywk6j8,2025-04-05,18:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,2,62,61:17,false,G. Yow,A. Sayyadmanesh,Regular,1,2,,2796500979
+7w95lgqov6wnfqm2cbcywk6j8,2025-04-05,18:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,2,75,74:30,false,A. Devine,T. Rommens,Regular,2,2,,2796514277
+7xkc6usxncqrp5vbb59u7zlec,2025-04-13,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,1,17,16:27,false,L. Lauberbach,José Marsà,Regular,1,0,,2800734563
+7xkc6usxncqrp5vbb59u7zlec,2025-04-13,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,1,20,19:40,true,S. Schrijvers,A. Ohata,Regular,1,1,,2800738377
+7ygyxo6o1uoe8uzbk4nsgeiok,2025-04-19,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,1,3,2:34,false,M. Berte,,Regular,0,1,,2803026729
+7ygyxo6o1uoe8uzbk4nsgeiok,2025-04-19,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,1,22,21:58,true,C. Ikwuemesi,S. Schrijvers,Regular,1,1,,2803055773
+7ygyxo6o1uoe8uzbk4nsgeiok,2025-04-19,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,1,33,32:11,true,W. Balikwisha,C. Ikwuemesi,Regular,2,1,,2803070591
+7ygyxo6o1uoe8uzbk4nsgeiok,2025-04-19,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,1,39,38:56,true,S. Schrijvers,Óscar Gil,Regular,3,1,,2803081609
+7ygyxo6o1uoe8uzbk4nsgeiok,2025-04-19,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,2,57,56:52,false,D. Hrnčár,,Regular,3,2,,2803125081
+7ygyxo6o1uoe8uzbk4nsgeiok,2025-04-19,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,2,74,73:33,false,A. Scheidler,D. Hrnčár,Regular,3,3,,2803146061
+7ygyxo6o1uoe8uzbk4nsgeiok,2025-04-19,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,2,82,81:58,true,C. Ikwuemesi,T. Verlinden,Regular,4,3,,2803157261
+7ygyxo6o1uoe8uzbk4nsgeiok,2025-04-19,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,2,92,91:03,false,A. Scheidler,,Regular,4,4,,2803169695
+7zt8gyxi7eoab8avc8bpm5y50,2025-04-22,20:30:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Standard Liège,2,78,77:41,true,T. Verlinden,Y. Maziz,Regular,0,1,,2804986947
+814atdxgv4huojqsu3t0d9vro,2025-04-26,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Standard Liège,1,38,37:24,true,S. Schrijvers,,Penalty,1,0,,2806285095
+814atdxgv4huojqsu3t0d9vro,2025-04-26,16:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Standard Liège,2,81,80:32,false,A. Hountondji,,Regular,1,1,,2806389279
+82ukg77wot5ten1zki8rhuln8,2025-05-03,18:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,1,46,45:29,false,R. Schoofs,,Penalty,0,1,,2809581185
+82ukg77wot5ten1zki8rhuln8,2025-05-03,18:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,81,80:26,false,N. Storm,B. Raman,Regular,0,2,,2809639155
+82ukg77wot5ten1zki8rhuln8,2025-05-03,18:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Mechelen,2,89,88:58,true,E. Pletinckx,C. Ikwuemesi,Regular,1,2,,2809647155
+84nc9rtln8g0ixfdcs5r0xxxw,2025-05-11,19:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,1,6,5:40,false,D. Hrnčár,B. Nsimba,Regular,1,0,,2813727165
+84nc9rtln8g0ixfdcs5r0xxxw,2025-05-11,19:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,1,18,17:12,false,B. Goncalves,,Regular,2,0,,2813738241
+84nc9rtln8g0ixfdcs5r0xxxw,2025-05-11,19:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,1,22,21:34,false,B. Nsimba,N. Rôdes,Regular,3,0,,2813743013
+84nc9rtln8g0ixfdcs5r0xxxw,2025-05-11,19:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,1,28,27:07,false,N. Rôdes,B. Goncalves,Regular,4,0,,2813748881
+84nc9rtln8g0ixfdcs5r0xxxw,2025-05-11,19:15:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Dender,2,90,89:24,false,M. Berte,B. Nsimba,Regular,5,0,,2813819241
+852y9z78ifhike3zkg6dfyluc,2025-05-16,20:45:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,1,28,27:53,false,T. Van den Keybus,A. Piedfort,Regular,0,1,,2815394971
+852y9z78ifhike3zkg6dfyluc,2025-05-16,20:45:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Westerlo,2,82,81:30,false,A. Devine,,Regular,0,2,,2815448933
+86dn3ijocusxpzra33m12qc5w,2025-05-24,20:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Sporting Charleroi,1,29,28:46,false,C. Keita,É. Camara,Regular,1,0,,2818419645
+86dn3ijocusxpzra33m12qc5w,2025-05-24,20:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Sporting Charleroi,1,43,42:48,false,Y. Titraoui,,Own Goal,1,1,,2818428967
+86dn3ijocusxpzra33m12qc5w,2025-05-24,20:00:00,2024/2025,Conference League Play-off Group,Belgian Jupiler Pro League,Sporting Charleroi,2,88,87:27,false,A. Stanić,,Regular,2,1,,2818477541
+csbw4frxjcvgpv95iekqvb21g,2025-07-27,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,1,3,2:09,true,M. Maertens,T. Verlinden,Regular,1,0,,2829923469
+csbw4frxjcvgpv95iekqvb21g,2025-07-27,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,2,79,78:33,true,Y. Maziz,J. Mijatović,Regular,2,0,,2829962075
+csbw4frxjcvgpv95iekqvb21g,2025-07-27,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,2,90,89:47,false,A. Bernier,,Regular,2,1,,2829967785
+csbw4frxjcvgpv95iekqvb21g,2025-07-27,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Sporting Charleroi,2,94,93:06,false,V. Dragsnes,,Regular,2,2,,2829969167
+ctopnopmg8mzxf3q6rje346qc,2025-08-03,18:30:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,1,0:46,false,A. Khalaili,A. Zorgane,Regular,1,0,,2831763253
+ctopnopmg8mzxf3q6rje346qc,2025-08-03,18:30:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,1,4,3:18,false,R. Sykes,A. Ait El Hadj,Regular,2,0,,2831764911
+ctopnopmg8mzxf3q6rje346qc,2025-08-03,18:30:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,48,47:39,false,R. Florucz,,Penalty,3,0,,2831808917
+ctopnopmg8mzxf3q6rje346qc,2025-08-03,18:30:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,59,58:06,false,R. Florucz,F. Leysen,Regular,4,0,,2831814275
+ctopnopmg8mzxf3q6rje346qc,2025-08-03,18:30:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Union Saint-Gilloise,2,71,70:30,false,O. Niang,S. Boufal,Regular,5,0,,2831819033
+cxtfvvs8g6im8v2btf5nupfro,2025-08-10,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Antwerp,1,36,35:07,false,M. Balikwisha,,Penalty,1,0,,2833890981
+cxtfvvs8g6im8v2btf5nupfro,2025-08-10,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Antwerp,2,78,77:02,false,Mahamadou Doumbia,,Penalty,2,0,,2833927815
+cxtfvvs8g6im8v2btf5nupfro,2025-08-10,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Antwerp,2,87,86:33,true,E. Pletinckx,W. George,Regular,2,1,,2833932371
+cxtfvvs8g6im8v2btf5nupfro,2025-08-10,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Antwerp,2,97,96:06,false,F. Adekami,D. Foulon,Regular,3,1,,2833939159
+d0y4sncaf09mzv9ms24ck6olw,2025-08-15,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Genk,1,14,13:41,false,Z. El Ouahdi,J. Steuckers,Regular,0,1,,2835139681
+d0y4sncaf09mzv9ms24ck6olw,2025-08-15,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Genk,1,20,19:39,false,Z. El Ouahdi,J. Steuckers,Regular,0,2,,2835143771
+d0y4sncaf09mzv9ms24ck6olw,2025-08-15,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Genk,1,38,37:48,true,R. Nyakossi,,Regular,1,2,,2835161703
+d5vpyuaaynfcg6vv6ixlmfcb8,2025-08-24,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Dender,2,71,70:50,true,E. Pletinckx,S. Schrijvers,Regular,0,1,,2839330559
+d7riiuoqud1d84e7gu4givjf8,2025-08-31,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,65,64:47,false,D. Dierckx,,Own Goal,1,0,,2841990225
+dawbvc4ebh1knr7qctivmrod0,2025-09-13,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,1,13,12:15,false,T. Claes,,Regular,1,0,,2845305059
+dawbvc4ebh1knr7qctivmrod0,2025-09-13,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,1,38,37:01,false,Y. Cappelle,J. Opoku,Regular,2,0,,2845364185
+de191c5ia8dqmkvpzprawob2s,2025-09-20,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,RAAL La Louvière,1,8,7:07,true,S. Kaba,Ł. Łakomy,Regular,1,0,,2848526907
+de191c5ia8dqmkvpzprawob2s,2025-09-20,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,RAAL La Louvière,1,16,15:47,false,J. Afriyie,S. Lahssaini,Regular,1,1,,2848545459
+de191c5ia8dqmkvpzprawob2s,2025-09-20,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,RAAL La Louvière,1,27,26:31,false,J. Afriyie,J. Ito,Regular,1,2,,2848566795
+dh7ze0l15ri59fuhmnrs8pst0,2025-09-26,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,55,54:26,false,L. Vázquez,N. Angulo,Regular,0,1,,2851606261
+dh7ze0l15ri59fuhmnrs8pst0,2025-09-26,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,80,79:41,true,Y. Maziz,,Regular,1,1,,2851620041
+dly0jj6xr9hi9nxzv17quzwno,2025-10-05,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Westerlo,1,19,18:44,false,Nacho Ferri,T. Rommens,Regular,1,0,,2856728547
+dly0jj6xr9hi9nxzv17quzwno,2025-10-05,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Westerlo,2,77,76:50,false,A. Mebude,B. Reynolds,Regular,2,0,,2856806903
+dob21hsimmlz7agqzo8irt5w4,2025-10-18,18:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,77,76:14,false,C. Tzolis,M. Diakhon,Regular,0,1,,2860712089
+drdzv152kp1zoqqdbl98trj10,2025-10-25,18:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Mechelen,2,74,73:07,false,T. Koudou,L. Lauberbach,Regular,1,0,,2864076097
+drdzv152kp1zoqqdbl98trj10,2025-10-25,18:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Mechelen,2,95,94:41,true,E. Pletinckx,Y. Maziz,Regular,1,1,,2864098569
+duivyh7ccvqb0o2ykwgvaq5uc,2025-11-02,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Gent,1,32,31:12,true,C. Ikwuemesi,Y. Maziz,Regular,1,0,,2868164281
+duivyh7ccvqb0o2ykwgvaq5uc,2025-11-02,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Gent,1,43,42:53,true,Ł. Łakomy,,Regular,2,0,,2868182591
+duivyh7ccvqb0o2ykwgvaq5uc,2025-11-02,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Gent,2,63,62:52,true,R. Nyakossi,,Regular,3,0,,2868230561
+duivyh7ccvqb0o2ykwgvaq5uc,2025-11-02,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Gent,2,80,79:52,true,H. Teklab,M. Maertens,Regular,4,0,,2868253829
+dwvrsfezoy7lsopii72xnd1xw,2025-11-08,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,37,36:02,false,E. Diop,,Regular,1,0,,2870681319
+dwvrsfezoy7lsopii72xnd1xw,2025-11-08,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,2,49,48:27,true,Ł. Łakomy,S. Kaba,Regular,1,1,,2870738445
+dwvrsfezoy7lsopii72xnd1xw,2025-11-08,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,2,61,60:40,true,S. Kaba,M. Maertens,Regular,1,2,,2870765723
+e1650lh8xyaev5kzm5v3m2kgk,2025-11-23,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,21,20:24,false,R. Ito,,Penalty,0,1,,2876010469
+e1650lh8xyaev5kzm5v3m2kgk,2025-11-23,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,41,40:50,false,I. Sebaoui,R. Yamamoto,Regular,0,2,,2876028701
+e1650lh8xyaev5kzm5v3m2kgk,2025-11-23,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,49,48:34,true,T. Verlinden,Ł. Łakomy,Regular,1,2,,2876034901
+e2ydwakqnrmekfzdr48j9n3f8,2025-11-30,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Genk,2,50,49:10,false,Mujaid Sadick,K. Karetsas,Regular,1,0,,2878567177
+e2ydwakqnrmekfzdr48j9n3f8,2025-11-30,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Genk,2,78,77:03,true,S. Kaba,D. Opoku,Regular,1,1,,2878599827
+e2ydwakqnrmekfzdr48j9n3f8,2025-11-30,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Genk,2,81,80:10,false,D. Heymans,K. Karetsas,Regular,2,1,,2878603485
+e6vo7nt78kq3sax8h8o1ke4gk,2025-12-07,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,1,8,7:58,true,T. Verlinden,Ł. Łakomy,Regular,1,0,,2881179953
+e6vo7nt78kq3sax8h8o1ke4gk,2025-12-07,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Zulte Waregem,1,35,34:25,false,B. Nyssen,T. Nnadi,Regular,1,1,,2881202541
+e9vop6xkarhbdtysjlqtm4w7o,2025-12-12,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Standard Liège,2,73,72:38,true,S. Kaba,,Regular,0,1,,2882496259
+ecz9iyxyc5ira9n59m8cp3bis,2025-12-21,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,7,6:24,false,P. Gerkens,,Regular,0,1,,2885510807
+ecz9iyxyc5ira9n59m8cp3bis,2025-12-21,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Cercle Brugge,1,19,18:51,false,P. Gerkens,S. Ngoura,Regular,0,2,,2885518191
+ejqw6juegshs0txtuuxahtno4,2026-01-18,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Sint-Truiden,1,9,8:48,false,I. Sebaoui,,Regular,1,0,,2890834141
+eqncupz92qy89z9bxks1e0t90,2026-02-01,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Mechelen,1,33,32:08,true,S. Schrijvers,,Penalty,1,0,,2895586621
+eqncupz92qy89z9bxks1e0t90,2026-02-01,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Mechelen,2,52,51:09,true,C. Ikwuemesi,T. Ominami,Regular,2,0,,2895615253
+eqncupz92qy89z9bxks1e0t90,2026-02-01,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Mechelen,2,61,60:42,false,M. Servais,,Regular,2,1,,2895619499
+eqncupz92qy89z9bxks1e0t90,2026-02-01,19:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Mechelen,2,79,78:09,false,K. Van Rafelghem,B. Boersma,Regular,2,2,,2895627285
+esy974nh0dqx61hrn6g35y044,2026-02-07,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Gent,1,17,16:38,true,R. Nyakossi,Y. Maziz,Regular,0,1,,2897617037
+esy974nh0dqx61hrn6g35y044,2026-02-07,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Gent,1,25,24:19,true,S. Schrijvers,,Penalty,0,2,,2897623521
+esy974nh0dqx61hrn6g35y044,2026-02-07,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Gent,2,54,53:33,false,H. Goore,M. Skóraś,Regular,1,2,,2897663517
+esy974nh0dqx61hrn6g35y044,2026-02-07,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Gent,2,70,69:07,true,Y. Maziz,T. Verlinden,Regular,1,3,,2897673735
+ewgb5fczpfa71pfzihlip6yok,2026-02-14,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Dender,1,7,6:09,false,R. Květ,B. Nsimba,Regular,0,1,,2900006963
+ewgb5fczpfa71pfzihlip6yok,2026-02-14,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Dender,1,16,15:44,true,C. Ikwuemesi,M. Maertens,Regular,1,1,,2900026757
+ewgb5fczpfa71pfzihlip6yok,2026-02-14,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Dender,1,40,39:15,true,Ł. Łakomy,T. Verlinden,Regular,2,1,,2900070391
+ewgb5fczpfa71pfzihlip6yok,2026-02-14,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Dender,2,90,89:25,false,B. Nsimba,,Penalty,2,2,,2900187671
+ewgb5fczpfa71pfzihlip6yok,2026-02-14,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Dender,2,95,94:24,true,S. Kaba,,Penalty,3,2,,2900194659
+exzov7o3p9v5vqr86qipfm1w4,2026-02-21,18:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,53,52:08,false,B. Meijer,Carlos Forbs,Regular,1,0,,2902848747
+exzov7o3p9v5vqr86qipfm1w4,2026-02-21,18:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,55,54:51,true,C. Ikwuemesi,S. Schrijvers,Regular,1,1,,2902850291
+exzov7o3p9v5vqr86qipfm1w4,2026-02-21,18:15:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Club Brugge,2,61,60:36,false,N. Tresoldi,A. Stanković,Regular,2,1,,2902853405
+f19ucr3rev3uy5uvxjxznqsk4,2026-02-28,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,7,6:54,true,Óscar Gil,,Regular,0,1,yes,2905683319
+f19ucr3rev3uy5uvxjxznqsk4,2026-02-28,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Anderlecht,1,29,28:49,true,E. Pletinckx,,Own Goal,1,1,,2905700885
+f19ucr3rev3uy5uvxjxznqsk4,2026-02-28,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,47,46:57,false,T. Hazard,,Regular,2,1,,2905729323
+f19ucr3rev3uy5uvxjxznqsk4,2026-02-28,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,52,51:04,false,M. Cvetković,T. Hazard,Regular,3,1,,2905731687
+f19ucr3rev3uy5uvxjxznqsk4,2026-02-28,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,71,70:27,false,T. Hazard,,Penalty,4,1,,2905746167
+f19ucr3rev3uy5uvxjxznqsk4,2026-02-28,20:45:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Anderlecht,2,94,93:16,false,A. Bertaccini,N. De Cat,Regular,5,1,,2905762907
+rf7k8o1xjf0xw5zrgpbtmhg,2026-03-07,16:00:00,2025/2026,Regular Season,Belgian Jupiler Pro League,Westerlo,1,4,3:41,false,E. Bayram,D. Haspolat,Regular,0,1,,2908122855

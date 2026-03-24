@@ -1,0 +1,31 @@
+=== NA Report — 2026-03-23 12:09:55 ===
+
+── gold_match (142 rows) ──────────────────────
+Total NAs: 66
+  - last_result_vs_opponent: 4 missing (2.8%)
+  - tickets_scanned: 62 missing (43.7%)
+
+── gold_google_trends_daily (1350 rows) ──────────────────────
+Total NAs: 1208
+  - match_id: 1208 missing (89.5%)
+
+── gold_match_tickets (71 rows) ──────────────────────
+No missing values
+
+── gold_match_context (142 rows) ──────────────────────
+Total NAs: 493
+  - promotion_names: 116 missing (81.7%)
+  - public_holiday_name: 138 missing (97.2%)
+  - school_holiday_name: 100 missing (70.4%)
+  - campaign_motto: 139 missing (97.9%)
+
+── gold_match_goals (372 rows) ──────────────────────
+Total NAs: 491
+  - assist_player_name: 125 missing (33.6%)
+  - var_reviewed: 366 missing (98.4%)
+
+── gold_belga_press_articles (49683 rows) ──────────────────────
+Total NAs: 81820
+  - lead: 10 missing (0.0%)
+  - match_id: 40905 missing (82.3%)
+  - days_to_match: 40905 missing (82.3%)

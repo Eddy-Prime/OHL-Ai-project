@@ -1,5 +1,10 @@
 Attendance Prediction Project Report
 Best model: xgboost_log
-Predictions file: outputs/predictions/new_match_predictions.csv
-
-Run `python -m src.train` to regenerate metrics and artifacts from local data.
+MAE: 691.78
+RMSE: 946.57
+R2: 0.1578
+MAPE: 13.38
+Median Abs Error: 550.68
+Rows train: 56
+Rows test: 15
+Data dir: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\data

@@ -1,19 +1,13 @@
-# Data is repository-local for reproducible runs
-
-# Notebook execution artifacts
-notebooks/*.executed.ipynb
-
-# Virtual environment
+.venv/
 venv/
-
-# Python
 __pycache__/
-*.py[cod]
+*.pyc
+data_cache/
+outputs/
+models/
+catboost_info/
+.ipynb_checkpoints/
 .env
 *.egg-info/
-
-# Jupyter
-.ipynb_checkpoints/
-
-# OS
+.idea/
 .DS_Store

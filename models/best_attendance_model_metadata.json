@@ -5,35 +5,14 @@
   "model_type": "log",
   "log_transform_used": true,
   "weighted_training_used": false,
-  "alpha_value": 1.0,
   "primary_candidate": "xgboost",
   "tested_model_names": [
-    "mean_baseline",
-    "opponent_mean_baseline",
-    "linear_regression_raw",
-    "linear_regression_log",
-    "random_forest_raw",
-    "random_forest_log",
-    "xgboost_raw",
-    "xgboost_log",
-    "xgboost_log_weighted",
-    "weighted_blend_raw"
+    "xgboost_log"
   ],
   "rows_total": 71,
   "rows_train": 56,
   "rows_test": 15,
-  "external_training_enabled": false,
-  "external_training_rows": 0,
-  "internal_training_rows": 56,
-  "internal_test_rows": 15,
   "evaluation_dataset": "OH Leuven internal only",
-  "external_dataset_stats": {
-    "enabled": false,
-    "path": "C:\\Users\\ASUS\\PycharmProjects\\PythoParser\\data_external\\intermediate\\transfermarkt_matches.csv",
-    "exists": true,
-    "rows_loaded": 0,
-    "rows_used": 0
-  },
   "features_used": [
     "stage",
     "away_team",
@@ -94,85 +73,7 @@
     "api_failures": 0
   },
   "target_column": "tickets_scanned",
-  "use_log_target": false,
   "metrics_by_model": {
-    "mean_baseline": {
-      "mae": 1523.1380952380957,
-      "rmse": 1748.7640548077823,
-      "r2": -1.8745486088474812,
-      "mape": 30.122711287106373,
-      "median_abs_error": 1347.9285714285716,
-      "max_abs_error": 3123.9285714285716,
-      "share_abs_error_le_500": 0.13333333333333333,
-      "share_abs_error_le_800": 0.26666666666666666,
-      "share_abs_error_le_1000": 0.3333333333333333
-    },
-    "opponent_mean_baseline": {
-      "mae": 1547.915238095238,
-      "rmse": 1900.0341770990249,
-      "r2": -2.393360865986469,
-      "mape": 29.031421588668987,
-      "median_abs_error": 1498.333333333334,
-      "max_abs_error": 3801.666666666666,
-      "share_abs_error_le_500": 0.2,
-      "share_abs_error_le_800": 0.26666666666666666,
-      "share_abs_error_le_1000": 0.4666666666666667
-    },
-    "linear_regression_raw": {
-      "mae": 3707.903811074663,
-      "rmse": 3947.6550890488247,
-      "r2": -13.6482459341728,
-      "mape": 65.75205006642261,
-      "median_abs_error": 3484.8669405755563,
-      "max_abs_error": 6062.0,
-      "share_abs_error_le_500": 0.0,
-      "share_abs_error_le_800": 0.0,
-      "share_abs_error_le_1000": 0.0
-    },
-    "linear_regression_log": {
-      "mae": 2598.1701585020814,
-      "rmse": 2824.316378615445,
-      "r2": -6.497801011929935,
-      "mape": 46.009341461664626,
-      "median_abs_error": 2731.6198971429135,
-      "max_abs_error": 5397.036819962768,
-      "share_abs_error_le_500": 0.0,
-      "share_abs_error_le_800": 0.0,
-      "share_abs_error_le_1000": 0.0
-    },
-    "random_forest_raw": {
-      "mae": 756.0608942708083,
-      "rmse": 977.6614970862652,
-      "r2": 0.10157000093872126,
-      "mape": 15.31127735037025,
-      "median_abs_error": 531.969594056568,
-      "max_abs_error": 1924.900211086985,
-      "share_abs_error_le_500": 0.4,
-      "share_abs_error_le_800": 0.6,
-      "share_abs_error_le_1000": 0.7333333333333333
-    },
-    "random_forest_log": {
-      "mae": 777.8204540506154,
-      "rmse": 951.04956376817,
-      "r2": 0.14981483520023653,
-      "mape": 15.310208480882373,
-      "median_abs_error": 643.5544610778534,
-      "max_abs_error": 1845.2681169494663,
-      "share_abs_error_le_500": 0.4,
-      "share_abs_error_le_800": 0.6666666666666666,
-      "share_abs_error_le_1000": 0.6666666666666666
-    },
-    "xgboost_raw": {
-      "mae": 726.0639973958333,
-      "rmse": 955.1486614806272,
-      "r2": 0.1424703129147572,
-      "mape": 14.148245166543433,
-      "median_abs_error": 715.36279296875,
-      "max_abs_error": 2012.2421875,
-      "share_abs_error_le_500": 0.4666666666666667,
-      "share_abs_error_le_800": 0.5333333333333333,
-      "share_abs_error_le_1000": 0.8
-    },
     "xgboost_log": {
       "mae": 691.7759513163114,
       "rmse": 946.5689444244912,
@@ -183,28 +84,6 @@
       "share_abs_error_le_500": 0.4,
       "share_abs_error_le_800": 0.7333333333333333,
       "share_abs_error_le_1000": 0.7333333333333333
-    },
-    "xgboost_log_weighted": {
-      "mae": 819.5231845722936,
-      "rmse": 1020.574448626593,
-      "r2": 0.02096864007506616,
-      "mape": 15.77483999592529,
-      "median_abs_error": 587.7968951199427,
-      "max_abs_error": 2128.0244221762587,
-      "share_abs_error_le_500": 0.3333333333333333,
-      "share_abs_error_le_800": 0.5333333333333333,
-      "share_abs_error_le_1000": 0.6666666666666666
-    },
-    "weighted_blend_raw": {
-      "mae": 1058.3717528741315,
-      "rmse": 1546.5767807799434,
-      "r2": -1.2482789406828698,
-      "mape": 19.841441770761435,
-      "median_abs_error": 504.90479315958146,
-      "max_abs_error": 4496.950601114394,
-      "share_abs_error_le_500": 0.4666666666666667,
-      "share_abs_error_le_800": 0.6,
-      "share_abs_error_le_1000": 0.6
     }
   },
   "best_metrics": {
@@ -218,55 +97,10 @@
     "share_abs_error_le_800": 0.7333333333333333,
     "share_abs_error_le_1000": 0.7333333333333333
   },
-  "data_dir": "C:\\Users\\ASUS\\Desktop\\International Project\\Data",
-  "trained_at_utc": "2026-03-24T12:54:14.054663+00:00",
-  "component_model_paths": {
-    "random_forest": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\models\\random_forest_model.joblib",
-    "xgboost": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\models\\xgboost_model.joblib"
-  },
-  "ensemble_weights": {
-    "xgboost": 0.7,
-    "random_forest": 0.3
-  },
-  "weighted_blend_weights": {
-    "xgboost": 0.3899782022646104,
-    "random_forest": 0.43179860531257014,
-    "linear_regression": 0.17822319242281945
-  },
-  "weighted_blend_validation_mae": {
-    "xgboost": 1340.9525146484375,
-    "random_forest": 1211.0790645242105,
-    "linear_regression": 2934.1986521269914
-  },
-  "residual_model_path": null,
-  "residual_correction_enabled": false,
+  "data_dir": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\data",
+  "trained_at_utc": "2026-03-24T14:23:47.985257+00:00",
   "calibration_enabled": false,
   "calibration_type": null,
-  "raw_metrics_for_best_model": {
-    "mae": 691.7759513163114,
-    "rmse": 946.5689444244912,
-    "r2": 0.15780681133124652,
-    "mape": 13.379518484886646,
-    "median_abs_error": 550.68170002841,
-    "max_abs_error": 2127.0581980049683,
-    "share_abs_error_le_500": 0.4,
-    "share_abs_error_le_800": 0.7333333333333333,
-    "share_abs_error_le_1000": 0.7333333333333333
-  },
-  "calibrated_metrics_for_best_model": null,
-  "calibration_training_method": "split train into base_train and calibration_validation, fit calibrator on validation predictions, retrain base model on full train",
   "calibration_params": null,
-  "feature_reduction_comparison": {
-    "xgboost_mae_before_full_reference": 1118.0737630208334,
-    "xgboost_mae_after_reduced": 726.0639973958333,
-    "mae_delta_after_minus_before": -392.0097656250001,
-    "mae_delta_pct": -35.06117204341335,
-    "full_reference_feature_count": 29,
-    "reduced_feature_count": 19
-  },
-  "xgboost_raw_mae": 726.0639973958333,
-  "xgboost_log_mae": 691.7759513163114,
-  "weighted_model_mae": 819.5231845722936,
-  "log_transform_improved_mae": true,
-  "weighting_improved_mae": false
+  "residual_correction_enabled": false
 }
