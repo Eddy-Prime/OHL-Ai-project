@@ -80,6 +80,25 @@ def build_summary(regenerate_plots=False):
         summary_lines.append(f"XGBoost MAE after reduction: {float(after_mae):.2f}")
         summary_lines.append(f"MAE delta after reduction (%): {float(delta_pct):.2f}")
 
+    weather_enabled = bool(metadata.get("use_weather_api", False))
+    weather_stats = metadata.get("weather_enrichment_stats", {})
+    summary_lines.append(f"Weather API enabled: {weather_enabled}")
+    if isinstance(weather_stats, dict) and len(weather_stats) > 0:
+        summary_lines.append(f"Weather rows enriched: {int(weather_stats.get('rows_enriched', 0))}")
+        summary_lines.append(f"Weather API failures: {int(weather_stats.get('api_failures', 0))}")
+
+    weather_impact_path = OUTPUTS_DIR / "weather_impact_comparison.csv"
+    if weather_impact_path.exists():
+        weather_impact_df = pd.read_csv(weather_impact_path)
+        summary_lines.append(f"Weather impact comparison file: {weather_impact_path}")
+        if len(weather_impact_df) > 0:
+            best_model_weather_row = weather_impact_df[weather_impact_df["model"] == best_model_name]
+            if len(best_model_weather_row) > 0:
+                row = best_model_weather_row.iloc[0]
+                summary_lines.append(
+                    f"Weather impact for {best_model_name}: MAE without={float(row['mae_without_weather']):.2f}, with={float(row['mae_with_weather']):.2f}, delta%={float(row['delta_mae_pct']):.2f}"
+                )
+
     calibration_enabled = bool(metadata.get("calibration_enabled", False))
     calibration_type = metadata.get("calibration_type")
     raw_metrics = metadata.get("raw_metrics_for_best_model")

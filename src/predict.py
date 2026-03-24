@@ -7,7 +7,7 @@ import joblib
 import pandas as pd
 
 from .calibration import apply_linear_calibrator, apply_multiplicative_calibrator
-from .config import BEST_MODEL_ARTIFACT_PATH, BEST_MODEL_METADATA_PATH, DEFAULT_DATA_DIR, NEW_MATCH_PREDICTIONS_PATH
+from .config import BEST_MODEL_ARTIFACT_PATH, BEST_MODEL_METADATA_PATH, DEFAULT_DATA_DIR, NEW_MATCH_PREDICTIONS_PATH, WEATHER_API_ENABLED_DEFAULT
 from .data_loader import load_raw_tables
 from .features import USER_INPUT_FEATURES, build_inference_dataset, prepare_inference_features
 from .utils import ensure_directories
@@ -69,6 +69,7 @@ def predict_from_file(
     model_path=BEST_MODEL_ARTIFACT_PATH,
     metadata_path=BEST_MODEL_METADATA_PATH,
     output_file=NEW_MATCH_PREDICTIONS_PATH,
+    use_weather_api=WEATHER_API_ENABLED_DEFAULT,
 ):
     input_path = Path(input_file)
     if not input_path.exists():
@@ -81,7 +82,12 @@ def predict_from_file(
         raise ValueError(f"Missing required input columns: {', '.join(missing_required)}")
 
     tables = load_raw_tables(data_dir)
-    inference_dataset, inference_stats = build_inference_dataset(tables=tables, new_matches_df=raw_input, return_stats=True)
+    inference_dataset, inference_stats = build_inference_dataset(
+        tables=tables,
+        new_matches_df=raw_input,
+        return_stats=True,
+        use_weather_api=use_weather_api,
+    )
 
     feature_columns = metadata.get("features_used", [])
     if not feature_columns:
@@ -102,6 +108,26 @@ def predict_from_file(
     result["raw_predicted_attendance"] = np.asarray(raw_predictions, dtype=float)
     result["predicted_attendance"] = predictions
 
+    weather_columns = [
+        "weather_temp_mean_c",
+        "weather_precipitation_mm",
+        "weather_rain_mm",
+        "weather_windspeed_max_kmh",
+        "weather_bad_flag",
+        "weather_source",
+    ]
+    for col in weather_columns:
+        if col in inference_dataset.columns:
+            result[col] = inference_dataset[col].values
+
+    weather_fallback_counts = {}
+    for col in ["weather_temp_mean_c", "weather_precipitation_mm", "weather_rain_mm", "weather_windspeed_max_kmh", "weather_bad_flag"]:
+        if col in feature_columns:
+            if col in inference_dataset.columns:
+                weather_fallback_counts[col] = int(inference_dataset[col].isna().sum())
+            else:
+                weather_fallback_counts[col] = int(len(inference_dataset))
+
     output_path = Path(output_file)
     ensure_directories([output_path.parent])
     result.to_csv(output_path, index=False)
@@ -116,6 +142,9 @@ def predict_from_file(
         "auto_generated_features": inference_stats.get("auto_generated_features", []),
         "fallback_global_mean": float(inference_stats.get("fallback", {}).get("global_mean", 0.0)),
         "fallback_counts": inference_stats.get("fallback", {}).get("fallback_counts", {}),
+        "weather_api_enabled": bool(use_weather_api),
+        "weather_stats": inference_stats.get("weather", {}),
+        "weather_fallback_counts": weather_fallback_counts,
     }
     return result, summary
 
@@ -127,6 +156,7 @@ def parse_args():
     parser.add_argument("--model-path", type=str, default=str(BEST_MODEL_ARTIFACT_PATH))
     parser.add_argument("--metadata-path", type=str, default=str(BEST_MODEL_METADATA_PATH))
     parser.add_argument("--output-file", type=str, default=str(NEW_MATCH_PREDICTIONS_PATH))
+    parser.add_argument("--use-weather-api", action="store_true")
     return parser.parse_args()
 
 
@@ -138,6 +168,7 @@ def main():
         model_path=Path(args.model_path),
         metadata_path=Path(args.metadata_path),
         output_file=Path(args.output_file),
+        use_weather_api=args.use_weather_api,
     )
     print(f"Best model: {summary['best_model']}")
     print(f"Rows scored: {summary['rows_scored']}")
@@ -146,6 +177,9 @@ def main():
     print(f"Auto-generated features: {', '.join(summary['auto_generated_features'])}")
     print(f"Lag fallback global mean: {summary['fallback_global_mean']:.2f}")
     print(f"Lag fallback counts: {summary['fallback_counts']}")
+    print(f"Weather API enabled: {summary['weather_api_enabled']}")
+    print(f"Weather fetch stats: {summary['weather_stats']}")
+    print(f"Weather fallback counts: {summary['weather_fallback_counts']}")
     print(f"Saved: {summary['output_file']}")
 
 

@@ -27,6 +27,8 @@ from .config import (
     REPORTS_DIR,
     TARGET_COLUMN,
     TEST_SIZE,
+    WEATHER_API_ENABLED_DEFAULT,
+    WEATHER_IMPACT_COMPARISON_PATH,
 )
 from .data_loader import load_raw_tables
 from .evaluate import (
@@ -71,6 +73,61 @@ MINIMAL_RESULTS_PATH = OUTPUTS_DIR / "minimal_feature_results.csv"
 MINIMAL_SUMMARY_PATH = OUTPUTS_DIR / "minimal_feature_summary.txt"
 MINIMAL_PLOT_PATH = OUTPUTS_DIR / "minimal_feature_plot.png"
 CALIBRATION_VALIDATION_SIZE = 0.2
+
+
+def run_weather_impact_comparison(
+    data_dir=DEFAULT_DATA_DIR,
+    tune_rf=False,
+    tune_xgb=False,
+    tune_catboost=False,
+    use_log_target=False,
+    run_ablation=False,
+    run_feature_minimization=False,
+    use_calibration=False,
+):
+    without_weather = run_pipeline(
+        data_dir=data_dir,
+        tune_rf=tune_rf,
+        tune_xgb=tune_xgb,
+        tune_catboost=tune_catboost,
+        use_log_target=use_log_target,
+        run_ablation=run_ablation,
+        run_feature_minimization=run_feature_minimization,
+        use_calibration=use_calibration,
+        use_weather_api=False,
+    )
+    with_weather = run_pipeline(
+        data_dir=data_dir,
+        tune_rf=tune_rf,
+        tune_xgb=tune_xgb,
+        tune_catboost=tune_catboost,
+        use_log_target=use_log_target,
+        run_ablation=run_ablation,
+        run_feature_minimization=run_feature_minimization,
+        use_calibration=use_calibration,
+        use_weather_api=True,
+    )
+
+    without_df = without_weather["comparison"][["model", "mae", "rmse", "mape"]].rename(
+        columns={"mae": "mae_without_weather", "rmse": "rmse_without_weather", "mape": "mape_without_weather"}
+    )
+    with_df = with_weather["comparison"][["model", "mae", "rmse", "mape"]].rename(
+        columns={"mae": "mae_with_weather", "rmse": "rmse_with_weather", "mape": "mape_with_weather"}
+    )
+    comparison = without_df.merge(with_df, on="model", how="outer")
+    comparison["delta_mae_pct"] = np.where(
+        comparison["mae_without_weather"].notna() & (comparison["mae_without_weather"] != 0),
+        (comparison["mae_with_weather"] - comparison["mae_without_weather"]) / comparison["mae_without_weather"] * 100.0,
+        np.nan,
+    )
+    comparison = comparison.sort_values("model").reset_index(drop=True)
+    save_csv(comparison, WEATHER_IMPACT_COMPARISON_PATH)
+    return {
+        "without_weather": without_weather,
+        "with_weather": with_weather,
+        "comparison": comparison,
+        "output_path": str(WEATHER_IMPACT_COMPARISON_PATH),
+    }
 
 
 def _fit_model(model_name, x_train, y_train, tune_rf, tune_xgb):
@@ -440,11 +497,12 @@ def run_pipeline(
     run_ablation=False,
     run_feature_minimization=False,
     use_calibration=False,
+    use_weather_api=WEATHER_API_ENABLED_DEFAULT,
 ):
     ensure_directories([OUTPUTS_DIR, PREDICTIONS_DIR, FEATURE_IMPORTANCE_DIR, MODELS_DIR, REPORTS_DIR])
 
     tables = load_raw_tables(data_dir)
-    match_level_df = build_match_level_dataset(tables)
+    match_level_df, dataset_stats = build_match_level_dataset(tables, use_weather_api=use_weather_api, return_stats=True)
 
     feature_columns = get_feature_columns(match_level_df)
     x, y, meta = split_features_target(match_level_df, feature_columns)
@@ -648,6 +706,8 @@ def run_pipeline(
         "features_used": feature_columns,
         "user_input_features": ["match_date", "away_team", "stage", "kickoff_time"],
         "feature_fill_values": feature_fill_values,
+        "use_weather_api": bool(use_weather_api),
+        "weather_enrichment_stats": dataset_stats.get("weather", {}),
         "target_column": TARGET_COLUMN,
         "use_log_target": False,
         "metrics_by_model": {name: payload["metrics"] for name, payload in all_results.items()},
@@ -698,7 +758,12 @@ def run_pipeline(
         f"Median Abs Error: {best_model_payload['metrics']['median_abs_error']:.2f}",
         f"Predictions file: {PREDICTIONS_DIR / 'new_match_predictions.csv'}",
         f"Reduced features: {len(feature_columns)}",
+        f"Weather API enabled: {bool(use_weather_api)}",
     ]
+    if isinstance(dataset_stats.get("weather"), dict):
+        weather_stats = dataset_stats["weather"]
+        summary_lines.append(f"Weather rows enriched: {int(weather_stats.get('rows_enriched', 0))}")
+        summary_lines.append(f"Weather API failures: {int(weather_stats.get('api_failures', 0))}")
     if calibration_enabled_for_best:
         summary_lines.append(f"Calibration enabled: True")
         summary_lines.append(f"Calibration type: {calibration_type_for_best}")
@@ -740,11 +805,28 @@ def parse_args():
     parser.add_argument("--run-ablation", action="store_true")
     parser.add_argument("--run-feature-minimization", action="store_true")
     parser.add_argument("--use-calibration", action="store_true")
+    parser.add_argument("--use-weather-api", action="store_true")
+    parser.add_argument("--compare-weather-impact", action="store_true")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    if args.compare_weather_impact:
+        comparison_result = run_weather_impact_comparison(
+            data_dir=Path(args.data_dir),
+            tune_rf=args.tune_rf,
+            tune_xgb=args.tune_xgb,
+            tune_catboost=args.tune_catboost,
+            use_log_target=args.use_log_target,
+            run_ablation=args.run_ablation,
+            run_feature_minimization=args.run_feature_minimization,
+            use_calibration=args.use_calibration,
+        )
+        print(comparison_result["comparison"].to_string(index=False))
+        print(f"Saved weather impact comparison: {comparison_result['output_path']}")
+        return
+
     result = run_pipeline(
         data_dir=Path(args.data_dir),
         tune_rf=args.tune_rf,
@@ -754,6 +836,7 @@ def main():
         run_ablation=args.run_ablation,
         run_feature_minimization=args.run_feature_minimization,
         use_calibration=args.use_calibration,
+        use_weather_api=args.use_weather_api,
     )
     print(result["comparison"].to_string(index=False))
     print(f"Best model: {result['run_info']['best_model_name']}")
@@ -767,6 +850,7 @@ def main():
         print(f"MAE delta (%): {delta_pct:.2f}")
     if result["run_info"].get("calibration_enabled", False):
         print(f"Calibration type: {result['run_info'].get('calibration_type')}")
+    print(f"Weather API enabled: {result['run_info'].get('use_weather_api', False)}")
     if result["minimization"] is not None:
         print(f"Feature minimization best set: {result['minimization']['best_feature_set']}")
         print(f"Feature minimization smallest acceptable set: {result['minimization']['smallest_acceptable_feature_set']}")

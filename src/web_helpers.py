@@ -37,6 +37,7 @@ def run_prediction_from_frame(
     data_dir: Path = DEFAULT_DATA_DIR,
     model_path: Path = BEST_MODEL_ARTIFACT_PATH,
     metadata_path: Path = BEST_MODEL_METADATA_PATH,
+    use_weather_api: bool = False,
 ):
     with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False, encoding="utf-8") as input_tmp:
         input_path = Path(input_tmp.name)
@@ -51,6 +52,7 @@ def run_prediction_from_frame(
             model_path=model_path,
             metadata_path=metadata_path,
             output_file=output_path,
+            use_weather_api=use_weather_api,
         )
         return result_df, summary
     finally:

@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from src.config import BEST_MODEL_ARTIFACT_PATH, BEST_MODEL_METADATA_PATH, DEFAULT_DATA_DIR, FEATURE_IMPORTANCE_DIR, OUTPUTS_DIR, PREDICTIONS_DIR
+from src.config import BEST_MODEL_ARTIFACT_PATH, BEST_MODEL_METADATA_PATH, DEFAULT_DATA_DIR, FEATURE_IMPORTANCE_DIR, OUTPUTS_DIR, PREDICTIONS_DIR, WEATHER_API_ENABLED_DEFAULT
 from src.web_helpers import (
     build_interpretation,
     build_prediction_export_frame,
@@ -78,6 +78,7 @@ if submitted:
         data_dir=Path(DEFAULT_DATA_DIR),
         model_path=Path(BEST_MODEL_ARTIFACT_PATH),
         metadata_path=Path(BEST_MODEL_METADATA_PATH),
+        use_weather_api=WEATHER_API_ENABLED_DEFAULT,
     )
 
     predicted = float(pred_df.iloc[0]["predicted_attendance"])
@@ -92,6 +93,15 @@ if submitted:
     r2.metric("Lower estimate", format_int_like(lower_mae))
     r3.metric("Upper estimate", format_int_like(upper_mae))
     st.caption(f"MAE range: {format_int_like(lower_mae)} to {format_int_like(upper_mae)} | Median absolute error range: {format_int_like(lower_med)} to {format_int_like(upper_med)}")
+
+    weather_cols = ["weather_temp_mean_c", "weather_rain_mm", "weather_windspeed_max_kmh", "weather_bad_flag"]
+    if WEATHER_API_ENABLED_DEFAULT and all(col in pred_df.columns for col in weather_cols):
+        st.subheader("Weather Summary")
+        w1, w2, w3, w4 = st.columns(4)
+        w1.metric("Temperature (C)", f"{float(pred_df.iloc[0]['weather_temp_mean_c']):.1f}" if pd.notna(pred_df.iloc[0]["weather_temp_mean_c"]) else "N/A")
+        w2.metric("Rain (mm)", f"{float(pred_df.iloc[0]['weather_rain_mm']):.1f}" if pd.notna(pred_df.iloc[0]["weather_rain_mm"]) else "N/A")
+        w3.metric("Wind max (km/h)", f"{float(pred_df.iloc[0]['weather_windspeed_max_kmh']):.1f}" if pd.notna(pred_df.iloc[0]["weather_windspeed_max_kmh"]) else "N/A")
+        w4.metric("Bad weather flag", f"{int(float(pred_df.iloc[0]['weather_bad_flag']))}" if pd.notna(pred_df.iloc[0]["weather_bad_flag"]) else "N/A")
 
     context = compute_context_statistics(history_df=history_df, match_date=match_date, away_team=away_team)
 

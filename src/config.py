@@ -7,6 +7,7 @@ OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 PREDICTIONS_DIR = OUTPUTS_DIR / "predictions"
 FEATURE_IMPORTANCE_DIR = OUTPUTS_DIR / "feature_importance"
 REPORTS_DIR = OUTPUTS_DIR / "reports"
+WEATHER_CACHE_DIR = PROJECT_ROOT / "data_cache" / "weather"
 MODELS_DIR = PROJECT_ROOT / "models"
 MODEL_ARTIFACT_PATH = MODELS_DIR / "trained_random_forest.joblib"
 MODEL_METADATA_PATH = MODELS_DIR / "model_metadata.json"
@@ -14,7 +15,18 @@ NEW_MATCH_PREDICTIONS_PATH = PREDICTIONS_DIR / "new_match_predictions.csv"
 DATA_EXAMPLES_DIR = PROJECT_ROOT / "data_examples"
 BEST_MODEL_ARTIFACT_PATH = MODELS_DIR / "best_attendance_model.joblib"
 BEST_MODEL_METADATA_PATH = MODELS_DIR / "best_attendance_model_metadata.json"
+WEATHER_IMPACT_COMPARISON_PATH = OUTPUTS_DIR / "weather_impact_comparison.csv"
 MODEL_SCHEMA_VERSION = "2.0"
+
+OPEN_METEO_ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
+OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
+OPEN_METEO_TIMEOUT_SECONDS = 10
+STADIUM_LATITUDE = float(os.getenv("OHL_STADIUM_LATITUDE", "50.8798"))
+STADIUM_LONGITUDE = float(os.getenv("OHL_STADIUM_LONGITUDE", "4.7005"))
+STADIUM_TIMEZONE = os.getenv("OHL_STADIUM_TIMEZONE", "Europe/Brussels")
+WEATHER_API_ENABLED_DEFAULT = False
+BAD_WEATHER_RAIN_THRESHOLD = float(os.getenv("OHL_BAD_WEATHER_RAIN_THRESHOLD", "3.0"))
+BAD_WEATHER_WIND_THRESHOLD = float(os.getenv("OHL_BAD_WEATHER_WIND_THRESHOLD", "30.0"))
 
 RAW_FILES = {
     "match": "gold_match.csv",

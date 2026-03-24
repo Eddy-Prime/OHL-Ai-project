@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from .config import DATE_COLUMN, TARGET_COLUMN
+from .config import BAD_WEATHER_RAIN_THRESHOLD, BAD_WEATHER_WIND_THRESHOLD, DATE_COLUMN, TARGET_COLUMN
+from .weather import WEATHER_COLUMNS, enrich_weather_for_matches
 
 
 USER_INPUT_FEATURES = [DATE_COLUMN, "away_team", "stage", "kickoff_time"]
@@ -15,6 +16,11 @@ AUTO_GENERATED_FEATURES = [
     "month",
     "attendance_last_match",
     "attendance_last_3_avg",
+    "weather_temp_mean_c",
+    "weather_precipitation_mm",
+    "weather_rain_mm",
+    "weather_windspeed_max_kmh",
+    "weather_bad_flag",
 ]
 REMOVABLE_FEATURES = [
     "weather_temp_mean_c",
@@ -39,6 +45,11 @@ FEATURE_COLUMNS = [
     "is_midweek",
     "kickoff_hour",
     "month",
+    "weather_temp_mean_c",
+    "weather_precipitation_mm",
+    "weather_rain_mm",
+    "weather_windspeed_max_kmh",
+    "weather_bad_flag",
     "attendance_last_match",
     "attendance_last_3_avg",
 ]
@@ -57,8 +68,10 @@ FULL_REFERENCE_COLUMNS = [
     "kickoff_hour",
     "month",
     "weather_temp_mean_c",
+    "weather_precipitation_mm",
     "weather_rain_mm",
     "weather_windspeed_max_kmh",
+    "weather_bad_flag",
     "seasonpass_holders",
     "promo_tickets_total",
     "pct_free_tickets",
@@ -171,7 +184,15 @@ def _prepare_context(df_context):
         if col in df.columns:
             df[col] = _to_bool_series(df[col]).fillna(False)
 
-    numeric_cols = ["weather_temp_mean_c", "weather_rain_mm", "weather_windspeed_max_kmh", "promo_tickets_total", "pct_free_tickets"]
+    numeric_cols = [
+        "weather_temp_mean_c",
+        "weather_precipitation_mm",
+        "weather_rain_mm",
+        "weather_windspeed_max_kmh",
+        "weather_bad_flag",
+        "promo_tickets_total",
+        "pct_free_tickets",
+    ]
     for col in numeric_cols:
         if col in df.columns:
             df[col] = _safe_numeric(df[col])
@@ -184,8 +205,10 @@ def _prepare_context(df_context):
         "is_public_holiday",
         "is_school_holiday_flanders",
         "weather_temp_mean_c",
+        "weather_precipitation_mm",
         "weather_rain_mm",
         "weather_windspeed_max_kmh",
+        "weather_bad_flag",
         "has_promotion",
         "promo_tickets_total",
         "pct_free_tickets",
@@ -302,8 +325,10 @@ def _normalize_types(df):
         "kickoff_hour",
         "month",
         "weather_temp_mean_c",
+        "weather_precipitation_mm",
         "weather_rain_mm",
         "weather_windspeed_max_kmh",
+        "weather_bad_flag",
         "seasonpass_holders",
         "promo_tickets_total",
         "pct_free_tickets",
@@ -317,6 +342,81 @@ def _normalize_types(df):
             out[col] = _safe_numeric(out[col])
 
     return out
+
+
+def _refresh_weather_bad_flag(df):
+    out = df.copy()
+    for col in ["weather_rain_mm", "weather_windspeed_max_kmh"]:
+        if col not in out.columns:
+            out[col] = np.nan
+        out[col] = _safe_numeric(out[col])
+
+    rain = out["weather_rain_mm"].fillna(0.0)
+    wind = out["weather_windspeed_max_kmh"].fillna(0.0)
+    out["weather_bad_flag"] = ((rain > BAD_WEATHER_RAIN_THRESHOLD) | (wind > BAD_WEATHER_WIND_THRESHOLD)).astype(float)
+    return out
+
+
+def _apply_weather_enrichment(df, use_weather_api=False, enrich_only_unobserved=False):
+    out = df.copy()
+    non_derived_weather_cols = ["weather_temp_mean_c", "weather_precipitation_mm", "weather_rain_mm", "weather_windspeed_max_kmh"]
+    for col in WEATHER_COLUMNS:
+        if col not in out.columns:
+            out[col] = np.nan
+
+    existing_weather_mask = out[[c for c in non_derived_weather_cols if c in out.columns]].notna().any(axis=1)
+    target_mask = pd.Series(True, index=out.index)
+    if enrich_only_unobserved and "is_observed" in out.columns:
+        target_mask = ~_to_bool_series(out["is_observed"])
+
+    weather_info = {
+        "enabled": bool(use_weather_api),
+        "rows_requested": int(target_mask.sum()),
+        "rows_enriched": 0,
+        "filled_cells": 0,
+        "historical_calls": 0,
+        "forecast_calls": 0,
+        "cache_hits": 0,
+        "api_failures": 0,
+    }
+
+    if use_weather_api and target_mask.any():
+        weather_input = out.loc[target_mask, ["match_id", DATE_COLUMN]].copy()
+        if "is_observed" in out.columns:
+            weather_input["is_observed"] = out.loc[target_mask, "is_observed"].values
+        weather_df, api_stats = enrich_weather_for_matches(match_df=weather_input, date_column=DATE_COLUMN, use_weather_api=True)
+        weather_info.update(api_stats)
+
+        if len(weather_df) > 0:
+            out = out.merge(weather_df, on="match_id", how="left", suffixes=("", "_api"))
+            for col in WEATHER_COLUMNS:
+                api_col = f"{col}_api"
+                if api_col in out.columns:
+                    missing_mask = out[col].isna() & target_mask
+                    api_values = _safe_numeric(out[api_col])
+                    filled_now = int((missing_mask & api_values.notna()).sum())
+                    weather_info["filled_cells"] += filled_now
+                    out.loc[missing_mask, col] = api_values.loc[missing_mask]
+                    out = out.drop(columns=[api_col])
+
+            if "weather_source" in out.columns and "weather_source_api" in out.columns:
+                out["weather_source"] = out["weather_source"].fillna(out["weather_source_api"])
+                out = out.drop(columns=["weather_source_api"])
+            elif "weather_source_api" in out.columns:
+                out["weather_source"] = out["weather_source_api"]
+                out = out.drop(columns=["weather_source_api"])
+
+    if "weather_source" not in out.columns:
+        out["weather_source"] = ""
+    out["weather_source"] = out["weather_source"].astype(str)
+
+    out.loc[existing_weather_mask, "weather_source"] = "source_table"
+    out = _refresh_weather_bad_flag(out)
+
+    enriched_mask = out[[c for c in non_derived_weather_cols if c in out.columns]].notna().any(axis=1)
+    if target_mask.any():
+        weather_info["rows_enriched"] = int((enriched_mask & target_mask).sum())
+    return out, weather_info
 
 
 def _build_feature_table(match_df, context_df, tickets_df, trends_df, articles_df):
@@ -350,7 +450,7 @@ def _apply_inference_fallbacks(df):
     return out, {"global_mean": global_mean, "fallback_counts": fallback_counts}
 
 
-def build_match_level_dataset(tables):
+def build_match_level_dataset(tables, use_weather_api=False, return_stats=False):
     match_df = _prepare_match(tables["match"])
     context_df = _prepare_context(tables.get("context", pd.DataFrame()))
     tickets_df = _prepare_tickets(tables.get("tickets", pd.DataFrame()))
@@ -359,13 +459,16 @@ def build_match_level_dataset(tables):
 
     match_df["is_observed"] = True
     merged = _build_feature_table(match_df, context_df, tickets_df, trends_df, articles_df)
+    merged, weather_stats = _apply_weather_enrichment(merged, use_weather_api=use_weather_api, enrich_only_unobserved=False)
     merged = merged[merged["is_home_match"]].copy()
     merged = merged.dropna(subset=[TARGET_COLUMN]).copy()
     merged = merged.sort_values([DATE_COLUMN, "kickoff_hour", "match_id"]).reset_index(drop=True)
+    if return_stats:
+        return merged, {"weather": weather_stats}
     return merged
 
 
-def build_inference_dataset(tables, new_matches_df, return_stats=False):
+def build_inference_dataset(tables, new_matches_df, return_stats=False, use_weather_api=False):
     historical_match_df = _prepare_match(tables["match"])
     context_df = _prepare_context(tables.get("context", pd.DataFrame()))
     tickets_df = _prepare_tickets(tables.get("tickets", pd.DataFrame()))
@@ -399,6 +502,7 @@ def build_inference_dataset(tables, new_matches_df, return_stats=False):
     combined = pd.concat([historical_aligned, incoming_aligned], ignore_index=True)
 
     merged = _build_feature_table(combined, context_df, tickets_df, trends_df, articles_df)
+    merged, weather_stats = _apply_weather_enrichment(merged, use_weather_api=use_weather_api, enrich_only_unobserved=True)
     merged, fallback_stats = _apply_inference_fallbacks(merged)
     inference_only = merged[~_to_bool_series(merged["is_observed"])].copy()
     inference_only = inference_only.sort_values([DATE_COLUMN, "kickoff_hour", "match_id"]).reset_index(drop=True)
@@ -408,6 +512,7 @@ def build_inference_dataset(tables, new_matches_df, return_stats=False):
             "user_input_features": USER_INPUT_FEATURES,
             "auto_generated_features": AUTO_GENERATED_FEATURES,
             "fallback": fallback_stats,
+            "weather": weather_stats,
         }
         return inference_only, stats
     return inference_only

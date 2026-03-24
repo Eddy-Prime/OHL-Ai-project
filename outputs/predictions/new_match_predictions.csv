@@ -1,3 +1,2 @@
-match_date,away_team,stage,kickoff_time,raw_predicted_attendance,predicted_attendance
-2026-09-12,Club Brugge,Regular Season,20:45:00,7595.217514546933,7595.217514546933
-2026-09-20,RSC Anderlecht,Regular Season,18:30:00,6156.728439483257,6156.728439483257
+match_date,away_team,stage,kickoff_time,raw_predicted_attendance,predicted_attendance,weather_temp_mean_c,weather_precipitation_mm,weather_rain_mm,weather_windspeed_max_kmh,weather_bad_flag,weather_source
+2026-08-12,Club Brugge,Regular Season,20:45:00,6121.850021392095,6121.850021392095,,,,,0.0,unavailable

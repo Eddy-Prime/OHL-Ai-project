@@ -1,13 +1,16 @@
 Attendance Prediction Project Report
 Best model: ensemble_raw
-MAE: 900.12
-RMSE: 1075.03
-R2: -0.0863
-MAPE: 16.92
-Median Abs Error: 631.22
+MAE: 795.00
+RMSE: 1031.67
+R2: -0.0004
+MAPE: 15.69
+Median Abs Error: 569.21
 Predictions file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv
-Reduced features: 11
+Reduced features: 16
+Weather API enabled: True
+Weather rows enriched: 142
+Weather API failures: 0
 Calibration enabled: False
-XGBoost MAE before reduction: 1107.79
-XGBoost MAE after reduction: 925.82
-MAE delta: -181.96 (-16.43%)
+XGBoost MAE before reduction: 1128.49
+XGBoost MAE after reduction: 803.31
+MAE delta: -325.18 (-28.82%)
