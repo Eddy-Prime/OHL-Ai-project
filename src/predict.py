@@ -6,6 +6,7 @@ import numpy as np
 import joblib
 import pandas as pd
 
+from .calibration import apply_linear_calibrator, apply_multiplicative_calibrator
 from .config import BEST_MODEL_ARTIFACT_PATH, BEST_MODEL_METADATA_PATH, DEFAULT_DATA_DIR, NEW_MATCH_PREDICTIONS_PATH
 from .data_loader import load_raw_tables
 from .features import build_inference_dataset, prepare_inference_features
@@ -47,6 +48,21 @@ def _predict_ensemble(metadata, model_input):
     return np.maximum(pred, 0.0)
 
 
+def _apply_optional_calibration(metadata, raw_predictions):
+    if not bool(metadata.get("calibration_enabled", False)):
+        return np.maximum(np.asarray(raw_predictions, dtype=float), 0.0)
+
+    calibration_type = metadata.get("calibration_type")
+    calibration_params = metadata.get("calibration_params") or {}
+
+    if calibration_type == "linear":
+        return apply_linear_calibrator(y_pred=raw_predictions, model_or_params=calibration_params)
+    if calibration_type == "multiplicative":
+        k = float(calibration_params.get("k", 1.0))
+        return apply_multiplicative_calibrator(y_pred=raw_predictions, k=k)
+    return np.maximum(np.asarray(raw_predictions, dtype=float), 0.0)
+
+
 def predict_from_file(
     input_file,
     data_dir=DEFAULT_DATA_DIR,
@@ -71,11 +87,14 @@ def predict_from_file(
 
     best_model_name = metadata.get("best_model_name", "unknown")
     if best_model_name == "ensemble":
-        predictions = _predict_ensemble(metadata=metadata, model_input=model_input)
+        raw_predictions = _predict_ensemble(metadata=metadata, model_input=model_input)
     else:
-        predictions = _predict_single_model(model_path=model_path, model_input=model_input)
+        raw_predictions = _predict_single_model(model_path=model_path, model_input=model_input)
+
+    predictions = _apply_optional_calibration(metadata=metadata, raw_predictions=raw_predictions)
 
     result = raw_input.copy()
+    result["raw_predicted_attendance"] = np.asarray(raw_predictions, dtype=float)
     result["predicted_attendance"] = predictions
 
     output_path = Path(output_file)

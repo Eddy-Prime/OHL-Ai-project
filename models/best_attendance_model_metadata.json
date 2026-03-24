@@ -1,14 +1,19 @@
 {
   "schema_version": "2.0",
-  "best_model_name": "xgboost",
+  "best_model_name": "linear_regression_calibrated",
+  "best_model_base_name": "linear_regression",
   "primary_candidate": "xgboost",
   "tested_model_names": [
     "mean_baseline",
     "opponent_mean_baseline",
-    "linear_regression",
-    "random_forest",
-    "xgboost",
-    "ensemble"
+    "linear_regression_raw",
+    "linear_regression_calibrated",
+    "random_forest_raw",
+    "random_forest_calibrated",
+    "xgboost_raw",
+    "xgboost_calibrated",
+    "ensemble_raw",
+    "ensemble_calibrated"
   ],
   "rows_total": 71,
   "rows_train": 56,
@@ -64,7 +69,7 @@
       "share_abs_error_le_800": 0.26666666666666666,
       "share_abs_error_le_1000": 0.4666666666666667
     },
-    "linear_regression": {
+    "linear_regression_raw": {
       "mae": 1685.2378519068538,
       "rmse": 1979.536839032406,
       "r2": -2.6832771418745387,
@@ -75,18 +80,40 @@
       "share_abs_error_le_800": 0.26666666666666666,
       "share_abs_error_le_1000": 0.3333333333333333
     },
-    "random_forest": {
-      "mae": 1328.9285450567152,
-      "rmse": 1692.7421392716838,
-      "r2": -1.6933254354450384,
-      "mape": 26.040240541773247,
+    "linear_regression_calibrated": {
+      "mae": 832.1752529290756,
+      "rmse": 1157.7391330235369,
+      "r2": -0.259878450364766,
+      "mape": 17.28007002447973,
+      "median_abs_error": 452.32105985729595,
+      "max_abs_error": 2468.9719961989576,
+      "share_abs_error_le_500": 0.6,
+      "share_abs_error_le_800": 0.6666666666666666,
+      "share_abs_error_le_1000": 0.6666666666666666
+    },
+    "random_forest_raw": {
+      "mae": 1328.9285450567145,
+      "rmse": 1692.7421392716828,
+      "r2": -1.6933254354450353,
+      "mape": 26.040240541773237,
       "median_abs_error": 990.520457671958,
-      "max_abs_error": 3210.456416549825,
+      "max_abs_error": 3210.4564165498223,
       "share_abs_error_le_500": 0.26666666666666666,
       "share_abs_error_le_800": 0.4,
       "share_abs_error_le_1000": 0.5333333333333333
     },
-    "xgboost": {
+    "random_forest_calibrated": {
+      "mae": 1201.8702884545646,
+      "rmse": 1492.0464862795352,
+      "r2": -1.0925311397985356,
+      "mape": 23.656537575813893,
+      "median_abs_error": 794.8176675706036,
+      "max_abs_error": 2967.12427649405,
+      "share_abs_error_le_500": 0.26666666666666666,
+      "share_abs_error_le_800": 0.5333333333333333,
+      "share_abs_error_le_1000": 0.5333333333333333
+    },
+    "xgboost_raw": {
       "mae": 1107.7858723958334,
       "rmse": 1415.8854667087098,
       "r2": -0.8843582312783926,
@@ -97,31 +124,53 @@
       "share_abs_error_le_800": 0.4666666666666667,
       "share_abs_error_le_1000": 0.6
     },
-    "ensemble": {
+    "xgboost_calibrated": {
+      "mae": 986.5538603555887,
+      "rmse": 1242.4052964562798,
+      "r2": -0.45088773497176504,
+      "mape": 19.813135828414463,
+      "median_abs_error": 711.1175726268702,
+      "max_abs_error": 2754.8472733414583,
+      "share_abs_error_le_500": 0.3333333333333333,
+      "share_abs_error_le_800": 0.5333333333333333,
+      "share_abs_error_le_1000": 0.6
+    },
+    "ensemble_raw": {
       "mae": 1156.1837240058596,
       "rmse": 1485.0952064675803,
       "r2": -1.0730788157126718,
-      "mape": 22.742587588951515,
+      "mape": 22.74258758895152,
       "median_abs_error": 891.4457040071466,
       "max_abs_error": 3093.0181749649464,
       "share_abs_error_le_500": 0.3333333333333333,
       "share_abs_error_le_800": 0.4666666666666667,
       "share_abs_error_le_1000": 0.6
+    },
+    "ensemble_calibrated": {
+      "mae": 1040.6236465196405,
+      "rmse": 1308.024816717398,
+      "r2": -0.6081967818085972,
+      "mape": 20.807742051324645,
+      "median_abs_error": 792.206276177234,
+      "max_abs_error": 2830.434468182785,
+      "share_abs_error_le_500": 0.3333333333333333,
+      "share_abs_error_le_800": 0.6,
+      "share_abs_error_le_1000": 0.6
     }
   },
   "best_metrics": {
-    "mae": 1107.7858723958334,
-    "rmse": 1415.8854667087098,
-    "r2": -0.8843582312783926,
-    "mape": 21.76088315537498,
-    "median_abs_error": 878.5107421875,
-    "max_abs_error": 3042.6875,
-    "share_abs_error_le_500": 0.3333333333333333,
-    "share_abs_error_le_800": 0.4666666666666667,
-    "share_abs_error_le_1000": 0.6
+    "mae": 832.1752529290756,
+    "rmse": 1157.7391330235369,
+    "r2": -0.259878450364766,
+    "mape": 17.28007002447973,
+    "median_abs_error": 452.32105985729595,
+    "max_abs_error": 2468.9719961989576,
+    "share_abs_error_le_500": 0.6,
+    "share_abs_error_le_800": 0.6666666666666666,
+    "share_abs_error_le_1000": 0.6666666666666666
   },
   "data_dir": "C:\\Users\\ASUS\\Desktop\\International Project\\Data",
-  "trained_at_utc": "2026-03-23T13:46:58.904206+00:00",
+  "trained_at_utc": "2026-03-23T14:16:52.865438+00:00",
   "component_model_paths": {
     "random_forest": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\models\\random_forest_model.joblib",
     "xgboost": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\models\\xgboost_model.joblib"
@@ -129,5 +178,34 @@
   "ensemble_weights": {
     "xgboost": 0.7,
     "random_forest": 0.3
+  },
+  "calibration_enabled": true,
+  "calibration_type": "linear",
+  "raw_metrics_for_best_model": {
+    "mae": 1685.2378519068538,
+    "rmse": 1979.536839032406,
+    "r2": -2.6832771418745387,
+    "mape": 31.556570622411574,
+    "median_abs_error": 1580.0925930127823,
+    "max_abs_error": 3435.5460376129877,
+    "share_abs_error_le_500": 0.2,
+    "share_abs_error_le_800": 0.26666666666666666,
+    "share_abs_error_le_1000": 0.3333333333333333
+  },
+  "calibrated_metrics_for_best_model": {
+    "mae": 832.1752529290756,
+    "rmse": 1157.7391330235369,
+    "r2": -0.259878450364766,
+    "mape": 17.28007002447973,
+    "median_abs_error": 452.32105985729595,
+    "max_abs_error": 2468.9719961989576,
+    "share_abs_error_le_500": 0.6,
+    "share_abs_error_le_800": 0.6666666666666666,
+    "share_abs_error_le_1000": 0.6666666666666666
+  },
+  "calibration_training_method": "split train into base_train and calibration_validation, fit calibrator on validation predictions, retrain base model on full train",
+  "calibration_params": {
+    "a": 0.2991073886861341,
+    "b": 4387.701158840003
   }
 }

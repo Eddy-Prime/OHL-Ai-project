@@ -32,6 +32,25 @@ FEATURE_COLUMNS = [
 ]
 
 
+FEATURE_MINIMIZATION_GROUPS = {
+    "minimal_core": ["stage", "away_team", "matchday"],
+    "minimal_plus_timing": ["stage", "away_team", "matchday", "weekday_name", "kickoff_hour", "month"],
+    "minimal_plus_lag": ["stage", "away_team", "matchday", "attendance_last_match", "attendance_last_3_avg"],
+    "minimal_plus_ticketing": ["stage", "away_team", "matchday", "seasonpass_holders", "pct_free_tickets"],
+    "minimal_plus_media": ["stage", "away_team", "matchday", "ohl_interest", "num_articles"],
+    "compact_best_practice": [
+        "stage",
+        "away_team",
+        "matchday",
+        "attendance_last_match",
+        "attendance_last_3_avg",
+        "seasonpass_holders",
+        "ohl_interest",
+    ],
+    "full_current": FEATURE_COLUMNS,
+}
+
+
 def _to_bool_series(series):
     if series.dtype == bool:
         return series
@@ -283,6 +302,23 @@ def build_inference_dataset(tables, new_matches_df):
 
 def get_feature_columns(df):
     return [col for col in FEATURE_COLUMNS if col in df.columns]
+
+
+def get_feature_minimization_groups(df):
+    available_columns = set(df.columns)
+    groups = {}
+    for group_name, columns in FEATURE_MINIMIZATION_GROUPS.items():
+        selected = [col for col in columns if col in available_columns]
+        if len(selected) > 0:
+            groups[group_name] = selected
+    return groups
+
+
+def get_feature_group_columns(df, group_name):
+    groups = get_feature_minimization_groups(df)
+    if group_name not in groups:
+        raise ValueError(f"Unknown or unavailable feature group: {group_name}")
+    return groups[group_name]
 
 
 def split_features_target(df, feature_columns):

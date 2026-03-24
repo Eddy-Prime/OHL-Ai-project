@@ -70,12 +70,45 @@ def build_summary(regenerate_plots=False):
         "Top features:",
     ]
 
+    calibration_enabled = bool(metadata.get("calibration_enabled", False))
+    calibration_type = metadata.get("calibration_type")
+    raw_metrics = metadata.get("raw_metrics_for_best_model")
+    calibrated_metrics = metadata.get("calibrated_metrics_for_best_model")
+    summary_lines.append(f"Calibration enabled: {calibration_enabled}")
+    if calibration_enabled:
+        summary_lines.append(f"Calibration type: {calibration_type}")
+        if isinstance(raw_metrics, dict) and isinstance(calibrated_metrics, dict):
+            summary_lines.append(f"Raw MAE: {float(raw_metrics.get('mae', float('nan'))):.2f}")
+            summary_lines.append(f"Calibrated MAE: {float(calibrated_metrics.get('mae', float('nan'))):.2f}")
+        summary_lines.append("Calibration was applied to reduce systematic overprediction or underprediction bias")
+
     for _, row in top_features.iterrows():
         summary_lines.append(f"- {row['feature']}: {row['importance']:.4f}")
 
     if best_model_name == "ensemble":
         weights = metadata.get("ensemble_weights", {})
         summary_lines.append(f"Ensemble weights - xgboost: {float(weights.get('xgboost', 0.7)):.2f}, random_forest: {float(weights.get('random_forest', 0.3)):.2f}")
+
+    minimal_results_path = OUTPUTS_DIR / "minimal_feature_results.csv"
+    minimal_summary_path = OUTPUTS_DIR / "minimal_feature_summary.txt"
+    if minimal_results_path.exists():
+        minimal_df = pd.read_csv(minimal_results_path)
+        if len(minimal_df) > 0:
+            best_min_row = minimal_df.sort_values(["mae", "feature_count"], ascending=[True, True]).iloc[0]
+            threshold = float(best_min_row["mae"]) * 1.05
+            acceptable_df = minimal_df[minimal_df["mae"] <= threshold].copy()
+            acceptable_df = acceptable_df.sort_values(["feature_count", "mae", "feature_set"], ascending=[True, True, True])
+            smallest_acceptable = acceptable_df.iloc[0]
+
+            summary_lines.append("Feature minimization:")
+            summary_lines.append(f"- Best feature set: {best_min_row['feature_set']} (MAE={float(best_min_row['mae']):.4f}, features={int(best_min_row['feature_count'])})")
+            summary_lines.append(f"- Smallest acceptable set: {smallest_acceptable['feature_set']} (MAE={float(smallest_acceptable['mae']):.4f}, features={int(smallest_acceptable['feature_count'])})")
+            summary_lines.append("Feature minimization comparison:")
+            for _, row in minimal_df.sort_values(["mae", "feature_count"]).iterrows():
+                summary_lines.append(f"  {row['feature_set']}: MAE={float(row['mae']):.4f}, features={int(row['feature_count'])}")
+
+    if minimal_summary_path.exists():
+        summary_lines.append(f"Feature minimization summary file: {minimal_summary_path}")
 
     if new_predictions_path.exists():
         new_predictions_df = pd.read_csv(new_predictions_path)

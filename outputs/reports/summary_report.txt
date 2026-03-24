@@ -1,8 +1,33 @@
 Attendance Prediction Project Report
-Best model: xgboost
-MAE: 1107.79
-RMSE: 1415.89
-R2: -0.8844
-MAPE: 21.76
-Median Abs Error: 878.51
-Predictions file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv
+Best model: linear_regression_calibrated
+Best MAE: 832.18
+Best RMSE: 1157.74
+Best R2: -0.2599
+Best MAPE: 17.28
+MAE improvement vs mean baseline: 690.96
+Top features:
+Calibration enabled: True
+Calibration type: linear
+Raw MAE: 1685.24
+Calibrated MAE: 832.18
+Calibration was applied to reduce systematic overprediction or underprediction bias
+- categorical__away_team_Anderlecht: 3562.5446
+- categorical__away_team_Club Brugge: 1859.8608
+- categorical__away_team_Antwerp: 1713.2132
+- categorical__away_team_KV Oostende: 1683.4635
+- categorical__away_team_RWDM: 1398.2316
+Feature minimization:
+- Best feature set: minimal_plus_ticketing (MAE=851.0113, features=5)
+- Smallest acceptable set: minimal_plus_ticketing (MAE=851.0113, features=5)
+Feature minimization comparison:
+  minimal_plus_ticketing: MAE=851.0113, features=5
+  minimal_plus_lag: MAE=927.5572, features=5
+  full_current: MAE=1107.7859, features=24
+  compact_best_practice: MAE=1136.8162, features=7
+  minimal_plus_timing: MAE=1347.9017, features=6
+  minimal_core: MAE=1482.3397, features=3
+  minimal_plus_media: MAE=2101.8227, features=5
+Feature minimization summary file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\minimal_feature_summary.txt
+New match predictions rows: 3
+New predictions mean attendance: 6455.90
+Prediction file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv
