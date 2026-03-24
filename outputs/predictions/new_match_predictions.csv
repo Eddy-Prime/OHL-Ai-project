@@ -1,4 +1,3 @@
-season,stage,competition_name,away_team,matchday,weekday_name,is_weekend,is_midweek,is_public_holiday,is_school_holiday_flanders,kickoff_time_local,match_date,weather_temp_mean_c,weather_rain_mm,weather_windspeed_max_kmh,has_promotion,promo_tickets_total,pct_free_tickets,seasonpass_holders,ohl_interest,num_articles,avg_days_to_match,raw_predicted_attendance,predicted_attendance
-2025-2026,Regular Season,Jupiler Pro League,Club Brugge,6,Saturday,1,0,0,0,20:45:00,2026-09-12,18.0,0.2,16.0,1,1200,0.035,7400,58.0,12,3.0,7984.309511409648,6775.867127259606
-2025-2026,Regular Season,Jupiler Pro League,RSC Anderlecht,7,Sunday,1,0,0,0,18:30:00,2026-09-20,16.0,1.1,19.0,0,0,0.02,7420,62.0,15,2.0,6393.996400693261,6300.192725519904
-2025-2026,Regular Season,Jupiler Pro League,Standard Liege,8,Wednesday,0,1,0,0,20:30:00,2026-09-30,14.0,2.5,22.0,1,800,0.03,7410,54.0,9,4.0,6365.431017422591,6291.648608322996
+match_date,away_team,stage,kickoff_time,raw_predicted_attendance,predicted_attendance
+2026-09-12,Club Brugge,Regular Season,20:45:00,7595.217514546933,7595.217514546933
+2026-09-20,RSC Anderlecht,Regular Season,18:30:00,6156.728439483257,6156.728439483257

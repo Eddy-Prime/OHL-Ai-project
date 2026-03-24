@@ -4,7 +4,46 @@ import pandas as pd
 from .config import DATE_COLUMN, TARGET_COLUMN
 
 
+USER_INPUT_FEATURES = [DATE_COLUMN, "away_team", "stage", "kickoff_time"]
+AUTO_GENERATED_FEATURES = [
+    "season",
+    "matchday",
+    "weekday_name",
+    "is_weekend",
+    "is_midweek",
+    "kickoff_hour",
+    "month",
+    "attendance_last_match",
+    "attendance_last_3_avg",
+]
+REMOVABLE_FEATURES = [
+    "weather_temp_mean_c",
+    "weather_rain_mm",
+    "weather_windspeed_max_kmh",
+    "num_articles",
+    "avg_days_to_match",
+    "ohl_interest",
+    "seasonpass_holders",
+    "promo_tickets_total",
+    "pct_free_tickets",
+    "has_promotion",
+]
+
 FEATURE_COLUMNS = [
+    "stage",
+    "away_team",
+    "season",
+    "matchday",
+    "weekday_name",
+    "is_weekend",
+    "is_midweek",
+    "kickoff_hour",
+    "month",
+    "attendance_last_match",
+    "attendance_last_3_avg",
+]
+
+FULL_REFERENCE_COLUMNS = [
     "season",
     "stage",
     "competition_name",
@@ -31,23 +70,22 @@ FEATURE_COLUMNS = [
     "avg_days_to_match",
 ]
 
-
 FEATURE_MINIMIZATION_GROUPS = {
-    "minimal_core": ["stage", "away_team", "matchday"],
-    "minimal_plus_timing": ["stage", "away_team", "matchday", "weekday_name", "kickoff_hour", "month"],
-    "minimal_plus_lag": ["stage", "away_team", "matchday", "attendance_last_match", "attendance_last_3_avg"],
-    "minimal_plus_ticketing": ["stage", "away_team", "matchday", "seasonpass_holders", "pct_free_tickets"],
-    "minimal_plus_media": ["stage", "away_team", "matchday", "ohl_interest", "num_articles"],
-    "compact_best_practice": [
+    "minimal_input_derived": ["stage", "away_team", "weekday_name", "kickoff_hour", "month"],
+    "minimal_plus_calendar": ["stage", "away_team", "weekday_name", "is_weekend", "is_midweek", "kickoff_hour", "month"],
+    "minimal_plus_lag": [
         "stage",
         "away_team",
-        "matchday",
+        "weekday_name",
+        "is_weekend",
+        "is_midweek",
+        "kickoff_hour",
+        "month",
         "attendance_last_match",
         "attendance_last_3_avg",
-        "seasonpass_holders",
-        "ohl_interest",
     ],
-    "full_current": FEATURE_COLUMNS,
+    "compact_reduced": FEATURE_COLUMNS,
+    "full_current": FULL_REFERENCE_COLUMNS,
 }
 
 
@@ -62,8 +100,30 @@ def _safe_numeric(series):
     return pd.to_numeric(series, errors="coerce")
 
 
+def _derive_season(date_series):
+    year = date_series.dt.year
+    month = date_series.dt.month
+    start_year = np.where(month >= 7, year, year - 1)
+    end_year = start_year + 1
+    return pd.Series(start_year.astype(str) + "-" + end_year.astype(str), index=date_series.index)
+
+
+def _parse_kickoff_hour(series):
+    values = series.astype(str)
+    parsed = pd.to_datetime(values, format="%H:%M:%S", errors="coerce")
+    remaining = parsed.isna()
+    if remaining.any():
+        parsed.loc[remaining] = pd.to_datetime(values.loc[remaining], format="%H:%M", errors="coerce")
+    return parsed.dt.hour.fillna(0).astype(int)
+
+
 def _prepare_match(df_match):
     df = df_match.copy()
+
+    if "match_id" not in df.columns:
+        df["match_id"] = [f"match_{i}" for i in range(len(df))]
+    df["match_id"] = df["match_id"].astype(str)
+
     df[DATE_COLUMN] = pd.to_datetime(df[DATE_COLUMN], errors="coerce")
     df = df.dropna(subset=[DATE_COLUMN]).copy()
     df = df.drop_duplicates(subset="match_id")
@@ -79,11 +139,24 @@ def _prepare_match(df_match):
 
     if "matchday" in df.columns:
         df["matchday"] = _safe_numeric(df["matchday"])
+    else:
+        df["matchday"] = np.nan
 
-    kickoff = pd.to_datetime(df.get("kickoff_time_local"), format="%H:%M:%S", errors="coerce")
-    df["kickoff_hour"] = kickoff.dt.hour.fillna(0).astype(int)
+    kickoff_source = "kickoff_time_local" if "kickoff_time_local" in df.columns else "kickoff_time"
+    if kickoff_source in df.columns:
+        df["kickoff_hour"] = _parse_kickoff_hour(df[kickoff_source])
+    else:
+        df["kickoff_hour"] = 0
+
     df["month"] = df[DATE_COLUMN].dt.month.astype(int)
 
+    if "season" not in df.columns:
+        df["season"] = _derive_season(df[DATE_COLUMN])
+    else:
+        df["season"] = df["season"].astype(str)
+
+    if "stage" not in df.columns:
+        df["stage"] = "unknown"
     if "away_team" not in df.columns:
         df["away_team"] = "unknown"
 
@@ -93,13 +166,7 @@ def _prepare_match(df_match):
 
 def _prepare_context(df_context):
     df = df_context.copy()
-    bool_cols = [
-        "has_promotion",
-        "is_weekend",
-        "is_midweek",
-        "is_public_holiday",
-        "is_school_holiday_flanders",
-    ]
+    bool_cols = ["has_promotion", "is_weekend", "is_midweek", "is_public_holiday", "is_school_holiday_flanders"]
     for col in bool_cols:
         if col in df.columns:
             df[col] = _to_bool_series(df[col]).fillna(False)
@@ -124,7 +191,7 @@ def _prepare_context(df_context):
         "pct_free_tickets",
     ]
     keep_cols = [c for c in keep_cols if c in df.columns]
-    return df[keep_cols].drop_duplicates(subset="match_id")
+    return df[keep_cols].drop_duplicates(subset="match_id") if keep_cols else pd.DataFrame({"match_id": []})
 
 
 def _prepare_tickets(df_tickets):
@@ -132,11 +199,13 @@ def _prepare_tickets(df_tickets):
     if "seasonpass_holders" in df.columns:
         df["seasonpass_holders"] = _safe_numeric(df["seasonpass_holders"])
     keep_cols = [c for c in ["match_id", "seasonpass_holders"] if c in df.columns]
-    return df[keep_cols].drop_duplicates(subset="match_id")
+    return df[keep_cols].drop_duplicates(subset="match_id") if keep_cols else pd.DataFrame({"match_id": []})
 
 
 def _prepare_trends(df_trends):
     df = df_trends.copy()
+    if "date" not in df.columns or "ohl_interest" not in df.columns:
+        return pd.DataFrame(columns=["date", "ohl_interest", "ohl_interest_3d_avg"])
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df["ohl_interest"] = _safe_numeric(df["ohl_interest"])
     df = df.dropna(subset=["date", "ohl_interest"]).copy()
@@ -148,6 +217,8 @@ def _prepare_trends(df_trends):
 
 def _prepare_articles(df_articles):
     df = df_articles.copy()
+    if "match_id" not in df.columns:
+        return pd.DataFrame(columns=["match_id", "num_articles", "avg_days_to_match"])
     df = df[df["match_id"].notna()].copy()
     if "article_id" not in df.columns:
         df["article_id"] = np.arange(len(df))
@@ -160,6 +231,8 @@ def _prepare_articles(df_articles):
 
 
 def _compute_interest_feature(match_df, trends_df):
+    if len(trends_df) == 0:
+        return pd.DataFrame({"match_id": match_df["match_id"], "ohl_interest": np.nan})
     out = match_df[["match_id", DATE_COLUMN]].copy()
     out["lookup_date"] = out[DATE_COLUMN].dt.normalize() - pd.Timedelta(days=1)
     merged = pd.merge_asof(
@@ -186,11 +259,31 @@ def _compute_lag_features(df):
                 "attendance_last_3_avg": last_3_avg,
             }
         )
-
         if bool(row.get("is_observed", True)) and bool(row.get("is_home_match", False)) and pd.notna(row.get(TARGET_COLUMN)):
             history.append(float(row[TARGET_COLUMN]))
-
     return pd.DataFrame(rows)
+
+
+def _infer_matchday(df):
+    out = df.copy()
+    if "matchday" not in out.columns:
+        out["matchday"] = np.nan
+    out["matchday"] = _safe_numeric(out["matchday"])
+    missing = out["matchday"].isna()
+    if missing.any():
+        inferred = out.groupby("season").cumcount() + 1
+        out.loc[missing, "matchday"] = inferred.loc[missing]
+    return out
+
+
+def _add_calendar_features(df):
+    out = df.copy()
+    out["weekday_name"] = out[DATE_COLUMN].dt.day_name().fillna("unknown")
+    weekday = out[DATE_COLUMN].dt.weekday
+    out["is_weekend"] = weekday.isin([5, 6]).astype(float)
+    out["is_midweek"] = weekday.isin([1, 2, 3]).astype(float)
+    out["month"] = out[DATE_COLUMN].dt.month.astype(int)
+    return out
 
 
 def _normalize_types(df):
@@ -198,7 +291,7 @@ def _normalize_types(df):
 
     for col in ["season", "stage", "competition_name", "away_team", "weekday_name"]:
         if col in out.columns:
-            out[col] = out[col].astype(str)
+            out[col] = out[col].astype(str).replace({"nan": "unknown", "None": "unknown"})
 
     for col in ["is_weekend", "is_midweek", "is_public_holiday", "is_school_holiday_flanders", "has_promotion"]:
         if col in out.columns:
@@ -231,6 +324,8 @@ def _build_feature_table(match_df, context_df, tickets_df, trends_df, articles_d
     merged = merged.merge(tickets_df, on="match_id", how="left")
     merged = merged.merge(articles_df, on="match_id", how="left")
     merged = merged.merge(_compute_interest_feature(match_df, trends_df), on="match_id", how="left")
+    merged = _add_calendar_features(merged)
+    merged = _infer_matchday(merged)
     merged = _normalize_types(merged)
     merged = merged.sort_values([DATE_COLUMN, "kickoff_hour", "match_id"]).reset_index(drop=True)
     lag_df = _compute_lag_features(merged)
@@ -239,33 +334,51 @@ def _build_feature_table(match_df, context_df, tickets_df, trends_df, articles_d
     return merged
 
 
+def _apply_inference_fallbacks(df):
+    out = df.copy()
+    observed_mask = _to_bool_series(out["is_observed"]) & _to_bool_series(out["is_home_match"]) & out[TARGET_COLUMN].notna()
+    observed_vals = _safe_numeric(out.loc[observed_mask, TARGET_COLUMN])
+    global_mean = float(observed_vals.mean()) if observed_vals.notna().any() else 0.0
+    inference_mask = ~_to_bool_series(out["is_observed"])
+
+    fallback_counts = {}
+    for col in ["attendance_last_match", "attendance_last_3_avg"]:
+        missing_mask = inference_mask & out[col].isna()
+        fallback_counts[col] = int(missing_mask.sum())
+        out.loc[missing_mask, col] = global_mean
+
+    return out, {"global_mean": global_mean, "fallback_counts": fallback_counts}
+
+
 def build_match_level_dataset(tables):
     match_df = _prepare_match(tables["match"])
-    context_df = _prepare_context(tables["context"])
-    tickets_df = _prepare_tickets(tables["tickets"])
-    trends_df = _prepare_trends(tables["trends"])
-    articles_df = _prepare_articles(tables["articles"])
+    context_df = _prepare_context(tables.get("context", pd.DataFrame()))
+    tickets_df = _prepare_tickets(tables.get("tickets", pd.DataFrame()))
+    trends_df = _prepare_trends(tables.get("trends", pd.DataFrame()))
+    articles_df = _prepare_articles(tables.get("articles", pd.DataFrame()))
 
     match_df["is_observed"] = True
     merged = _build_feature_table(match_df, context_df, tickets_df, trends_df, articles_df)
     merged = merged[merged["is_home_match"]].copy()
     merged = merged.dropna(subset=[TARGET_COLUMN]).copy()
-    merged = merged.sort_values(DATE_COLUMN).reset_index(drop=True)
+    merged = merged.sort_values([DATE_COLUMN, "kickoff_hour", "match_id"]).reset_index(drop=True)
     return merged
 
 
-def build_inference_dataset(tables, new_matches_df):
+def build_inference_dataset(tables, new_matches_df, return_stats=False):
     historical_match_df = _prepare_match(tables["match"])
-    context_df = _prepare_context(tables["context"])
-    tickets_df = _prepare_tickets(tables["tickets"])
-    trends_df = _prepare_trends(tables["trends"])
-    articles_df = _prepare_articles(tables["articles"])
+    context_df = _prepare_context(tables.get("context", pd.DataFrame()))
+    tickets_df = _prepare_tickets(tables.get("tickets", pd.DataFrame()))
+    trends_df = _prepare_trends(tables.get("trends", pd.DataFrame()))
+    articles_df = _prepare_articles(tables.get("articles", pd.DataFrame()))
 
     historical_match_df["is_observed"] = True
 
     incoming = new_matches_df.copy()
-    if DATE_COLUMN not in incoming.columns:
-        raise ValueError(f"Missing required column in input file: {DATE_COLUMN}")
+    missing_required = [col for col in USER_INPUT_FEATURES if col not in incoming.columns]
+    if missing_required:
+        raise ValueError(f"Missing required input columns: {', '.join(missing_required)}")
+
     incoming[DATE_COLUMN] = pd.to_datetime(incoming[DATE_COLUMN], errors="coerce")
     if incoming[DATE_COLUMN].isna().any():
         raise ValueError("Some rows in input file have invalid match_date values")
@@ -274,19 +387,10 @@ def build_inference_dataset(tables, new_matches_df):
         incoming["match_id"] = [f"new_match_{i}" for i in range(len(incoming))]
     incoming["match_id"] = incoming["match_id"].astype(str)
 
-    if "is_home_match" not in incoming.columns:
-        incoming["is_home_match"] = True
-    incoming["is_home_match"] = _to_bool_series(incoming["is_home_match"])
-
-    if "kickoff_hour" not in incoming.columns:
-        kickoff = pd.to_datetime(incoming.get("kickoff_time_local"), format="%H:%M:%S", errors="coerce")
-        incoming["kickoff_hour"] = kickoff.dt.hour.fillna(0).astype(int)
-    if "month" not in incoming.columns:
-        incoming["month"] = incoming[DATE_COLUMN].dt.month
-    if "away_team" not in incoming.columns:
-        incoming["away_team"] = incoming.get("opponent", "unknown")
-
+    incoming["kickoff_time_local"] = incoming["kickoff_time"].astype(str)
+    incoming["is_home_match"] = True
     incoming[TARGET_COLUMN] = np.nan
+    incoming["season"] = _derive_season(incoming[DATE_COLUMN])
     incoming["is_observed"] = False
 
     union_cols = sorted(set(historical_match_df.columns).union(set(incoming.columns)))
@@ -295,13 +399,26 @@ def build_inference_dataset(tables, new_matches_df):
     combined = pd.concat([historical_aligned, incoming_aligned], ignore_index=True)
 
     merged = _build_feature_table(combined, context_df, tickets_df, trends_df, articles_df)
-    merged = merged[~merged["is_observed"]].copy()
-    merged = merged.sort_values(DATE_COLUMN).reset_index(drop=True)
-    return merged
+    merged, fallback_stats = _apply_inference_fallbacks(merged)
+    inference_only = merged[~_to_bool_series(merged["is_observed"])].copy()
+    inference_only = inference_only.sort_values([DATE_COLUMN, "kickoff_hour", "match_id"]).reset_index(drop=True)
+
+    if return_stats:
+        stats = {
+            "user_input_features": USER_INPUT_FEATURES,
+            "auto_generated_features": AUTO_GENERATED_FEATURES,
+            "fallback": fallback_stats,
+        }
+        return inference_only, stats
+    return inference_only
 
 
 def get_feature_columns(df):
     return [col for col in FEATURE_COLUMNS if col in df.columns]
+
+
+def get_full_reference_feature_columns(df):
+    return [col for col in FULL_REFERENCE_COLUMNS if col in df.columns]
 
 
 def get_feature_minimization_groups(df):
@@ -327,7 +444,8 @@ def split_features_target(df, feature_columns):
     valid = y.notna()
     x = x.loc[valid].reset_index(drop=True)
     y = y.loc[valid].reset_index(drop=True)
-    meta = df.loc[valid, ["match_id", DATE_COLUMN, "away_team"]].reset_index(drop=True)
+    meta_cols = [c for c in ["match_id", DATE_COLUMN, "away_team"] if c in df.columns]
+    meta = df.loc[valid, meta_cols].reset_index(drop=True)
     return x, y, meta
 
 
@@ -344,9 +462,47 @@ def time_train_test_split(x, y, meta, test_size):
     return x_train, x_test, y_train, y_test, meta_train, meta_test
 
 
-def prepare_inference_features(df, feature_columns):
+def build_feature_fill_values(x_train, feature_columns):
+    fill_values = {}
+    for col in feature_columns:
+        if col not in x_train.columns:
+            continue
+        series = x_train[col]
+        if pd.api.types.is_numeric_dtype(series):
+            numeric = _safe_numeric(series)
+            if numeric.notna().any():
+                fill_values[col] = float(numeric.median())
+            else:
+                fill_values[col] = 0.0
+        else:
+            non_null = series.dropna().astype(str)
+            if len(non_null) == 0:
+                fill_values[col] = "unknown"
+            else:
+                fill_values[col] = str(non_null.mode().iloc[0])
+    return fill_values
+
+
+def prepare_inference_features(df, feature_columns, fill_values=None):
     out = _normalize_types(df.copy())
     for col in feature_columns:
         if col not in out.columns:
             out[col] = np.nan
+
+    for col in feature_columns:
+        series = out[col]
+        if pd.api.types.is_numeric_dtype(series):
+            fallback = 0.0
+            if isinstance(fill_values, dict) and col in fill_values:
+                fallback = float(fill_values[col])
+            numeric = _safe_numeric(series)
+            if not np.isfinite(fallback):
+                fallback = float(numeric.mean()) if numeric.notna().any() else 0.0
+            out[col] = numeric.fillna(fallback)
+        else:
+            fallback = "unknown"
+            if isinstance(fill_values, dict) and col in fill_values:
+                fallback = str(fill_values[col])
+            out[col] = series.astype(str).replace({"nan": "unknown", "None": "unknown"}).fillna(fallback)
+
     return out[feature_columns].copy()

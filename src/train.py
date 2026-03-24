@@ -42,8 +42,10 @@ from .evaluate import (
     save_feature_importance,
 )
 from .features import (
+    build_feature_fill_values,
     build_match_level_dataset,
     get_feature_columns,
+    get_full_reference_feature_columns,
     get_feature_minimization_groups,
     split_features_target,
     time_train_test_split,
@@ -338,6 +340,7 @@ def run_pipeline(
         meta=meta,
         test_size=TEST_SIZE,
     )
+    feature_fill_values = build_feature_fill_values(x_train=x_train, feature_columns=feature_columns)
 
     global_mean = float(np.mean(y_train))
     pred_mean = mean_baseline(y_train=y_train, size=len(y_test))
@@ -390,6 +393,27 @@ def run_pipeline(
 
     best_model_name, best_model_payload = _select_best_fitted_model(fitted_results, BEST_SELECTION_CANDIDATES)
     best_predictions = np.asarray(best_model_payload["predictions"], dtype=float)
+
+    full_reference_columns = get_full_reference_feature_columns(match_level_df)
+    mae_before_full = float("nan")
+    mae_after_reduced = float(fitted_results["xgboost_raw"]["metrics"]["mae"])
+    mae_delta = float("nan")
+    mae_delta_pct = float("nan")
+    if len(full_reference_columns) > len(feature_columns):
+        x_full, y_full, meta_full = split_features_target(match_level_df, full_reference_columns)
+        x_train_full, x_test_full, y_train_full, y_test_full, _, _ = time_train_test_split(
+            x=x_full,
+            y=y_full,
+            meta=meta_full,
+            test_size=TEST_SIZE,
+        )
+        xgb_full = train_xgboost(x_train=x_train_full, y_train=y_train_full, tune=tune_xgb)
+        pred_full = np.asarray(xgb_full.predict(x_test_full), dtype=float)
+        pred_full = np.maximum(pred_full, 0.0)
+        mae_before_full = float(compute_metrics(y_test_full, pred_full)["mae"])
+        mae_delta = mae_after_reduced - mae_before_full
+        if np.isfinite(mae_before_full) and mae_before_full != 0:
+            mae_delta_pct = (mae_delta / mae_before_full) * 100.0
 
     comparison_df = build_comparison_table(all_results)
     save_csv(comparison_df, OUTPUTS_DIR / "model_comparison.csv")
@@ -496,6 +520,8 @@ def run_pipeline(
         "rows_train": int(len(x_train)),
         "rows_test": int(len(x_test)),
         "features_used": feature_columns,
+        "user_input_features": ["match_date", "away_team", "stage", "kickoff_time"],
+        "feature_fill_values": feature_fill_values,
         "target_column": TARGET_COLUMN,
         "use_log_target": False,
         "metrics_by_model": {name: payload["metrics"] for name, payload in all_results.items()},
@@ -513,6 +539,14 @@ def run_pipeline(
         "calibrated_metrics_for_best_model": calibrated_metrics_for_best,
         "calibration_training_method": "split train into base_train and calibration_validation, fit calibrator on validation predictions, retrain base model on full train",
         "calibration_params": best_model_payload.get("calibration_params") if calibration_enabled_for_best else None,
+        "feature_reduction_comparison": {
+            "xgboost_mae_before_full_reference": mae_before_full,
+            "xgboost_mae_after_reduced": mae_after_reduced,
+            "mae_delta_after_minus_before": mae_delta,
+            "mae_delta_pct": mae_delta_pct,
+            "full_reference_feature_count": len(full_reference_columns),
+            "reduced_feature_count": len(feature_columns),
+        },
     }
 
     if minimization_output is not None:
@@ -537,6 +571,7 @@ def run_pipeline(
         f"MAPE: {best_model_payload['metrics']['mape']:.2f}",
         f"Median Abs Error: {best_model_payload['metrics']['median_abs_error']:.2f}",
         f"Predictions file: {PREDICTIONS_DIR / 'new_match_predictions.csv'}",
+        f"Reduced features: {len(feature_columns)}",
     ]
     if calibration_enabled_for_best:
         summary_lines.append(f"Calibration enabled: True")
@@ -549,6 +584,11 @@ def run_pipeline(
     if minimization_output is not None:
         summary_lines.append(f"Feature minimization best set: {minimization_output['best_feature_set']}")
         summary_lines.append(f"Feature minimization smallest acceptable set: {minimization_output['smallest_acceptable_feature_set']}")
+
+    if np.isfinite(mae_before_full):
+        summary_lines.append(f"XGBoost MAE before reduction: {mae_before_full:.2f}")
+        summary_lines.append(f"XGBoost MAE after reduction: {mae_after_reduced:.2f}")
+        summary_lines.append(f"MAE delta: {mae_delta:.2f} ({mae_delta_pct:.2f}%)")
 
     (REPORTS_DIR / "summary_report.txt").write_text("\n".join(summary_lines), encoding="utf-8")
 
@@ -591,6 +631,14 @@ def main():
     )
     print(result["comparison"].to_string(index=False))
     print(f"Best model: {result['run_info']['best_model_name']}")
+    reduction = result["run_info"].get("feature_reduction_comparison", {})
+    before_mae = reduction.get("xgboost_mae_before_full_reference")
+    after_mae = reduction.get("xgboost_mae_after_reduced")
+    delta_pct = reduction.get("mae_delta_pct")
+    if isinstance(before_mae, (int, float)) and np.isfinite(before_mae):
+        print(f"XGBoost MAE before reduction: {before_mae:.2f}")
+        print(f"XGBoost MAE after reduction: {after_mae:.2f}")
+        print(f"MAE delta (%): {delta_pct:.2f}")
     if result["run_info"].get("calibration_enabled", False):
         print(f"Calibration type: {result['run_info'].get('calibration_type')}")
     if result["minimization"] is not None:

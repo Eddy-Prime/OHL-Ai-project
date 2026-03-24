@@ -9,7 +9,7 @@ import pandas as pd
 from .calibration import apply_linear_calibrator, apply_multiplicative_calibrator
 from .config import BEST_MODEL_ARTIFACT_PATH, BEST_MODEL_METADATA_PATH, DEFAULT_DATA_DIR, NEW_MATCH_PREDICTIONS_PATH
 from .data_loader import load_raw_tables
-from .features import build_inference_dataset, prepare_inference_features
+from .features import USER_INPUT_FEATURES, build_inference_dataset, prepare_inference_features
 from .utils import ensure_directories
 
 
@@ -76,17 +76,22 @@ def predict_from_file(
 
     metadata = load_metadata(metadata_path=metadata_path)
     raw_input = pd.read_csv(input_path)
+    missing_required = [col for col in USER_INPUT_FEATURES if col not in raw_input.columns]
+    if missing_required:
+        raise ValueError(f"Missing required input columns: {', '.join(missing_required)}")
+
     tables = load_raw_tables(data_dir)
-    inference_dataset = build_inference_dataset(tables=tables, new_matches_df=raw_input)
+    inference_dataset, inference_stats = build_inference_dataset(tables=tables, new_matches_df=raw_input, return_stats=True)
 
     feature_columns = metadata.get("features_used", [])
     if not feature_columns:
         raise ValueError("Model metadata does not contain features_used")
 
-    model_input = prepare_inference_features(inference_dataset, feature_columns)
+    fill_values = metadata.get("feature_fill_values", {})
+    model_input = prepare_inference_features(inference_dataset, feature_columns, fill_values=fill_values)
 
     best_model_name = metadata.get("best_model_name", "unknown")
-    if best_model_name == "ensemble":
+    if str(best_model_name).startswith("ensemble"):
         raw_predictions = _predict_ensemble(metadata=metadata, model_input=model_input)
     else:
         raw_predictions = _predict_single_model(model_path=model_path, model_input=model_input)
@@ -108,6 +113,9 @@ def predict_from_file(
         "prediction_mean": float(result["predicted_attendance"].mean()),
         "prediction_max": float(result["predicted_attendance"].max()),
         "output_file": str(output_path),
+        "auto_generated_features": inference_stats.get("auto_generated_features", []),
+        "fallback_global_mean": float(inference_stats.get("fallback", {}).get("global_mean", 0.0)),
+        "fallback_counts": inference_stats.get("fallback", {}).get("fallback_counts", {}),
     }
     return result, summary
 
@@ -135,6 +143,9 @@ def main():
     print(f"Rows scored: {summary['rows_scored']}")
     print(f"Predicted attendance range: {summary['prediction_min']:.0f} - {summary['prediction_max']:.0f}")
     print(f"Mean predicted attendance: {summary['prediction_mean']:.0f}")
+    print(f"Auto-generated features: {', '.join(summary['auto_generated_features'])}")
+    print(f"Lag fallback global mean: {summary['fallback_global_mean']:.2f}")
+    print(f"Lag fallback counts: {summary['fallback_counts']}")
     print(f"Saved: {summary['output_file']}")
 
 

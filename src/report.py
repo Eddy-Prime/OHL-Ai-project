@@ -67,8 +67,18 @@ def build_summary(regenerate_plots=False):
         f"Best R2: {best_model_row['r2']:.4f}",
         f"Best MAPE: {best_model_row.get('mape', float('nan')):.2f}",
         f"MAE improvement vs mean baseline: {mae_improvement:.2f}",
+        f"Minimal required prediction input: {', '.join(metadata.get('user_input_features', ['match_date', 'away_team', 'stage', 'kickoff_time']))}",
         "Top features:",
     ]
+
+    reduction = metadata.get("feature_reduction_comparison", {})
+    before_mae = reduction.get("xgboost_mae_before_full_reference")
+    after_mae = reduction.get("xgboost_mae_after_reduced")
+    delta_pct = reduction.get("mae_delta_pct")
+    if isinstance(before_mae, (int, float)) and pd.notna(before_mae):
+        summary_lines.append(f"XGBoost MAE before reduction: {float(before_mae):.2f}")
+        summary_lines.append(f"XGBoost MAE after reduction: {float(after_mae):.2f}")
+        summary_lines.append(f"MAE delta after reduction (%): {float(delta_pct):.2f}")
 
     calibration_enabled = bool(metadata.get("calibration_enabled", False))
     calibration_type = metadata.get("calibration_type")
