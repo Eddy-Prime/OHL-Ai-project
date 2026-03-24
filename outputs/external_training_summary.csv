@@ -1,0 +1,2 @@
+internal_training_rows,external_training_rows,internal_test_rows,best_model,mae_internal_test,rmse_internal_test,mape_internal_test,used_external_transfermarkt
+56,0,15,xgboost_log,691.7759513163114,946.5689444244912,13.379518484886646,False

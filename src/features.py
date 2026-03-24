@@ -16,6 +16,9 @@ AUTO_GENERATED_FEATURES = [
     "month",
     "attendance_last_match",
     "attendance_last_3_avg",
+    "opponent_strength_score",
+    "opponent_frequency_seen",
+    "opponent_tier",
     "weather_temp_mean_c",
     "weather_precipitation_mm",
     "weather_rain_mm",
@@ -45,6 +48,9 @@ FEATURE_COLUMNS = [
     "is_midweek",
     "kickoff_hour",
     "month",
+    "opponent_strength_score",
+    "opponent_frequency_seen",
+    "opponent_tier",
     "weather_temp_mean_c",
     "weather_precipitation_mm",
     "weather_rain_mm",
@@ -67,6 +73,9 @@ FULL_REFERENCE_COLUMNS = [
     "is_school_holiday_flanders",
     "kickoff_hour",
     "month",
+    "opponent_strength_score",
+    "opponent_frequency_seen",
+    "opponent_tier",
     "weather_temp_mean_c",
     "weather_precipitation_mm",
     "weather_rain_mm",
@@ -271,19 +280,49 @@ def _compute_interest_feature(match_df, trends_df):
 
 def _compute_lag_features(df):
     history = []
+    opponent_count = {}
+    opponent_sum = {}
     rows = []
     for _, row in df.iterrows():
         last_match = history[-1] if len(history) >= 1 else np.nan
         last_3_avg = float(np.mean(history[-3:])) if len(history) >= 1 else np.nan
+        global_mean = float(np.mean(history)) if len(history) >= 1 else np.nan
+
+        opponent = str(row.get("away_team", "unknown"))
+        opp_seen = int(opponent_count.get(opponent, 0))
+        if opp_seen > 0:
+            opp_score = float(opponent_sum[opponent] / opp_seen)
+        else:
+            opp_score = global_mean
+
+        known_scores = [opponent_sum[k] / opponent_count[k] for k in opponent_count if opponent_count[k] > 0]
+        if pd.notna(opp_score) and len(known_scores) >= 4:
+            q1 = float(np.quantile(known_scores, 0.25))
+            q3 = float(np.quantile(known_scores, 0.75))
+            if opp_score >= q3:
+                opp_tier = "high"
+            elif opp_score <= q1:
+                opp_tier = "low"
+            else:
+                opp_tier = "medium"
+        else:
+            opp_tier = "medium"
+
         rows.append(
             {
                 "match_id": row["match_id"],
                 "attendance_last_match": last_match,
                 "attendance_last_3_avg": last_3_avg,
+                "opponent_strength_score": opp_score,
+                "opponent_frequency_seen": opp_seen,
+                "opponent_tier": opp_tier,
             }
         )
         if bool(row.get("is_observed", True)) and bool(row.get("is_home_match", False)) and pd.notna(row.get(TARGET_COLUMN)):
-            history.append(float(row[TARGET_COLUMN]))
+            attendance = float(row[TARGET_COLUMN])
+            history.append(attendance)
+            opponent_count[opponent] = opp_seen + 1
+            opponent_sum[opponent] = float(opponent_sum.get(opponent, 0.0)) + attendance
     return pd.DataFrame(rows)
 
 
@@ -324,6 +363,8 @@ def _normalize_types(df):
         "matchday",
         "kickoff_hour",
         "month",
+        "opponent_strength_score",
+        "opponent_frequency_seen",
         "weather_temp_mean_c",
         "weather_precipitation_mm",
         "weather_rain_mm",
@@ -340,6 +381,9 @@ def _normalize_types(df):
     ]:
         if col in out.columns:
             out[col] = _safe_numeric(out[col])
+
+    if "opponent_tier" in out.columns:
+        out["opponent_tier"] = out["opponent_tier"].astype(str).replace({"nan": "medium", "None": "medium"})
 
     return out
 

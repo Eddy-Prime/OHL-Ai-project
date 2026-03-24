@@ -16,7 +16,15 @@ DATA_EXAMPLES_DIR = PROJECT_ROOT / "data_examples"
 BEST_MODEL_ARTIFACT_PATH = MODELS_DIR / "best_attendance_model.joblib"
 BEST_MODEL_METADATA_PATH = MODELS_DIR / "best_attendance_model_metadata.json"
 WEATHER_IMPACT_COMPARISON_PATH = OUTPUTS_DIR / "weather_impact_comparison.csv"
+EXTERNAL_TRAINING_SUMMARY_PATH = OUTPUTS_DIR / "external_training_summary.csv"
 MODEL_SCHEMA_VERSION = "2.0"
+
+TRANSFERMARKT_EXTERNAL_PATH = Path(
+    os.getenv(
+        "TRANSFERMARKT_EXTERNAL_PATH",
+        r"C:\Users\ASUS\PycharmProjects\PythoParser\data_external\intermediate\transfermarkt_matches.csv",
+    )
+)
 
 OPEN_METEO_ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast"

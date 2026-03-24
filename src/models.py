@@ -35,15 +35,19 @@ def build_preprocessor(x_train):
     return preprocessor
 
 
-def _fit_with_optional_tuning(pipeline, x_train, y_train, tune, param_grid):
+def _fit_with_optional_tuning(pipeline, x_train, y_train, tune, param_grid, sample_weight=None):
+    fit_params = {}
+    if sample_weight is not None:
+        fit_params["model__sample_weight"] = np.asarray(sample_weight, dtype=float)
+
     if not tune:
-        pipeline.fit(x_train, y_train)
+        pipeline.fit(x_train, y_train, **fit_params)
         return pipeline
 
     n_rows = len(x_train)
     n_splits = 3 if n_rows >= 24 else 2
     if n_rows < 12:
-        pipeline.fit(x_train, y_train)
+        pipeline.fit(x_train, y_train, **fit_params)
         return pipeline
 
     search = GridSearchCV(
@@ -54,11 +58,11 @@ def _fit_with_optional_tuning(pipeline, x_train, y_train, tune, param_grid):
         n_jobs=-1,
         refit=True,
     )
-    search.fit(x_train, y_train)
+    search.fit(x_train, y_train, **fit_params)
     return search.best_estimator_
 
 
-def train_linear_regression(x_train, y_train):
+def train_linear_regression(x_train, y_train, sample_weight=None):
     preprocessor = build_preprocessor(x_train)
     model = Pipeline(
         steps=[
@@ -66,11 +70,18 @@ def train_linear_regression(x_train, y_train):
             ("model", LinearRegression()),
         ]
     )
-    model.fit(x_train, y_train)
+    fit_params = {}
+    if sample_weight is not None:
+        fit_params["model__sample_weight"] = np.asarray(sample_weight, dtype=float)
+    model.fit(x_train, y_train, **fit_params)
     return model
 
 
-def train_random_forest(x_train, y_train, tune=False):
+def train_residual_model(x_train, y_train):
+    return train_linear_regression(x_train=x_train, y_train=y_train)
+
+
+def train_random_forest(x_train, y_train, tune=False, sample_weight=None):
     preprocessor = build_preprocessor(x_train)
     base_model = RandomForestRegressor(
         n_estimators=300,
@@ -91,10 +102,10 @@ def train_random_forest(x_train, y_train, tune=False):
         "model__n_estimators": [200, 300, 500],
         "model__max_depth": [3, 5, 8],
     }
-    return _fit_with_optional_tuning(pipeline, x_train, y_train, tune=tune, param_grid=param_grid)
+    return _fit_with_optional_tuning(pipeline, x_train, y_train, tune=tune, param_grid=param_grid, sample_weight=sample_weight)
 
 
-def train_xgboost(x_train, y_train, tune=False):
+def train_xgboost(x_train, y_train, tune=False, sample_weight=None):
     try:
         from xgboost import XGBRegressor
     except ImportError as exc:
@@ -125,11 +136,19 @@ def train_xgboost(x_train, y_train, tune=False):
         "model__subsample": [0.7, 0.85, 1.0],
         "model__colsample_bytree": [0.7, 0.85, 1.0],
     }
-    return _fit_with_optional_tuning(pipeline, x_train, y_train, tune=tune, param_grid=param_grid)
+    return _fit_with_optional_tuning(pipeline, x_train, y_train, tune=tune, param_grid=param_grid, sample_weight=sample_weight)
 
 
 
 def get_model_feature_importance(model):
+    if isinstance(model, LogTargetModel):
+        return get_model_feature_importance(model.base_model)
+    if isinstance(model, ResidualCorrectedModel):
+        return get_model_feature_importance(model.base_model)
+    if isinstance(model, WeightedBlendModel):
+        if "xgboost" in model.models:
+            return get_model_feature_importance(model.models["xgboost"])
+        return get_model_feature_importance(list(model.models.values())[0])
     if isinstance(model, SimpleEnsemble):
         if "xgboost" in model.models:
             return get_model_feature_importance(model.models["xgboost"])
@@ -177,3 +196,75 @@ class SimpleEnsemble:
         if "xgboost" in self.models:
             return self.models["xgboost"].named_steps
         return list(self.models.values())[0].named_steps
+
+
+class WeightedBlendModel:
+    def __init__(self, models_dict, weights_dict, calibration_dict=None):
+        self.models = models_dict
+        self.weights = weights_dict
+        self.calibration = calibration_dict or {}
+
+    def _apply_component_calibration(self, model_name, preds):
+        from .calibration import apply_linear_calibrator, apply_multiplicative_calibrator
+
+        config = self.calibration.get(model_name, {})
+        if not bool(config.get("enabled", False)):
+            return np.asarray(preds, dtype=float)
+
+        calibration_type = config.get("type")
+        params = config.get("params") or {}
+        if calibration_type == "linear":
+            return apply_linear_calibrator(y_pred=preds, model_or_params=params)
+        if calibration_type == "multiplicative":
+            return apply_multiplicative_calibrator(y_pred=preds, k=float(params.get("k", 1.0)))
+        return np.asarray(preds, dtype=float)
+
+    def predict(self, x):
+        final_pred = np.zeros(shape=len(x), dtype=float)
+        for name, model in self.models.items():
+            pred = np.asarray(model.predict(x), dtype=float)
+            pred = self._apply_component_calibration(name, pred)
+            weight = float(self.weights.get(name, 0.0))
+            final_pred += weight * pred
+        return final_pred
+
+    @property
+    def named_steps(self):
+        if "xgboost" in self.models:
+            return self.models["xgboost"].named_steps
+        return list(self.models.values())[0].named_steps
+
+
+class ResidualCorrectedModel:
+    def __init__(self, base_model, residual_model):
+        self.base_model = base_model
+        self.residual_model = residual_model
+
+    def predict(self, x):
+        base_pred = np.asarray(self.base_model.predict(x), dtype=float)
+        residual_pred = np.asarray(self.residual_model.predict(x), dtype=float)
+        return np.maximum(base_pred + residual_pred, 0.0)
+
+    @property
+    def named_steps(self):
+        if hasattr(self.base_model, "named_steps"):
+            return self.base_model.named_steps
+        raise AttributeError("Base model has no named_steps")
+
+
+class LogTargetModel:
+    def __init__(self, base_model):
+        self.base_model = base_model
+
+    def predict(self, x):
+        pred_log = np.asarray(self.base_model.predict(x), dtype=float)
+        pred = np.expm1(pred_log)
+        return np.maximum(pred, 0.0)
+
+    @property
+    def named_steps(self):
+        if hasattr(self.base_model, "named_steps"):
+            return self.base_model.named_steps
+        raise AttributeError("Base model has no named_steps")
+
+

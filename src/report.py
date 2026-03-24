@@ -80,6 +80,20 @@ def build_summary(regenerate_plots=False):
         summary_lines.append(f"XGBoost MAE after reduction: {float(after_mae):.2f}")
         summary_lines.append(f"MAE delta after reduction (%): {float(delta_pct):.2f}")
 
+    xgb_raw_mae = metadata.get("xgboost_raw_mae")
+    xgb_log_mae = metadata.get("xgboost_log_mae")
+    weighted_model_mae = metadata.get("weighted_model_mae")
+    if isinstance(xgb_raw_mae, (int, float)) and isinstance(xgb_log_mae, (int, float)):
+        summary_lines.append(f"XGBoost raw MAE: {float(xgb_raw_mae):.2f}")
+        summary_lines.append(f"XGBoost log MAE: {float(xgb_log_mae):.2f}")
+        summary_lines.append(f"Log-transform improved MAE: {bool(metadata.get('log_transform_improved_mae', False))}")
+    if isinstance(weighted_model_mae, (int, float)):
+        summary_lines.append(f"Weighted model MAE: {float(weighted_model_mae):.2f}")
+        summary_lines.append(f"Weighting improved MAE: {bool(metadata.get('weighting_improved_mae', False))}")
+
+    summary_lines.append(f"Model type: {metadata.get('model_type', 'raw')}")
+    summary_lines.append(f"Log transform used: {bool(metadata.get('log_transform_used', False))}")
+
     weather_enabled = bool(metadata.get("use_weather_api", False))
     weather_stats = metadata.get("weather_enrichment_stats", {})
     summary_lines.append(f"Weather API enabled: {weather_enabled}")
@@ -98,6 +112,12 @@ def build_summary(regenerate_plots=False):
                 summary_lines.append(
                     f"Weather impact for {best_model_name}: MAE without={float(row['mae_without_weather']):.2f}, with={float(row['mae_with_weather']):.2f}, delta%={float(row['delta_mae_pct']):.2f}"
                 )
+
+    summary_lines.append(f"External training enabled: {bool(metadata.get('external_training_enabled', False))}")
+    summary_lines.append(f"Internal training rows: {int(metadata.get('internal_training_rows', metadata.get('rows_train', 0)))}")
+    summary_lines.append(f"External training rows: {int(metadata.get('external_training_rows', 0))}")
+    summary_lines.append(f"Internal test rows: {int(metadata.get('internal_test_rows', metadata.get('rows_test', 0)))}")
+    summary_lines.append(f"Evaluation dataset: {metadata.get('evaluation_dataset', 'OH Leuven internal only')}")
 
     calibration_enabled = bool(metadata.get("calibration_enabled", False))
     calibration_type = metadata.get("calibration_type")

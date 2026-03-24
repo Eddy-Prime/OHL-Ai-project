@@ -1,16 +1,49 @@
 Attendance Prediction Project Report
-Best model: ensemble_raw
-MAE: 795.00
-RMSE: 1031.67
-R2: -0.0004
-MAPE: 15.69
-Median Abs Error: 569.21
-Predictions file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv
-Reduced features: 16
-Weather API enabled: True
+Best model: xgboost_log
+Best MAE: 691.78
+Best RMSE: 946.57
+Best R2: 0.1578
+Best MAPE: 13.38
+MAE improvement vs mean baseline: 831.36
+Minimal required prediction input: match_date, away_team, stage, kickoff_time
+Top features:
+XGBoost MAE before reduction: 1118.07
+XGBoost MAE after reduction: 726.06
+MAE delta after reduction (%): -35.06
+XGBoost raw MAE: 726.06
+XGBoost log MAE: 691.78
+Log-transform improved MAE: True
+Weighted model MAE: 819.52
+Weighting improved MAE: False
+Model type: log
+Log transform used: True
+Weather API enabled: False
 Weather rows enriched: 142
 Weather API failures: 0
+Weather impact comparison file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\weather_impact_comparison.csv
+External training enabled: False
+Internal training rows: 56
+External training rows: 0
+Internal test rows: 15
+Evaluation dataset: OH Leuven internal only
 Calibration enabled: False
-XGBoost MAE before reduction: 1128.49
-XGBoost MAE after reduction: 803.31
-MAE delta: -325.18 (-28.82%)
+- numeric__attendance_last_match: 0.1469
+- categorical__stage_Conference League Play-off Group: 0.1123
+- categorical__opponent_tier_high: 0.1089
+- categorical__away_team_Gent: 0.0781
+- categorical__season_2024/2025: 0.0731
+Feature minimization:
+- Best feature set: minimal_plus_ticketing (MAE=851.0113, features=5)
+- Smallest acceptable set: minimal_plus_ticketing (MAE=851.0113, features=5)
+Feature minimization comparison:
+  minimal_plus_ticketing: MAE=851.0113, features=5
+  minimal_plus_lag: MAE=927.5572, features=5
+  full_current: MAE=1107.7859, features=24
+  compact_best_practice: MAE=1136.8162, features=7
+  minimal_plus_timing: MAE=1347.9017, features=6
+  minimal_core: MAE=1482.3397, features=3
+  minimal_plus_media: MAE=2101.8227, features=5
+Feature minimization summary file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\minimal_feature_summary.txt
+New match predictions rows: 1
+New predictions mean attendance: 7174.69
+Prediction file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv
