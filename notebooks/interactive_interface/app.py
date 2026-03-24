@@ -27,6 +27,9 @@ def get_matchday(d: date) -> int:
     start = date(d.year if d.month >= 7 else d.year - 1, 7, 25)
     return min(34, max(1, round((d - start).days / 7)))
 
+def get_season_progress(matchday: int) -> float:
+    return round(matchday / 34, 4)
+
 def fuzzy_match(name: str):
     matches = difflib.get_close_matches(name, opponent_lookup.keys(), n=1, cutoff=0.3)
     if matches:
@@ -73,6 +76,14 @@ def rain_label(mm: float) -> str:
     elif mm < 10: return "🌧️ Moderate rain (some fans may stay home)"
     else:         return "⛈️ Heavy rain (expect lower attendance)"
 
+def is_weekend(d: date) -> int:
+    return int(d.weekday() >= 5)
+
+TOP_TEAMS = {"club brugge", "anderlecht", "stvv", "kv mechelen", "westerlo"}
+
+def is_top_opponent(name: str) -> int:
+    return int(name.lower() in TOP_TEAMS)
+
 # ── Session state ─────────────────────────────────────────────────────────────
 session = {}
 
@@ -82,28 +93,33 @@ def chat():
     user_msg = request.json.get('message', '').strip()
     step     = session.get('step', 'ask_opponent')
 
+    # ── Step 1: Opponent ──────────────────────────────────────────────────────
     if step == 'ask_opponent':
         matched, opp_avg = fuzzy_match(user_msg)
-        if matched:
-            session['opponent'] = matched
-            session['opp_avg']  = opp_avg
-            session['step']     = 'ask_date'
-            reply = f"Got it — <b>{matched}</b> (historical avg: {opp_avg:.0f} tickets).<br>📅 What is the match date? <i>(YYYY-MM-DD)</i>"
-        else:
-            session['opponent'] = 'Unknown'
-            session['opp_avg']  = float(GLOBAL_AVG)
-            session['step']     = 'ask_date'
-            reply = f"Unknown opponent — using global average ({GLOBAL_AVG:.0f} tickets).<br>📅 What is the match date? <i>(YYYY-MM-DD)</i>"
+        session['opponent']     = matched or 'Unknown'
+        session['opp_avg']      = opp_avg
+        session['is_top']       = is_top_opponent(user_msg)
+        session['step']         = 'ask_date'
+        reply = (
+            f"Got it — <b>{session['opponent']}</b> "
+            f"(historical avg: {opp_avg:.0f} tickets).<br>"
+            f"📅 What is the match date? <i>(YYYY-MM-DD)</i>"
+        )
 
+    # ── Step 2: Date ──────────────────────────────────────────────────────────
     elif step == 'ask_date':
         try:
             match_date = datetime.strptime(user_msg, "%Y-%m-%d").date()
         except ValueError:
             return jsonify({'reply': "❌ Invalid date format. Please use <b>YYYY-MM-DD</b> (e.g. 2026-04-15)."})
-        session['step'] = 'ask_kickoff'
         session['date'] = user_msg
-        reply = f"📅 Date set: <b>{match_date.strftime('%A, %d %b %Y')}</b>.<br>⏰ What is the kickoff time? <i>(HH:MM, e.g. 20:45)</i>"
+        session['step'] = 'ask_kickoff'
+        reply = (
+            f"📅 Date set: <b>{match_date.strftime('%A, %d %b %Y')}</b>.<br>"
+            f"⏰ What is the kickoff time? <i>(HH:MM, e.g. 20:45)</i>"
+        )
 
+    # ── Step 3: Kickoff → Predict ─────────────────────────────────────────────
     elif step == 'ask_kickoff':
         try:
             kickoff_hour = int(user_msg.split(':')[0])
@@ -113,33 +129,82 @@ def chat():
         match_date    = datetime.strptime(session['date'], "%Y-%m-%d").date()
         academic_week = get_academic_week(match_date)
         matchday      = get_matchday(match_date)
+        season_prog   = get_season_progress(matchday)
         rain_mm, rain_source = get_rain(match_date)
         opp_avg       = session['opp_avg']
+        is_top        = session['is_top']
 
-        if rain_source == "forecast_unavailable":
-            weather_line = "🌤️ Weather unavailable (>16 days away) — using 0mm rain"
-        else:
-            weather_line = f"{rain_label(rain_mm)} ({rain_mm:.1f}mm)"
+        # Opponent frequency & strength — use lookup size as proxy
+        opp_freq      = len(opponent_lookup)  # fallback: total unique opponents seen
+        opp_str_norm  = 0.5                   # neutral fallback
 
-        X        = np.array([[opp_avg, academic_week, matchday, rain_mm, kickoff_hour]])
+        # Form features — neutral defaults (no live form available at prediction time)
+        points_last_5    = 7.5   # ~midpoint of 0–15
+        wins_last_3      = 1.0   # ~midpoint of 0–3
+        goal_diff_last_5 = 0.0   # neutral
+
+        # Match importance composite
+        form_norm        = 0.5   # neutral
+        match_importance = round(0.5 * form_norm + 0.5 * season_prog, 4)
+        match_attract    = round(0.4 * match_importance + 0.4 * opp_str_norm + 0.2 * is_top, 4)
+        form_x_opp       = points_last_5 * is_top
+
+        # Lag — use global avg as fallback
+        attendance_lag_1 = float(GLOBAL_AVG)
+        has_promotion    = 0
+        weekend          = is_weekend(match_date)
+
+        # ── Build feature vector (must match feats order) ────────────────────
+        # features_combined order:
+        # opponent_avg_attendance_raw, academic_week, matchday, weather_rain_mm,
+        # kickoff_hour, points_last_5, wins_last_3, goal_diff_last_5,
+        # match_importance, match_attractiveness, form_x_opponent,
+        # is_weekend, season_progress, has_promotion, attendance_lag_1
+        X = np.array([[
+            opp_avg,
+            academic_week,
+            matchday,
+            rain_mm,
+            kickoff_hour,
+            points_last_5,
+            wins_last_3,
+            goal_diff_last_5,
+            match_importance,
+            match_attract,
+            form_x_opp,
+            weekend,
+            season_prog,
+            has_promotion,
+            attendance_lag_1,
+        ]])
+
         X_scaled = scaler.transform(X)
         pred     = model.predict(X_scaled)[0]
         low      = max(0, round(pred - std_dev))
         high     = round(pred + std_dev)
         pred     = round(pred)
 
+        weather_line = (
+            "🌤️ Weather unavailable (>16 days away) — using 0mm rain"
+            if rain_source == "forecast_unavailable"
+            else f"{rain_label(rain_mm)} ({rain_mm:.1f}mm)"
+        )
+
         reply = f"""
-        ✅ Here's the prediction for <b>{session['opponent']}</b>
+        ✅ Prediction for <b>{session['opponent']}</b>
         on <b>{session['date']}</b> at <b>{user_msg}</b>:<br><br>
         {weather_line}<br>
-        📅 Academic week: {academic_week} &nbsp;|&nbsp; Est. matchday: {matchday}<br><br>
+        📅 Academic week: {academic_week} &nbsp;|&nbsp; Est. matchday: {matchday}<br>
+        🏆 Top opponent: {"Yes" if is_top else "No"} &nbsp;|&nbsp; Weekend: {"Yes" if weekend else "No"}<br><br>
         <div style='background:#0d2a4a;padding:12px;border-radius:8px;margin-top:8px;'>
             📊 <b>Predicted attendance: {pred:,}</b><br>
             📉 Minimum estimate: {low:,}<br>
             📈 Maximum estimate: {high:,}
         </div><br>
+        <i style='color:#888;font-size:12px;'>* Form features use season averages — provide current form below for a sharper prediction.</i><br><br>
         🔄 Want to predict another match? Type an opponent name to start again!
         """
+
         session.clear()
         session['step'] = 'ask_opponent'
 
