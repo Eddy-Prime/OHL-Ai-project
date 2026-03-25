@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OHL AI Model Validation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #1B7E5A;
+      --green-light: #2aad7c;
+      --red: #E30613;
+      --bg: #080d0a;
+      --surface: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.2);
+      --text: #ffffff;
+      --muted: #a0a09b;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 18px; 
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* WATERMARK LOGO */
+    .watermark {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(400px, 60vmin, 900px);
+      height: clamp(400px, 60vmin, 900px);
+      pointer-events: none; z-index: 0;
+      opacity: 0.05;
+    }
+
+    /* AMBIENT GLOWS */
+    .amb { position: fixed; pointer-events: none; z-index: 0; border-radius: 50%; filter: blur(140px); }
+    .amb-g { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--green) 0%, transparent 60%); opacity: 0.18; }
+    .amb-r { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--red) 0%, transparent 60%); opacity: 0.1; }
+
+    /* SPLASH SCREEN */
+    #splashScreen {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    .splash-logo { width: clamp(200px, 35vw, 400px); margin-bottom: 40px; animation: pulseLogo 3s infinite ease-in-out; }
+    .splash-title { font-family: 'Syne', sans-serif; font-size: 38px; font-weight: 800; margin-bottom: 8px; text-align: center; }
+    .splash-subtitle { color: var(--muted); font-size: 18px; margin-bottom: 50px; letter-spacing: 2px; text-transform: uppercase; text-align: center; }
+    .btn-enter {
+      padding: 18px 45px; background: linear-gradient(135deg, var(--green) 0%, #0f4a30 100%);
+      color: #fff; border: none; border-radius: 100px;
+      font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-enter:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(27,126,90,0.4); }
+
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,255,255,0.05)); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(255,255,255,0.2)); }
+    }
+
+    /* MAIN DASHBOARD PAGE */
+    #mainDashboard {
+      display: none; position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 60px 40px;
+      animation: fadeIn 0.8s ease both;
+    }
+
+    /* HEADER */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 70px; padding-bottom: 30px; border-bottom: 1px solid var(--border);
+    }
+    .brand { display: flex; align-items: center; gap: 20px; }
+    .brand-logo { width: 64px; height: 64px; flex-shrink: 0; }
+    .brand-text h1 { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; }
+    .brand-text p { font-size: 15px; font-weight: 600; color: var(--green-light); letter-spacing: 2px; text-transform: uppercase; }
+    
+    .btn-chat {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; background: rgba(255,255,255,0.08); border: 1px solid var(--border-strong);
+      color: #fff; text-decoration: none; border-radius: 100px;
+      font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; transition: var(--transition);
+    }
+    .btn-chat:hover { background: #fff; color: #000; }
+
+    /* PANELS / SUBDIVISIONS */
+    .section-block { margin-bottom: 70px; }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 30px;
+      display: flex; align-items: center; gap: 14px; color: #fff;
+    }
+    .section-title svg { color: var(--green-light); padding: 8px; background: rgba(27,126,90,0.15); border-radius: 12px; }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
+      padding: 45px; backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+
+    /* METRICS GRID */
+    .perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+    .perf-tile {
+      background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 20px; padding: 35px 30px;
+      position: relative; overflow: hidden; transition: var(--transition);
+    }
+    .perf-tile:hover { transform: translateY(-6px); border-color: var(--border-strong); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+    .perf-tile::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+      background: linear-gradient(90deg, var(--green), var(--green-light)); opacity: 0.8;
+    }
+    .pt-raw { font-family: 'Syne', sans-serif; font-size: 50px; font-weight: 800; color: #fff; letter-spacing: -2px; margin-bottom: 12px; line-height: 1; }
+    .pt-raw span { font-size: 20px; color: var(--muted); font-weight: 500; letter-spacing: 0; }
+    .pt-name { font-size: 17px; font-weight: 700; color: var(--green-light); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+    .pt-explain { font-size: 16px; color: var(--muted); line-height: 1.5; }
+
+    /* FEATURES GRID */
+    .feat-desc { color: var(--muted); font-size: 17px; margin-bottom: 35px; max-width: 800px; }
+    .tags-container { display: flex; flex-wrap: wrap; gap: 16px; }
+    .tag {
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      padding: 14px 22px; border-radius: 100px; font-size: 16px; font-family: 'Syne', monospace;
+      color: #e0e0e0; cursor: pointer; transition: var(--transition);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .tag:hover { background: var(--green); color: #fff; border-color: var(--green-light); transform: scale(1.05); }
+    .tag::after {
+      content: '?'; font-family: sans-serif; font-size: 12px; font-weight: bold;
+      background: rgba(255,255,255,0.2); width: 20px; height: 20px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center; color: #fff;
+    }
+
+    /* IMPROVEMENTS LIST */
+    .improve-list { list-style: none; display: flex; flex-direction: column; gap: 24px; }
+    .improve-list li {
+      display: flex; gap: 24px; background: rgba(0,0,0,0.2); padding: 35px;
+      border-radius: 20px; border-left: 5px solid var(--red); transition: var(--transition);
+    }
+    .improve-list li:hover { background: rgba(0,0,0,0.3); border-color: #ff3333; }
+    .improve-list h4 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 10px; letter-spacing: -0.2px; }
+    .improve-list p { font-size: 17px; color: var(--muted); line-height: 1.6; }
+    .improve-icon {
+      background: rgba(227,6,19,0.12); color: var(--red);
+      width: 64px; height: 64px; border-radius: 18px; font-size: 28px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(227,6,19,0.25);
+    }
+
+    /* FEATURE EXPLANATION MODAL */
+    #featureModal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      z-index: 10000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+    }
+    .modal-content {
+      background: #111a15; border: 1px solid var(--green); border-radius: 24px;
+      width: 90%; max-width: 600px; padding: 40px; position: relative;
+      transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+    }
+    #featureModal.active { display: flex; opacity: 1; }
+    #featureModal.active .modal-content { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 25px; right: 25px; background: rgba(255,255,255,0.1); border: none;
+      color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: var(--transition);
+    }
+    .modal-close:hover { background: var(--red); transform: rotate(90deg); }
+    .modal-title { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--green-light); margin-bottom: 16px; word-break: break-all; }
+    .modal-desc { font-size: 18px; color: var(--text); line-height: 1.6; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- SPLASH SCREEN -->
+  <div id="splashScreen">
+    <img src="/public/OH_LEUVEN.png" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/en/thumb/f/fa/Oud-Heverlee_Leuven_logo.svg/1200px-Oud-Heverlee_Leuven_logo.svg.png';" alt="OHL Logo" class="splash-logo">
+    <h1 class="splash-title">OHL AI Predictor Dashboard</h1>
+    <p class="splash-subtitle">System Initialized & Model Validated</p>
+    <button class="btn-enter" onclick="enterDashboard()">Enter Dashboard</button>
+  </div>
+
+  <!-- WATERMARK LOGO -->
+  <div class="watermark">
+    <img src="/public/OH_LEUVEN.png" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/en/thumb/f/fa/Oud-Heverlee_Leuven_logo.svg/1200px-Oud-Heverlee_Leuven_logo.svg.png';" style="width: 100%; height: 100%; object-fit: contain;" alt="OHL">
+  </div>
+
+  <div class="amb amb-g"></div>
+  <div class="amb amb-r"></div>
+
+  <!-- MAIN DASHBOARD -->
+  <div class="page" id="mainDashboard">
+    
+    <header>
+      <div class="brand">
+        <svg class="brand-logo" viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="34" r="14" fill="#aaa" />
+          <ellipse cx="100" cy="83" rx="66" ry="19" transform="rotate(-13 100 83)" fill="#E30613" />
+          <ellipse cx="100" cy="128" rx="46" ry="15" transform="rotate(-9 100 128)" fill="#1B7E5A" />
+        </svg>
+        <div class="brand-text">
+          <h1>Model Validation Output</h1>
+          <p>Notebook Results & Structural Analysis</p>
+        </div>
+      </div>
+      <a href="/chat" class="btn-chat" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Open Chatbot Simulator
+      </a>
+    </header>
+
+    <!-- SECTION 1: METRICS -->
+    <div class="section-block">
+      <div class="section-title">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>
+        AI Model Validation Results (LOOCV)
+      </div>
+      <div class="perf-grid">
+        <div class="perf-tile">
+          <div class="pt-name">MAE (Mean Absolute Error)</div>
+          <div class="pt-raw" id="val-mae">...</div>
+          <div class="pt-explain">Average absolute error per match (in spectators/tickets). Example: MAE 875 means you're typically ~875 seats off (too high or too low).</div>
+        </div>
+        <div class="perf-tile">
+          <div class="pt-name">RMSE (Root Mean Square Error)</div>
+          <div class="pt-raw" id="val-rmse">...</div>
+          <div class="pt-explain">Like MAE, but penalises big misses more. Useful for “worst-case” buffer planning (bigger RMSE = more occasional large errors).</div>
+        </div>
+        <div class="perf-tile">
+          <div class="pt-name">R² Score</div>
+          <div class="pt-raw" id="val-r2">...</div>
+          <div class="pt-explain">Explained variance (0–1). R² = 0.67 means the model explains ~67% of attendance variation across matches (higher is better).</div>
+        </div>
+        <div class="perf-tile">
+          <div class="pt-name">MAPE (Mean Abs. Pct Error)</div>
+          <div class="pt-raw" id="val-mape">...</div>
+          <div class="pt-explain">Average percentage error. MAPE 13.9% means the prediction is, on average, ~13.9% away from the true attendance.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: FEATURES -->
+    <div class="section-block card">
+      <div class="section-title" style="margin-bottom: 20px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Model Inputs / Features Used (<span id="featCount">...</span>)
+      </div>
+      <p class="feat-desc">
+        This is the exact list of 21 engineered features extracted dynamically by the <code>final-model.ipynb</code> notebook for the final pipeline. <strong>Click on any feature to read its business meaning.</strong>
+      </p>
+      <div class="tags-container" id="featList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- SECTION 3: IMPROVEMENTS -->
+    <div class="section-block">
+      <div class="section-title">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Actionable Strategic Improvements
+      </div>
+      <ul class="improve-list">
+        <li>
+          <div class="improve-icon">📊</div>
+          <div>
+            <h4>Expanded Historical Data Depth</h4>
+            <p>Currently, the dataset is restricted to a limited number of matchdays. Incorporating consolidated data from 5+ prior seasons would allow the model to natively isolate long-term seasonal trends and correct for macro-fatigue.</p>
+          </div>
+        </li>
+        <li>
+          <div class="improve-icon">🚑</div>
+          <div>
+            <h4>Micro-Event Features (Player Injuries & Market Strengths)</h4>
+            <p>The current engineered features primarily track baseline team momentum ("Points Last 5"). However, if a marquee player is injured right before a high-profile fixture, the model remains mathematically blind. Integrating real-time injury logs or Expected Goals (xG) discrepancies would radically refine the 'match attractiveness' calculations.</p>
+          </div>
+        </li>
+        <li>
+          <div class="improve-icon">⚙️</div>
+          <div>
+            <h4>Extensive Algorithmic Hyperparameter Tuning</h4>
+            <p>The Gradient Boosting tree hyperparameters are currently configured reliably but statically (`n_estimators=200`, `max_depth=2`). Applying a wide-scale automated Grid Search Pipeline evaluating thousands of depth/learning-rate combinations could organically reduce the predictive error margin (MAE) by another 5-10% without new data.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- FEATURE EXPLANATION MODAL -->
+  <div id="featureModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal(event)">✕</button>
+      <div class="modal-title" id="mTitle">Feature Name</div>
+      <div class="modal-desc" id="mDesc">Explanation goes here.</div>
+    </div>
+  </div>
+
+  <script>
+    // Exact Explanations for Notebook Features
+    const FEATURE_DICT = {
+      "attendance_lag_1": "The exact attendance number of the immediately previous home match. Acts as the strongest proxy for short-term fan momentum.",
+      "attendance_roll_3": "The average attendance over the last 3 home matches. Smooths out extreme one-off variations.",
+      "attendance_roll_5": "The average attendance over the last 5 home matches, confirming medium-term attendance baseline.",
+      "tickets_sold_b2c": "Direct Business-to-Consumer tickets sold. Reflects raw individual fan interest rather than corporate blocks.",
+      "tickets_sold_b2b": "Business-to-Business tickets sold via corporate channels and sponsors.",
+      "opponent_avg_attendance_raw": "The historical baseline average attendance whenever this specific opponent visits.",
+      "is_top_opponent": "A binary flag (1 or 0) indicating if the opponent is considered a high-draw 'Top 5' club (Bruges, Anderlecht, etc.).",
+      "points_last_5": "Total points earned by OHL in their last 5 fixtures. Captures the team's winning form.",
+      "goal_diff_last_5": "Cumulative goal difference over the last 5 matches. Highly predictive of team entertainment value.",
+      "form_x_opponent": "An engineered interaction variable calculating the product of recent point form and top-opponent status.",
+      "match_attractiveness": "A composite engineered score aggregating season progress, team form, and opponent drawing power into a single index.",
+      "season_progress": "A percentage representing how far into the season the match takes place (Matchday divided by Total Matchdays).",
+      "season_enc": "An integer encoding the specific season. Helps the model adjust for broad season-to-season baseline shifts.",
+      "is_playoff": "A binary flag indicating if the fixture is a high-stakes, end-of-season playoff match.",
+      "has_promotion": "A binary flag indicating whether an active targeted ticket promotion (student discount, family day) is running.",
+      "pct_free_tickets": "Percentage of total tickets that were distributed for free via partnerships or campaigns.",
+      "kickoff_hour": "The local hour timing of the kickoff, used to differentiate afternoon family matches from late-night fixtures.",
+      "weather_rain_mm": "The anticipated precipitation in millimeters for the match window. Severe rain heavily depresses casual attendance.",
+      "ohl_interest": "Aggregated Google Trends Search Volume Index scoring local digital interest in OHL prior to matchday.",
+      "article_count_7d": "Media Exposure Index tracking the total number of Belga press articles mentioning OHL in the immediate 7 days leading up to kickoff.",
+      "lag_x_form": "A complex interaction feature multiplying the previous match's attendance by the point form of the last 5 games."
+    };
+
+    function enterDashboard() {
+      const splash = document.getElementById('splashScreen');
+      const dash = document.getElementById('mainDashboard');
+      splash.style.opacity = '0';
+      setTimeout(() => {
+        splash.style.display = 'none';
+        dash.style.display = 'block';
+      }, 700);
+    }
+
+    function openModal(featName) {
+      const modal = document.getElementById('featureModal');
+      const title = document.getElementById('mTitle');
+      const desc = document.getElementById('mDesc');
+      
+      title.textContent = featName;
+      desc.textContent = FEATURE_DICT[featName] || "This is a statistically engineered feature extracted directly from the notebook pipeline to reduce algorithmic error.";
+      
+      modal.classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (e) { e.stopPropagation(); e.preventDefault(); }
+      document.getElementById('featureModal').classList.remove('active');
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res = await fetch('/api/metrics');
+        const data = await res.json();
+
+        // Fill Metrics
+        if (data.metrics) {
+          document.getElementById('val-mae').innerHTML = `${data.metrics.MAE} <span>tckts</span>`;
+          document.getElementById('val-rmse').innerHTML = `${data.metrics.RMSE} <span>tckts</span>`;
+          document.getElementById('val-r2').innerHTML = data.metrics.R2;
+          document.getElementById('val-mape').innerHTML = data.metrics.MAPE;
+        }
+
+        // Fill Features
+        if (data.features) {
+          document.getElementById('featCount').textContent = data.features.length;
+          const container = document.getElementById('featList');
+          container.innerHTML = data.features.map(f => `<div class="tag" onclick="openModal('${f}')">${f}</div>`).join('');
+        }
+
+      } catch (err) {
+        console.error("Failed to load metrics", err);
+        document.getElementById('featCount').textContent = "Error Loading Data";
+      }
+    });
+  </script>
+</body>
+</html>y>
+</html>

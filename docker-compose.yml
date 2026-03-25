@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  ohl-ai-dashboard:
+    build: .
+    container_name: ohl-ai-dashboard
+    ports:
+      - "5800:5800"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
+    restart: unless-stopped

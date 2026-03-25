@@ -3,54 +3,191 @@
   <head>
     <meta charset="UTF-8" />
     <title>OHL Attendance Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+      :root {
+        --green: #1B7E5A;
+        --green-light: #2aad7c;
+        --red: #E30613;
+        --bg: #080d0a;
+        --surface: rgba(255, 255, 255, 0.05);
+        --border: rgba(255, 255, 255, 0.08);
+        --border-strong: rgba(255, 255, 255, 0.2);
+        --text: #ffffff;
+        --muted: #a0a09b;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
 
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
-        font-family: "Segoe UI", sans-serif;
-        background: #0d0d1a;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 16px;
         min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+        display: grid;
+        place-items: center;
+        padding: 36px 18px;
+      }
+
+      /* WATERMARK LOGO */
+      .watermark {
+        position: fixed; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: clamp(380px, 60vmin, 900px);
+        height: clamp(380px, 60vmin, 900px);
+        pointer-events: none; z-index: 0;
+        opacity: 0.05;
+      }
+
+      /* AMBIENT GLOWS */
+      .amb { position: fixed; pointer-events: none; z-index: 0; border-radius: 50%; filter: blur(140px); }
+      .amb-g { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--green) 0%, transparent 60%); opacity: 0.18; }
+      .amb-r { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--red) 0%, transparent 60%); opacity: 0.1; }
+
+      /* SPLASH SCREEN */
+      #splashScreen {
+        position: fixed; inset: 0; z-index: 9999;
+        background: var(--bg);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        transition: opacity 0.8s ease, visibility 0.8s ease;
+        padding: 36px 18px;
+        text-align: center;
+      }
+
+      .splash-logo {
+        width: clamp(180px, 28vw, 320px);
+        margin-bottom: 28px;
+        animation: pulseLogo 3s infinite ease-in-out;
+        filter: drop-shadow(0 22px 50px rgba(0,0,0,0.4));
+      }
+
+      .splash-title {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(26px, 4.2vw, 38px);
+        font-weight: 800;
+        margin-bottom: 8px;
+        letter-spacing: -0.6px;
+      }
+
+      .splash-subtitle {
+        color: var(--muted);
+        font-size: 15px;
+        margin-bottom: 32px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .btn-enter {
+        padding: 16px 40px;
+        background: linear-gradient(135deg, var(--green) 0%, #0f4a30 100%);
+        color: #fff;
+        border: none;
+        border-radius: 100px;
+        font-family: 'Syne', sans-serif;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .btn-enter:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(27,126,90,0.4); }
+
+      @keyframes pulseLogo {
+        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,255,255,0.05)); }
+        50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(255,255,255,0.2)); }
+      }
+
+      .chat-shell {
+        width: min(720px, 100%);
+        position: relative;
+        z-index: 1;
       }
 
       .chat-container {
-        width: 480px;
-        background: #1a1a2e;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
         display: flex;
         flex-direction: column;
         overflow: hidden;
       }
 
       .chat-header {
-        background: #003d7a;
-        padding: 18px 20px;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
-        gap: 12px;
+        justify-content: space-between;
+        gap: 14px;
       }
 
-      .chat-header div h2 {
+      .chat-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      .brand-logo {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+        flex-shrink: 0;
+        filter: drop-shadow(0 12px 30px rgba(0,0,0,0.35));
+      }
+
+      .chat-header h2 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: -0.3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .chat-header p {
+        color: var(--green-light);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 18px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid var(--border-strong);
         color: #fff;
-        font-size: 16px;
+        text-decoration: none;
+        border-radius: 100px;
+        font-family: 'Syne', sans-serif;
+        font-size: 14px;
+        font-weight: 800;
+        transition: var(--transition);
+        flex-shrink: 0;
       }
-      .chat-header div p {
-        color: #a0c4ff;
-        font-size: 12px;
-      }
+
+      .btn-back:hover { background: #fff; color: #000; }
 
       .chat-messages {
         flex: 1;
-        padding: 20px;
+        padding: 22px;
         overflow-y: auto;
-        max-height: 440px;
+        max-height: min(62vh, 560px);
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -59,28 +196,30 @@
       .msg {
         max-width: 80%;
         padding: 10px 14px;
-        border-radius: 12px;
-        font-size: 14px;
+        border-radius: 16px;
+        font-size: 15px;
         line-height: 1.5;
+        border: 1px solid transparent;
       }
 
       .msg.bot {
-        background: #16213e;
-        color: #e0e0e0;
+        background: rgba(0,0,0,0.25);
+        border-color: var(--border);
+        color: #eaeaea;
         align-self: flex-start;
-        border-bottom-left-radius: 2px;
+        border-bottom-left-radius: 6px;
       }
       .msg.user {
-        background: #003d7a;
+        background: linear-gradient(135deg, var(--green) 0%, #0f4a30 100%);
         color: #fff;
         align-self: flex-end;
-        border-bottom-right-radius: 2px;
+        border-bottom-right-radius: 6px;
       }
 
       .chat-input {
         display: flex;
-        padding: 14px;
-        border-top: 1px solid #2a2a3e;
+        padding: 16px 18px;
+        border-top: 1px solid var(--border);
         gap: 10px;
       }
 
@@ -88,37 +227,41 @@
         flex: 1;
         padding: 10px 14px;
         border-radius: 24px;
-        border: 1px solid #2a2a3e;
-        background: #16213e;
+        border: 1px solid var(--border);
+        background: rgba(0,0,0,0.25);
         color: #fff;
-        font-size: 14px;
+        font-size: 15px;
         outline: none;
       }
 
       .chat-input input::placeholder {
-        color: #666;
+        color: rgba(255,255,255,0.45);
       }
 
       .chat-input button {
-        background: #003d7a;
+        background: rgba(255,255,255,0.08);
         color: white;
-        border: none;
+        border: 1px solid var(--border-strong);
         padding: 10px 18px;
         border-radius: 24px;
         cursor: pointer;
         font-size: 14px;
-        transition: background 0.2s;
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        transition: var(--transition);
       }
 
       .chat-input button:hover {
-        background: #0059b3;
+        background: #fff;
+        color: #000;
       }
 
       .typing-dots span {
         display: inline-block;
         width: 6px;
         height: 6px;
-        background: #a0c4ff;
+        background: var(--green-light);
         border-radius: 50%;
         margin: 0 2px;
         animation: bounce 1.2s infinite;
@@ -143,37 +286,74 @@
     </style>
   </head>
   <body>
-    <div class="chat-container">
-      <div class="chat-header">
-        <div>
-          <h2>🟡 OHL Attendance Predictor</h2>
-          <p>Powered by Machine Learning</p>
-        </div>
-      </div>
+    <!-- SPLASH SCREEN -->
+    <div id="splashScreen">
+      <img src="/public/OH_LEUVEN.png" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/en/thumb/f/fa/Oud-Heverlee_Leuven_logo.svg/1200px-Oud-Heverlee_Leuven_logo.svg.png';" alt="OHL Logo" class="splash-logo">
+      <div class="splash-title">OHL Attendance Predictor</div>
+      <div class="splash-subtitle">Chatbot Simulator</div>
+      <button class="btn-enter" onclick="enterChat()">Enter Chatbot</button>
+    </div>
 
-      <div class="chat-messages" id="messages">
-        <div class="msg bot">
-          👋 Welcome! I can predict attendance for an OH Leuven home match.<br /><br />
-          👤 Who is the <b>opponent</b>?
-        </div>
-      </div>
+    <div class="watermark">
+      <img src="/public/OH_LEUVEN.png" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/en/thumb/f/fa/Oud-Heverlee_Leuven_logo.svg/1200px-Oud-Heverlee_Leuven_logo.svg.png';" style="width: 100%; height: 100%; object-fit: contain;" alt="OHL">
+    </div>
+    <div class="amb amb-g"></div>
+    <div class="amb amb-r"></div>
 
-      <div class="chat-input">
-        <input
-          type="text"
-          id="userInput"
-          placeholder="Type your answer..."
-          onkeydown="if (event.key === 'Enter') sendMessage();"
-        />
-        <button onclick="sendMessage()">Send</button>
+    <div class="chat-shell">
+      <div class="chat-container">
+        <div class="chat-header">
+          <div class="chat-brand">
+            <img class="brand-logo" src="/public/OH_LEUVEN.png" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/en/thumb/f/fa/Oud-Heverlee_Leuven_logo.svg/1200px-Oud-Heverlee_Leuven_logo.svg.png';" alt="OHL logo">
+            <div>
+              <h2>OHL Attendance Predictor</h2>
+              <p>Chatbot Simulator</p>
+            </div>
+          </div>
+          <a class="btn-back" href="/">
+            <span aria-hidden="true">←</span>
+            Go back
+          </a>
+        </div>
+
+        <div class="chat-messages" id="messages">
+          <div class="msg bot">
+            👋 Welcome! I can predict attendance for an OH Leuven home match.<br /><br />
+            👤 Who is the <b>opponent</b>?
+          </div>
+        </div>
+
+        <div class="chat-input">
+          <input
+            type="text"
+            id="userInput"
+            placeholder="Type your answer..."
+            onkeydown="if (event.key === 'Enter') sendMessage();"
+          />
+          <button onclick="sendMessage()">Send</button>
+        </div>
       </div>
     </div>
 
     <script>
-      // Reset session on every page load
-      window.addEventListener("load", async () => {
-        await fetch("/reset", { method: "POST" });
-      });
+      async function enterChat() {
+        const splash = document.getElementById('splashScreen');
+        splash.style.opacity = '0';
+        splash.style.pointerEvents = 'none';
+        setTimeout(() => {
+          splash.style.display = 'none';
+        }, 700);
+
+        // Reset session when user enters chat
+        try {
+          await fetch("/reset", { method: "POST" });
+        } catch (e) {
+          // If reset fails, chat can still be used; server will recover on first message.
+        }
+
+        const input = document.getElementById("userInput");
+        if (input) input.focus();
+      }
 
       async function sendMessage() {
         const input = document.getElementById("userInput");

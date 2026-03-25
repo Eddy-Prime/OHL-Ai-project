@@ -7,15 +7,20 @@ import numpy as np
 from datetime import datetime, date
 import xml.etree.ElementTree as ET
 
+import os
+
 app = Flask(__name__)
-with open('/Users/nachatissa/Desktop/SCHOOL/SEM2/Advanced AI/BUSit week/Attendance AI/MODEL/OHL-Ai-project/src/interactive_interface/model.pkl', 'rb') as f:
+# Fix hardcoded paths for Docker compatibility
+model_path = os.path.join(os.path.dirname(__file__), 'model.pkl')
+with open(model_path, 'rb') as f:
     artifacts = pickle.load(f)
 model = artifacts['model']
 scaler = artifacts['scaler']
 std_dev = 1000.0  # Fixed value since not saved in pickle
 feats = artifacts['features']
 
-with open('/Users/nachatissa/Desktop/SCHOOL/SEM2/Advanced AI/BUSit week/Attendance AI/MODEL/OHL-Ai-project/src/interactive_interface/opponentlookup.json') as f:
+lookup_path = os.path.join(os.path.dirname(__file__), 'opponentlookup.json')
+with open(lookup_path) as f:
     opponent_lookup = json.load(f)
 GLOBAL_AVG = opponent_lookup.pop('globalavg', 5000.0)
 
@@ -503,9 +508,158 @@ def chat():
 
     return jsonify({'reply': reply})
 
+# ── Stateless API Endpoint for Dashboard ──────────────────────────────────────
+@app.route('/api/predict', methods=['POST'])
+def api_predict():
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    # 1. Opponent
+    raw_opponent = data.get('opponent', '')
+    matched, opp_avg = fuzzy_match(raw_opponent)
+    if not matched:
+        return jsonify({"error": f"Opponent '{raw_opponent}' not recognised."}), 400
+    is_top = is_top_opponent(raw_opponent)
+
+    # 2. Date
+    raw_date = data.get('date', '')
+    try:
+        match_date = datetime.strptime(raw_date, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Use YYYY-MM-DD"}), 400
+    days_ahead = (match_date - date.today()).days
+
+    # 3. Kickoff
+    raw_kickoff = data.get('kickoff', '20:00')
+    try:
+        kickoff_hour = int(raw_kickoff.split(':')[0])
+    except ValueError:
+        kickoff_hour = 20
+
+    # 4. Form
+    raw_form = data.get('form', 'skip')
+    points_last_5 = 7.5
+    goal_diff_last_5 = 0.0
+    if raw_form.lower() != 'skip':
+        parsed = parse_form(raw_form)
+        if parsed:
+            points_last_5 = parsed[0]
+
+    # 5. Promotion
+    has_promotion = 1 if data.get('promotion') else 0
+
+    # Create session-like dict for build_feature_vector
+    temp_session = {
+        'date': raw_date,
+        'kickoff_hour': kickoff_hour,
+        'opp_avg': opp_avg,
+        'is_top': is_top,
+        'opponent': matched,
+        'has_promotion': has_promotion
+    }
+
+    # Fetch dynamic data
+    rain_mm, rain_source = get_rain(match_date)
+    article_count, headlines = get_article_count_7d(matched)
+    ohl_interest = get_ohl_interest_proxy(matched, days_ahead)
+
+    # Prediction
+    try:
+        X_vec = build_feature_vector(
+            temp_session, points_last_5, goal_diff_last_5,
+            rain_mm, article_count, ohl_interest
+        )
+        X_scaled = scaler.transform(X_vec)
+        pred = float(model.predict(X_scaled)[0])
+    except Exception as e:
+        return jsonify({"error": f"Prediction error: {str(e)}"}), 500
+
+    low = max(0, round(pred - std_dev))
+    high = min(STADIUM_CAPACITY, round(pred + std_dev))
+    pred = round(pred)
+
+    if pred >= 8500:
+        tier = "Near sell-out"
+        color = "#e63946" # Red
+    elif pred >= 7000:
+        tier = "High attendance"
+        color = "#2a9d8f" # Green
+    elif pred >= 5000:
+        tier = "Moderate attendance"
+        color = "#e9c46a" # Yellow
+    else:
+        tier = "Low attendance"
+        color = "#f4a261" # Orange
+
+    return jsonify({
+        "prediction": pred,
+        "low": low,
+        "high": high,
+        "capacity_pct": round(pred / STADIUM_CAPACITY * 100, 1),
+        "tier": tier,
+        "tier_color": color,
+        "opponent": matched,
+        "match_date": match_date.strftime('%A, %d %b %Y'),
+        "weather": {
+            "rain_mm": rain_mm,
+            "label": rain_label(rain_mm)
+        },
+        "news": {
+            "count": article_count,
+            "headlines": headlines
+        }
+    })
+
+import os
+import csv
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+PUBLIC_DIR = os.path.join(PROJECT_ROOT, 'public')
+
+@app.route('/public/<path:filename>')
+def public_files(filename):
+    return send_from_directory(PUBLIC_DIR, filename)
+
+@app.route('/api/metrics', methods=['GET'])
+def api_metrics():
+    metrics = {}
+    csv_path = os.path.join(os.path.dirname(__file__), '../../data/raw/model_results_combined.csv')
+    try:
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                metrics['MAE'] = round(float(row['MAE']), 1)
+                metrics['RMSE'] = round(float(row['RMSE']), 1)
+                metrics['R2'] = round(float(row['R2']), 2)
+                metrics['MAPE'] = f"{round(float(row['MAPE']), 1)}%"
+                break # Only one row expected
+    except Exception as e:
+        return jsonify({"error": f"Could not load metrics: {e}"}), 500
+
+    return jsonify({
+        "metrics": metrics,
+        "features": feats,
+        "features_count": len(feats),
+        "global_avg": round(GLOBAL_AVG)
+    })
+
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    # Serve dashboard.html from the root directory of the project
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '../../'), 'dashboard.html')
+
+@app.route('/chat')
+def chat_page():
+    # Serve the original chatbot interface
+    return send_from_directory(os.path.dirname(__file__), 'index.html')
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    return response
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5800, debug=True)
