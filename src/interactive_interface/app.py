@@ -1,23 +1,23 @@
 from flask import Flask, request, jsonify, send_from_directory
-import pickle, json, difflib, requests
+import pickle
+import json
+import difflib
+import requests
 import numpy as np
 from datetime import datetime, date
 import xml.etree.ElementTree as ET
 
 app = Flask(__name__)
-
-# ── Load model & lookup ───────────────────────────────────────────────────────
-with open('model.pkl', 'rb') as f:
+with open('/Users/nachatissa/Desktop/SCHOOL/SEM2/Advanced AI/BUSit week/Attendance AI/MODEL/OHL-Ai-project/src/interactive_interface/model.pkl', 'rb') as f:
     artifacts = pickle.load(f)
+model = artifacts['model']
+scaler = artifacts['scaler']
+std_dev = 1000.0  # Fixed value since not saved in pickle
+feats = artifacts['features']
 
-model    = artifacts['model']
-scaler   = artifacts['scaler']
-std_dev  = artifacts['std']
-feats    = artifacts['features']
-
-with open('opponent_lookup.json') as f:
+with open('/Users/nachatissa/Desktop/SCHOOL/SEM2/Advanced AI/BUSit week/Attendance AI/MODEL/OHL-Ai-project/src/interactive_interface/opponentlookup.json') as f:
     opponent_lookup = json.load(f)
-GLOBAL_AVG = opponent_lookup.pop('__global_avg__')
+GLOBAL_AVG = opponent_lookup.pop('globalavg', 5000.0)
 
 STADIUM_CAPACITY = 10_000
 
