@@ -39,5 +39,10 @@ def load_raw_tables(data_dir):
     for key, filename in RAW_FILES.items():
         file_path = data_dir / filename
         tables[key] = _read_csv(file_path)
-    return tables
 
+    transfermarkt_path = data_dir / "transfermarkt_matches.csv"
+    if transfermarkt_path.exists():
+        tables["transfermarkt"] = _read_csv(transfermarkt_path)
+    else:
+        tables["transfermarkt"] = pd.DataFrame()
+    return tables

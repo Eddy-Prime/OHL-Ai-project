@@ -6,6 +6,7 @@ from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.ensemble import RandomForestRegressor
+from sklearn import __version__ as sklearn_version
 
 from .config import RANDOM_STATE
 
@@ -19,10 +20,18 @@ def build_preprocessor(x_train):
             ("imputer", SimpleImputer(strategy="median", keep_empty_features=True)),
         ]
     )
+
+    encoder_kwargs = {"handle_unknown": "ignore"}
+    major, minor, *_ = sklearn_version.split(".")
+    if int(major) > 1 or (int(major) == 1 and int(minor) >= 2):
+        encoder_kwargs["sparse_output"] = False
+    else:
+        encoder_kwargs["sparse"] = False
+
     categorical_pipeline = Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="most_frequent", keep_empty_features=True)),
-            ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
+            ("encoder", OneHotEncoder(**encoder_kwargs)),
         ]
     )
 
@@ -140,6 +149,39 @@ def train_xgboost(x_train, y_train, tune=False, sample_weight=None):
 
 
 
+def train_catboost(x_train, y_train, tune=False, sample_weight=None):
+    try:
+        from catboost import CatBoostRegressor
+    except ImportError as exc:
+        raise ImportError("catboost is required. Install dependencies with: pip install -r requirements.txt") from exc
+
+    preprocessor = build_preprocessor(x_train)
+    base_model = CatBoostRegressor(
+        loss_function="RMSE",
+        random_seed=RANDOM_STATE,
+        verbose=False,
+        allow_writing_files=False,
+        iterations=600,
+        depth=5,
+        learning_rate=0.05,
+    )
+
+    pipeline = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("model", base_model),
+        ]
+    )
+
+    param_grid = {
+        "model__iterations": [400, 600, 900],
+        "model__depth": [4, 5, 6],
+        "model__learning_rate": [0.03, 0.05, 0.08],
+        "model__l2_leaf_reg": [3.0, 5.0, 8.0],
+    }
+    return _fit_with_optional_tuning(pipeline, x_train, y_train, tune=tune, param_grid=param_grid, sample_weight=sample_weight)
+
+
 def get_model_feature_importance(model):
     if isinstance(model, LogTargetModel):
         return get_model_feature_importance(model.base_model)
@@ -182,9 +224,11 @@ class SimpleEnsemble:
     def predict(self, x):
         xgb_pred = np.asarray(self.models["xgboost"].predict(x), dtype=float)
         rf_pred = np.asarray(self.models["random_forest"].predict(x), dtype=float)
-        xgb_weight = float(self.weights.get("xgboost", 0.7))
-        rf_weight = float(self.weights.get("random_forest", 0.3))
-        return xgb_weight * xgb_pred + rf_weight * rf_pred
+        catboost_pred = np.asarray(self.models["catboost"].predict(x), dtype=float) if "catboost" in self.models else np.zeros_like(xgb_pred)
+        xgb_weight = float(self.weights.get("xgboost", 0.6))
+        rf_weight = float(self.weights.get("random_forest", 0.2))
+        cat_weight = float(self.weights.get("catboost", 0.2))
+        return xgb_weight * xgb_pred + rf_weight * rf_pred + cat_weight * catboost_pred
 
     def fit(self, x, y):
         for model in self.models.values():

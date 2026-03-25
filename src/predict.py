@@ -52,7 +52,7 @@ def predict_from_file(
         tables=tables,
         new_matches_df=raw_input,
         return_stats=True,
-        use_weather_api=False,
+        use_weather_api=bool(use_weather_api),
     )
 
     feature_columns = metadata.get("features_used", [])
@@ -69,6 +69,7 @@ def predict_from_file(
     result = raw_input.copy()
     result["raw_predicted_attendance"] = np.asarray(raw_predictions, dtype=float)
     result["predicted_attendance"] = predictions
+    result["model_name"] = best_model_name
 
     weather_columns = [
         "weather_temp_mean_c",
@@ -104,9 +105,11 @@ def predict_from_file(
         "auto_generated_features": inference_stats.get("auto_generated_features", []),
         "fallback_global_mean": float(inference_stats.get("fallback", {}).get("global_mean", 0.0)),
         "fallback_counts": inference_stats.get("fallback", {}).get("fallback_counts", {}),
-        "weather_api_enabled": False,
+        "weather_api_enabled": bool(use_weather_api),
         "weather_stats": inference_stats.get("weather", {}),
         "weather_fallback_counts": weather_fallback_counts,
+        "transfermarkt_stats": inference_stats.get("transfermarkt", {}),
+        "metadata_feature_count": int(len(feature_columns)),
     }
     return result, summary
 
@@ -135,7 +138,7 @@ def predict_new_matches(
             model_path=model_path,
             metadata_path=metadata_path,
             output_file=output_file,
-            use_weather_api=False,
+            use_weather_api=bool(use_weather_api),
         )
     finally:
         if input_path.exists():

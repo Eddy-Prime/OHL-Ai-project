@@ -11,7 +11,7 @@ MODELS_DIR = PROJECT_ROOT / "models"
 NEW_MATCH_PREDICTIONS_PATH = PREDICTIONS_DIR / "new_match_predictions.csv"
 BEST_MODEL_ARTIFACT_PATH = MODELS_DIR / "best_attendance_model.joblib"
 BEST_MODEL_METADATA_PATH = MODELS_DIR / "best_attendance_model_metadata.json"
-MODEL_SCHEMA_VERSION = "2.0"
+MODEL_SCHEMA_VERSION = "3.0"
 
 OPEN_METEO_ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
@@ -212,5 +212,4 @@ FEATURE_GROUPS = {
         "opp_goals_last_3_matches",
     ],
 }
-
 

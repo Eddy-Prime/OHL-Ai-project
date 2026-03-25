@@ -1,32 +1,18 @@
-# OH Leuven Attendance Prediction (Final, Self-Contained)
+# OH Leuven Attendance Prediction
 
-This project is simplified to one final deterministic model: `xgboost_log`.
+This project trains and serves a football attendance model for OH Leuven with a full reproducible pipeline from raw CSV data to prediction and Streamlit usage.
 
-## Quick Start
+## What is included
 
-Put all required CSV files in the repository `data/` folder, then run:
+- Time-based train/test split with leakage checks
+- Feature engineering for attendance history, team form, schedule, media, trends, weather, and opponent strength
+- Optional Transfermarkt integration through opponent prior features
+- Model comparison across baselines, XGBoost, and CatBoost
+- Automatic best-model selection and artifact export
 
-```powershell
-python -m src.train --check-data-only
-python -m src.train
-python -m src.predict --input-file data_examples/new_match_input_template.csv
-```
+## Required data
 
-Notebook entrypoints:
-
-```powershell
-jupyter notebook notebooks/final_attendance_model.ipynb
-jupyter notebook notebooks/demo_attendance_model.ipynb
-```
-
-
-## Self-contained repository layout
-
-- All required raw data must live in `data/`
-- Default data path is repository-relative: `PROJECT_ROOT / "data"`
-- No absolute `C:\...` paths are used in code
-
-Required files in `data/`:
+Place the required files in `data/`:
 
 - `gold_match.csv`
 - `gold_match_tickets.csv`
@@ -35,16 +21,45 @@ Required files in `data/`:
 - `gold_belga_press_articles.csv`
 - `gold_match_goals.csv`
 
-## Final model
+Optional:
 
-- Model: `xgboost_log`
-- Target transform: `log1p(tickets_scanned)`
-- Prediction inverse transform: `expm1(...)`
-- Split: time-based holdout on OH Leuven internal data
+- `transfermarkt_matches.csv`
 
-## Outputs
+## Quick start
 
-- Predictions: `outputs/predictions/new_match_predictions.csv`
-- Final plots: `outputs/plots/actual_vs_predicted.png`, `outputs/plots/residuals.png`
+```powershell
+python -m src.train --check-data-only
+python -m src.train
+python -m src.predict --input-file data_examples/new_match_input_template.csv
+python -m src.report
+```
 
+Optional tuning:
 
+```powershell
+python -m src.train --tune-xgb --tune-catboost
+```
+
+Run Streamlit app:
+
+```powershell
+streamlit run app.py
+```
+
+## Main outputs
+
+- Best model artifact: `models/best_attendance_model.joblib`
+- Metadata: `models/best_attendance_model_metadata.json`
+- Model comparison: `outputs/model_comparison.csv`
+- Test predictions: `outputs/predictions/test_predictions.csv`
+- Top error cases: `outputs/predictions/top_error_cases.csv`
+- New predictions: `outputs/predictions/new_match_predictions.csv`
+- Feature importance: `outputs/feature_importance/best_model_feature_importance.csv`
+- Plots: `outputs/predictions/*.png`, `outputs/plots/*.png`
+- Summary report: `outputs/reports/summary_report.txt`
+
+## Notes
+
+- Paths are repository-relative and portable.
+- Evaluation is always on OH Leuven internal holdout data.
+- Transfermarkt data is used as an external opponent prior source, not as direct target rows in evaluation.
