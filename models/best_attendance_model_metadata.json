@@ -4,14 +4,6 @@
   "best_model_base_name": "catboost",
   "model_type": "log",
   "log_transform_used": true,
-  "weighted_training_used": false,
-  "primary_candidate": "xgboost",
-  "tested_model_names": [
-    "mean_baseline",
-    "opponent_mean_baseline",
-    "xgboost_log",
-    "catboost_log"
-  ],
   "rows_total": 71,
   "rows_train": 56,
   "rows_test": 15,
@@ -198,50 +190,92 @@
       "share_abs_error_le_1000": 0.7333333333333333
     },
     "catboost_log": {
-      "mae": 600.6880112599722,
-      "rmse": 799.9389738923004,
-      "r2": 0.3985203555552368,
-      "mape": 12.199718910474552,
-      "median_abs_error": 482.3899031572173,
-      "max_abs_error": 1618.4107880022675,
-      "share_abs_error_le_500": 0.5333333333333333,
+      "mae": 611.464772690339,
+      "rmse": 805.7331592880428,
+      "r2": 0.3897754227166528,
+      "mape": 12.020645853840113,
+      "median_abs_error": 436.8702964902268,
+      "max_abs_error": 1789.1149520347353,
+      "share_abs_error_le_500": 0.6,
       "share_abs_error_le_800": 0.7333333333333333,
-      "share_abs_error_le_1000": 0.8
+      "share_abs_error_le_1000": 0.7333333333333333
     }
   },
   "best_metrics": {
-    "mae": 600.6880112599722,
-    "rmse": 799.9389738923004,
-    "r2": 0.3985203555552368,
-    "mape": 12.199718910474552,
-    "median_abs_error": 482.3899031572173,
-    "max_abs_error": 1618.4107880022675,
-    "share_abs_error_le_500": 0.5333333333333333,
+    "mae": 611.464772690339,
+    "rmse": 805.7331592880428,
+    "r2": 0.3897754227166528,
+    "mape": 12.020645853840113,
+    "median_abs_error": 436.8702964902268,
+    "max_abs_error": 1789.1149520347353,
+    "share_abs_error_le_500": 0.6,
     "share_abs_error_le_800": 0.7333333333333333,
-    "share_abs_error_le_1000": 0.8
+    "share_abs_error_le_1000": 0.7333333333333333
   },
-  "model_ranking": [
-    {
-      "model": "catboost_log",
-      "mae": 600.6880112599722,
-      "rmse": 799.9389738923004
+  "holdout_test_metrics": {
+    "mae": 611.464772690339,
+    "rmse": 805.7331592880428,
+    "r2": 0.3897754227166528,
+    "mape": 12.020645853840113,
+    "median_abs_error": 436.8702964902268,
+    "max_abs_error": 1789.1149520347353,
+    "share_abs_error_le_500": 0.6,
+    "share_abs_error_le_800": 0.7333333333333333,
+    "share_abs_error_le_1000": 0.7333333333333333
+  },
+  "rolling_backtest_results": {
+    "created_at": "2026-03-25T13:56:36.767346+00:00",
+    "backtest_results": {
+      "xgboost_log": {
+        "model_name": "xgboost_log",
+        "n_folds": 1,
+        "mae_mean": 1471.6766641509435,
+        "mae_std": NaN,
+        "rmse_mean": 1732.7079280560502,
+        "rmse_std": NaN,
+        "mape_mean": 23.229275510344845,
+        "mape_std": NaN,
+        "r2_mean": 0.15369282772568238,
+        "r2_std": NaN
+      },
+      "catboost_log": {
+        "model_name": "catboost_log",
+        "n_folds": 1,
+        "mae_mean": 1801.8584946270466,
+        "mae_std": NaN,
+        "rmse_mean": 2061.2172956198715,
+        "rmse_std": NaN,
+        "mape_mean": 29.955088140035883,
+        "mape_std": NaN,
+        "r2_mean": -0.19763602819118997,
+        "r2_std": NaN
+      }
     },
-    {
-      "model": "xgboost_log",
-      "mae": 695.0274348194581,
-      "rmse": 894.3135375239318
-    },
-    {
-      "model": "mean_baseline",
-      "mae": 1523.1380952380957,
-      "rmse": 1748.7640548077823
-    },
-    {
-      "model": "opponent_mean_baseline",
-      "mae": 1547.915238095238,
-      "rmse": 1900.0341770990249
+    "final_holdout_metrics": {
+      "xgboost_log": {
+        "mae": 695.0274348194581,
+        "rmse": 894.3135375239318,
+        "r2": 0.24822681491453769,
+        "mape": 13.880611621216607,
+        "median_abs_error": 464.75499440824933,
+        "max_abs_error": 1998.913462623651,
+        "share_abs_error_le_500": 0.6,
+        "share_abs_error_le_800": 0.7333333333333333,
+        "share_abs_error_le_1000": 0.7333333333333333
+      },
+      "catboost_log": {
+        "mae": 611.464772690339,
+        "rmse": 805.7331592880428,
+        "r2": 0.3897754227166528,
+        "mape": 12.020645853840113,
+        "median_abs_error": 436.8702964902268,
+        "max_abs_error": 1789.1149520347353,
+        "share_abs_error_le_500": 0.6,
+        "share_abs_error_le_800": 0.7333333333333333,
+        "share_abs_error_le_1000": 0.7333333333333333
+      }
     }
-  ],
+  },
   "time_split": {
     "train_min_date": "2022-07-30",
     "train_max_date": "2025-05-03",
@@ -252,21 +286,5 @@
     "suspicious_feature_count": 0
   },
   "data_dir": "C:\\Users\\ASUS\\PycharmProjects\\OHL-Ai-project\\data",
-  "trained_at_utc": "2026-03-25T13:41:31.046438+00:00",
-  "calibration_enabled": false,
-  "calibration_type": null,
-  "calibration_params": null,
-  "residual_correction_enabled": false,
-  "minimal_feature_best_set": {
-    "feature_set": "full_current",
-    "feature_count": 61,
-    "mae": 695.0274348194581,
-    "rmse": 894.3135375239318,
-    "mape": 13.880611621216607,
-    "r2": 0.24822681491453769
-  },
-  "tuning": {
-    "xgboost": false,
-    "catboost": false
-  }
+  "trained_at_utc": "2026-03-25T14:00:17.832214+00:00"
 }

@@ -1,4 +1,4 @@
 match_date,away_team,stage,kickoff_time,raw_predicted_attendance,predicted_attendance,model_name,weather_temp_mean_c,weather_precipitation_mm,weather_rain_mm,weather_windspeed_max_kmh,weather_bad_flag,weather_source
-2026-09-12,Club Brugge,Regular Season,20:45:00,7009.649168242744,7009.649168242744,catboost_log,,,,,0.0,
-2026-09-20,RSC Anderlecht,Regular Season,18:30:00,5629.180929377087,5629.180929377087,catboost_log,,,,,0.0,
-2026-09-30,Standard Liege,Regular Season,20:30:00,6207.821202014048,6207.821202014048,catboost_log,,,,,0.0,
+2026-09-12,Club Brugge,Regular Season,20:45:00,7359.100656823345,7359.100656823345,catboost_log,,,,,0.0,
+2026-09-20,RSC Anderlecht,Regular Season,18:30:00,5395.817950411427,5395.817950411427,catboost_log,,,,,0.0,
+2026-09-30,Standard Liege,Regular Season,20:30:00,5973.70695422475,5973.70695422475,catboost_log,,,,,0.0,

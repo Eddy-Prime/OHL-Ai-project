@@ -1,38 +1,11 @@
-Attendance Prediction Project Report
+Attendance Prediction - Research Pipeline Report
 Best model: catboost_log
-Best MAE: 600.69
-Best RMSE: 799.94
-Best R2: 0.3985
-Best MAPE: 12.20
-MAE improvement vs mean baseline: 922.45
-Minimal required prediction input: match_date, away_team, stage, kickoff_time
-Top features:
-Model type: log
-Log transform used: True
-Weather API enabled: False
-Weather rows enriched: 142
-Weather API failures: 0
-External training enabled: False
-Internal training rows: 56
-External training rows: 0
-Internal test rows: 15
-Evaluation dataset: OH Leuven internal only
-Calibration enabled: False
-- numeric__matchday: 9.7026
-- numeric__attendance_last_match: 8.0476
-- numeric__attendance_last_same_weekday: 6.9617
-- numeric__attendance_last_3_avg: 6.3651
-- numeric__ohl_interest_trend: 3.9870
-Feature minimization:
-- Best feature set: full_current (MAE=695.0274, features=61)
-- Smallest acceptable set: full_current (MAE=695.0274, features=61)
-Feature minimization comparison:
-  full_current: MAE=695.0274, features=61
-  minimal_plus_lag: MAE=904.1473, features=9
-  compact_reduced: MAE=1197.1302, features=13
-  minimal_input_derived: MAE=1577.5623, features=5
-  minimal_plus_calendar: MAE=1620.6303, features=7
-Feature minimization summary file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\minimal_feature_summary.txt
-New match predictions rows: 3
-New predictions mean attendance: 6282.22
-Prediction file: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\outputs\predictions\new_match_predictions.csv
+Final holdout MAE: 611.46
+Final holdout RMSE: 805.73
+Final holdout R2: 0.3898
+Final holdout MAPE: 12.02
+Rows train: 56
+Rows test: 15
+Rolling backtest folds: 1
+Backtest MAE mean: 1801.86
+Data dir: C:\Users\ASUS\PycharmProjects\OHL-Ai-project\data
